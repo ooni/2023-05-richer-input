@@ -1,0 +1,307 @@
+{
+	"conf": {
+		"features": {
+			"webconnectivity_0.5": true
+		},
+		"test_helpers": {
+			"dns": [
+				{
+					"address": "37.218.241.93:57004",
+					"type": "legacy"
+				},
+				{
+					"address": "37.218.241.93:57004",
+					"type": "legacy"
+				}
+			],
+			"http-return-json-headers": [
+				{
+					"address": "http://37.218.241.94:80",
+					"type": "legacy"
+				},
+				{
+					"address": "http://37.218.241.94:80",
+					"type": "legacy"
+				}
+			],
+			"ssl": [
+				{
+					"address": "https://37.218.241.93",
+					"type": "legacy"
+				},
+				{
+					"address": "https://37.218.241.93",
+					"type": "legacy"
+				}
+			],
+			"tcp-echo": [
+				{
+					"address": "37.218.241.93",
+					"type": "legacy"
+				},
+				{
+					"address": "37.218.241.93",
+					"type": "legacy"
+				}
+			],
+			"traceroute": [
+				{
+					"address": "37.218.241.93",
+					"type": "legacy"
+				},
+				{
+					"address": "37.218.241.93",
+					"type": "legacy"
+				}
+			],
+			"web-connectivity": [
+				{
+					"address": "https://1.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://2.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://3.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://0.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://d33d1gs9kpq1c5.cloudfront.net",
+					"front": "d33d1gs9kpq1c5.cloudfront.net",
+					"type": "cloudfront"
+				}
+			]
+		}
+	},
+	"nettests": [
+		{
+			"report_id": "20230406T142431Z_bridgereachability_IT_30722_n1_ItipaDoVyevvjO9n",
+			"targets": [],
+			"nettest_name": "bridge_reachability"
+		},
+		{
+			"report_id": "20230406T142431Z_dash_IT_30722_n1_ldAWcG94R1xigSo2",
+			"targets": [],
+			"nettest_name": "dash"
+		},
+		{
+			"report_id": "20230406T142431Z_dnsconsistency_IT_30722_n1_JmZtNolbZaVRHM5i",
+			"targets": [],
+			"nettest_name": "dns_consistency"
+		},
+		{
+			"report_id": "20230406T142431Z_dnscheck_IT_30722_n1_CtRwDkl5cJFLrsDn",
+			"targets": [
+				{
+					"attributes": {},
+					"input": "https://dns.google/dns-query",
+					"options": {}
+				},
+				{
+					"attributes": {},
+					"input": "https://8.8.8.8/dns-query",
+					"options": {}
+				},
+				{
+					"attributes": {},
+					"input": "https://cloudflare-dns.com/dns-query",
+					"options": {}
+				},
+				{
+					"attributes": {},
+					"input": "https://1.1.1.1/dns-query",
+					"options": {}
+				}
+			],
+			"nettest_name": "dnscheck"
+		},
+		{
+			"report_id": "20230406T142431Z_dnsping_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "dnsping"
+		},
+		{
+			"report_id": "20230406T142431Z_echcheck_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "echcheck"
+		},
+		{
+			"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
+			"targets": [],
+			"nettest_name": "facebook_messenger"
+		},
+		{
+			"report_id": "20230406T142431Z_httpheaderfieldmanipulation_IT_30722_n1_LSFoxGt03W9TFQYv",
+			"targets": [],
+			"nettest_name": "http_header_field_manipulation"
+		},
+		{
+			"report_id": "20230406T142431Z_httphost_IT_30722_n1_XkbqGkeFIyQoz4oC",
+			"targets": [],
+			"nettest_name": "http_host"
+		},
+		{
+			"report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
+			"targets": [],
+			"nettest_name": "http_invalid_request_line"
+		},
+		{
+			"report_id": "20230406T142431Z_httprequests_IT_30722_n1_i1bmYGtxccE5Ugag",
+			"targets": [],
+			"nettest_name": "http_requests"
+		},
+		{
+			"report_id": "20230406T142431Z_meekfrontedrequeststest_IT_30722_n1_MRCctjAvMXJsqA95",
+			"targets": [],
+			"nettest_name": "meek_fronted_requests_test"
+		},
+		{
+			"report_id": "20230406T142431Z_multiprotocoltraceroute_IT_30722_n1_Og3QIFGsrmkAbR4b",
+			"targets": [],
+			"nettest_name": "multi_protocol_traceroute"
+		},
+		{
+			"report_id": "20230406T142431Z_ndt_IT_30722_n1_yXHa0JH88iYyBdVh",
+			"targets": [],
+			"nettest_name": "ndt"
+		},
+		{
+			"report_id": "20230406T142431Z_portfiltering_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "portfiltering"
+		},
+		{
+			"report_id": "20230406T142431Z_psiphon_IT_30722_n1_JndR2OBVs9h2UY4c",
+			"targets": [],
+			"nettest_name": "psiphon"
+		},
+		{
+			"report_id": "20230406T142431Z_quicping_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "quicping"
+		},
+		{
+			"report_id": "20230406T142431Z_riseupvpn_IT_30722_n1_oeixGC9p63urokq3",
+			"targets": [],
+			"nettest_name": "riseupvpn"
+		},
+		{
+			"report_id": "20230406T142431Z_signal_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "signal"
+		},
+		{
+			"report_id": "20230406T142431Z_simplequicping_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "simplequicping"
+		},
+		{
+			"report_id": "20230406T142431Z_sniblocking_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "sniblocking"
+		},
+		{
+			"report_id": "20230406T142431Z_stunreachability_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [
+				{
+					"attributes": {},
+					"input": "stun://stun.voip.blackberry.com:3478",
+					"options": {}
+				},
+				{
+					"attributes": {},
+					"input": "stun://stun.antisip.com:3478",
+					"options": {}
+				}
+			],
+			"nettest_name": "stunreachability"
+		},
+		{
+			"report_id": "20230406T142431Z_tcpconnect_IT_30722_n1_H5NHWB4qkY3nSPKz",
+			"targets": [],
+			"nettest_name": "tcp_connect"
+		},
+		{
+			"report_id": "20230406T142431Z_tcpping_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "tcpping"
+		},
+		{
+			"report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
+			"targets": [],
+			"nettest_name": "telegram"
+		},
+		{
+			"report_id": "20230406T142431Z_tlsmiddlebox_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "tlsmiddlebox"
+		},
+		{
+			"report_id": "20230406T142431Z_tlsping_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "tlsping"
+		},
+		{
+			"report_id": "20230406T142431Z_tor_IT_30722_n1_yC3sir64oGz2zS2o",
+			"targets": [],
+			"nettest_name": "tor"
+		},
+		{
+			"report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "torsf"
+		},
+		{
+			"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_bo0sJqaj2MNEx7lS",
+			"targets": [],
+			"nettest_name": "urlgetter"
+		},
+		{
+			"report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy",
+			"targets": [],
+			"nettest_name": "vanilla_tor"
+		},
+		{
+			"report_id": "20230406T142431Z_webconnectivity_IT_30722_n1_QY8E8jHBkSr7kUWu",
+			"targets": [
+				{
+					"attributes": {
+						"category_code": "MMED",
+						"country_code": "XX"
+					},
+					"input": "https://www.instagram.com/",
+					"options": {}
+				},
+				{
+					"attributes": {
+						"category_code": "GRP",
+						"country_code": "XX"
+					},
+					"input": "https://www.facebook.com/",
+					"options": {}
+				},
+				{
+					"attributes": {
+						"category_code": "CULTR",
+						"country_code": "IT"
+					},
+					"input": "https://en.wiktionary.org/",
+					"options": {}
+				}
+			],
+			"nettest_name": "web_connectivity"
+		},
+		{
+			"report_id": "20230406T142431Z_whatsapp_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"targets": [],
+			"nettest_name": "whatsapp"
+		}
+	],
+	"v": 2
+}

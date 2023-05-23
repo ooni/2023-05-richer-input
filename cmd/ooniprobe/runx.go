@@ -25,14 +25,14 @@ func newRunxSubcommand() *cobra.Command {
 		RunE:  state.Main,
 	}
 
-	// register the required --descriptor flag
+	// register the required --check-in flag
 	cmd.Flags().StringVar(
-		&state.descriptor,
-		"descriptor",
+		&state.checkIn,
+		"check-in",
 		"",
-		"path of the input report descriptor file",
+		"path of the input check-in response file",
 	)
-	cmd.MarkFlagRequired("descriptor")
+	cmd.MarkFlagRequired("check-in")
 
 	// register the required --location flag
 	cmd.Flags().StringVar(
@@ -52,43 +52,25 @@ func newRunxSubcommand() *cobra.Command {
 		"path of the output report file",
 	)
 
-	// TODO(bassosimone): shall we pass the check-in config rather
-	// than passing just the test-helpers?
-	//
-	// TODO(bassosimone): otherwise just make runx take in input
-	// the output of the check-in API and call it a day?
-
-	// register the required --test-helpers flag
-	cmd.Flags().StringVar(
-		&state.testHelpers,
-		"test-helpers",
-		"",
-		"path of the input test-helpers file",
-	)
-	cmd.MarkFlagRequired("test-helpers")
-
 	return cmd
 }
 
 // runxSubcommand contains the state bound to the runx subcommand.
 type runxSubcommand struct {
-	// descriptor is the name of the file containing the report descriptor.
-	descriptor string
+	// checkIn is the name of the file containing the check-in response.
+	checkIn string
 
 	// location is the name of the file containing the probe location.
 	location string
 
 	// output is the name of the output file
 	output string
-
-	// testHelpers is the name of the file containing the test helpers information.
-	testHelpers string
 }
 
 // Main is the main of the [runxSubcommand]
 func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
-	// load the descriptor from disk
-	descr, err := sc.loadReportDescriptor()
+	// load the check-in response from disk
+	cr, err := sc.loadCheckInResponse()
 	if err != nil {
 		return err
 	}
@@ -106,20 +88,14 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 	}
 	defer mw.Close()
 
-	// load test helpers information
-	thinfo, err := sc.loadTestHelpers()
-	if err != nil {
-		return err
-	}
-
 	// create the runner state
-	rs := runner.NewState(log.Log, "miniooni", "0.1.0-dev", thinfo)
+	rs := runner.NewState(log.Log, &runxSettings{}, "miniooni", "0.1.0-dev")
 
 	// create context
 	ctx := context.Background()
 
 	// perform all the measurements
-	if err := rs.Run(ctx, mw, location, descr); err != nil {
+	if err := rs.Run(ctx, mw, location, cr); err != nil {
 		return err
 	}
 
@@ -127,17 +103,17 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 	return mw.Close()
 }
 
-// loadReportDescriptor loads the report descriptor from file
-func (sc *runxSubcommand) loadReportDescriptor() (*model.ReportDescriptor, error) {
-	data, err := os.ReadFile(sc.descriptor)
+// loadCheckInResponse loads the check-in response from file
+func (sc *runxSubcommand) loadCheckInResponse() (*model.CheckInResponse, error) {
+	data, err := os.ReadFile(sc.checkIn)
 	if err != nil {
 		return nil, err
 	}
-	var descriptor model.ReportDescriptor
-	if err := json.Unmarshal(data, &descriptor); err != nil {
+	var cr model.CheckInResponse
+	if err := json.Unmarshal(data, &cr); err != nil {
 		return nil, err
 	}
-	return &descriptor, nil
+	return &cr, nil
 }
 
 // loadProbeLocation loads the probe location from file
@@ -151,19 +127,6 @@ func (sc *runxSubcommand) loadProbeLocation() (*model.ProbeLocation, error) {
 		return nil, err
 	}
 	return &location, nil
-}
-
-// loadTestHelpers loads the test-helpers information from file
-func (sc *runxSubcommand) loadTestHelpers() (map[string][]enginemodel.OOAPIService, error) {
-	data, err := os.ReadFile(sc.testHelpers)
-	if err != nil {
-		return nil, err
-	}
-	var ths map[string][]enginemodel.OOAPIService
-	if err := json.Unmarshal(data, &ths); err != nil {
-		return nil, err
-	}
-	return ths, nil
 }
 
 // runxMeasurementWriter writes measurements to disk
@@ -202,4 +165,19 @@ func (mw *runxMeasurementWriter) SaveMeasurement(ctx context.Context, meas *engi
 	data = append(data, '\n')
 	_, err = mw.file.Write(data)
 	return err
+}
+
+// runxSettings implements [model.Settings]
+type runxSettings struct{}
+
+var _ model.Settings = &runxSettings{}
+
+// IsNettestEnabled implements model.Settings
+func (rs *runxSettings) IsNettestEnabled(name string) bool {
+	switch name {
+	case "web_connectivity", "facebook_messenger", "telegram", "signal", "whatsapp":
+		return true
+	default:
+		return false
+	}
 }
