@@ -41,15 +41,15 @@ func NewState(
 
 // TODO(bassosimone): location should be passed to the constructor.
 
-// Run runs the nettest indicated by a given report template.
+// Run runs the nettest indicated by a given report descriptor.
 func (s *State) Run(
 	ctx context.Context,
 	saver model.MeasurementSaver,
 	location *model.ProbeLocation,
-	rt *model.ReportTemplate,
+	rd *model.ReportDescriptor,
 ) error {
 	// create the nettest instance
-	nettest, err := s.newNettest(rt.NettestName)
+	nettest, err := s.newNettest(rd.NettestName)
 	if err != nil {
 		return err
 	}
@@ -61,8 +61,8 @@ func (s *State) Run(
 	// other precautions to avoid running for too much time (maybe???)
 
 	// measure each of the targets
-	for _, target := range rt.Targets {
-		if err := s.measure(ctx, saver, location, rt, nettest, t0, &target); err != nil {
+	for _, target := range rd.Targets {
+		if err := s.measure(ctx, saver, location, rd, nettest, t0, &target); err != nil {
 			return err
 		}
 	}

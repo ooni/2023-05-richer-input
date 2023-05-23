@@ -17,7 +17,7 @@ const measurementDateFormat = "2006-01-02 15:04:05"
 // newMeasurement creates a new [model.Measurement] instance.
 func (s *State) newMeasurement(
 	location *model.ProbeLocation,
-	rt *model.ReportTemplate,
+	rd *model.ReportDescriptor,
 	nettest runnerNettest,
 	t0 time.Time,
 	target *model.MeasurementTarget,
@@ -38,7 +38,7 @@ func (s *State) newMeasurement(
 		ProbeASN:                  location.IPv4.ProbeASN.String(),
 		ProbeCC:                   location.IPv4.ProbeCC,
 		ProbeNetworkName:          location.IPv4.ProbeNetworkName,
-		ReportID:                  rt.ReportID,
+		ReportID:                  rd.ReportID,
 		ResolverASN:               location.IPv4.ResolverASN.String(),
 		ResolverIP:                location.IPv4.ResolverIP,
 		ResolverNetworkName:       location.IPv4.ResolverNetworkName,

@@ -54,6 +54,9 @@ func newRunxSubcommand() *cobra.Command {
 
 	// TODO(bassosimone): shall we pass the check-in config rather
 	// than passing just the test-helpers?
+	//
+	// TODO(bassosimone): otherwise just make runx take in input
+	// the output of the check-in API and call it a day?
 
 	// register the required --test-helpers flag
 	cmd.Flags().StringVar(
@@ -124,16 +127,13 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 	return mw.Close()
 }
 
-// TODO(bassosimone): decide whether to call this struct descriptor
-// or template (where descriptor seems better)
-
 // loadReportDescriptor loads the report descriptor from file
-func (sc *runxSubcommand) loadReportDescriptor() (*model.ReportTemplate, error) {
+func (sc *runxSubcommand) loadReportDescriptor() (*model.ReportDescriptor, error) {
 	data, err := os.ReadFile(sc.descriptor)
 	if err != nil {
 		return nil, err
 	}
-	var descriptor model.ReportTemplate
+	var descriptor model.ReportDescriptor
 	if err := json.Unmarshal(data, &descriptor); err != nil {
 		return nil, err
 	}

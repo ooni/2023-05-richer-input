@@ -1,7 +1,7 @@
 package model
 
-// ReportTemplate is the template to create a report.
-type ReportTemplate struct {
+// ReportDescriptor describes how to create a report.
+type ReportDescriptor struct {
 	// NettestName is the name of the nettest to execute.
 	NettestName string `json:"nettest_name"`
 

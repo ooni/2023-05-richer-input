@@ -9,12 +9,12 @@ import (
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
-// run runs the nettest indicated by a given report template.
+// measure runs the nettest indicated by a given report descriptor.
 func (s *State) measure(
 	ctx context.Context,
 	saver model.MeasurementSaver,
 	location *model.ProbeLocation,
-	rt *model.ReportTemplate,
+	rd *model.ReportDescriptor,
 	nettest runnerNettest,
 	t0 time.Time,
 	target *model.MeasurementTarget,
@@ -26,7 +26,7 @@ func (s *State) measure(
 	)
 
 	// create a new measurement instance
-	meas := s.newMeasurement(location, rt, nettest, t0, target)
+	meas := s.newMeasurement(location, rd, nettest, t0, target)
 
 	// TODO(bassosimone): once ooniprobe uses this code, we should
 	// modify the way we interface with experiments such that a single
