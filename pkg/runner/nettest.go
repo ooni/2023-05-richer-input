@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"github.com/ooni/probe-engine/pkg/experiment/fbmessenger"
+	"github.com/ooni/probe-engine/pkg/experiment/hhfm"
+	"github.com/ooni/probe-engine/pkg/experiment/hirl"
 	"github.com/ooni/probe-engine/pkg/experiment/signal"
 	"github.com/ooni/probe-engine/pkg/experiment/telegram"
 	"github.com/ooni/probe-engine/pkg/experiment/webconnectivity"
@@ -38,27 +40,37 @@ func (s *State) newNettest(name string) (runnerNettest, error) {
 
 	switch name {
 	case "facebook_messenger":
-		// TODO(bassosimone): the fbmessenger experiment should take a pointer
+		// TODO(bassosimone): this experiment should take a pointer
 		config := fbmessenger.Config{}
 		return fbmessenger.NewExperimentMeasurer(config), nil
 
+	case "http_invalid_request_line":
+		// TODO(bassosimone): this experiment should take a pointer
+		config := hirl.Config{}
+		return hirl.NewExperimentMeasurer(config), nil
+
+	case "http_header_field_manipulation":
+		// TODO(bassosimone): this experiment should take a pointer
+		config := hhfm.Config{}
+		return hhfm.NewExperimentMeasurer(config), nil
+
 	case "signal":
-		// TODO(bassosimone): the signal experiment should take a pointer
+		// TODO(bassosimone): this experiment should take a pointer
 		config := signal.Config{}
 		return signal.NewExperimentMeasurer(config), nil
 
 	case "web_connectivity":
-		// TODO(bassosimone): the web_connectivity experiment should take a pointer
+		// TODO(bassosimone): this experiment should take a pointer
 		config := webconnectivity.Config{}
 		return webconnectivity.NewExperimentMeasurer(config), nil
 
 	case "telegram":
-		// TODO(bassosimone): the telegram experiment should take a pointer
+		// TODO(bassosimone): this experiment should take a pointer
 		config := telegram.Config{}
 		return telegram.NewExperimentMeasurer(config), nil
 
 	case "whatsapp":
-		// TODO(bassosimone): the whatsapp experiment should take a pointer
+		// TODO(bassosimone): this experiment should take a pointer
 		config := whatsapp.Config{}
 		return whatsapp.NewExperimentMeasurer(config), nil
 
