@@ -1,0 +1,8 @@
+{
+	"web-connectivity": [
+		{
+			"address": "https://3.th.ooni.org",
+			"type": "https"
+		}
+	]
+}

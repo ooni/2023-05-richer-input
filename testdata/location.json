@@ -1,0 +1,22 @@
+{
+	"ipv4": {
+		"probe_ip": "88.99.81.188",
+		"probe_asn": 24940,
+		"probe_cc": "DE",
+		"probe_network_name": "Hetzner Online GmbH",
+		"resolver_ip": "78.46.173.81",
+		"resolver_asn": 24940,
+		"resolver_cc": "DE",
+		"resolver_network_name": "Hetzner Online GmbH"
+	},
+	"ipv6": {
+		"probe_ip": "2a01:4f8:c012:8aa4::1",
+		"probe_asn": 24940,
+		"probe_cc": "DE",
+		"probe_network_name": "Hetzner Online GmbH",
+		"resolver_ip": "2a01:4f8:0:a231::add:2b",
+		"resolver_asn": 24940,
+		"resolver_cc": "DE",
+		"resolver_network_name": "Hetzner Online GmbH"
+	}
+}
