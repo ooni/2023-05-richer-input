@@ -62,6 +62,8 @@ func (s *State) runMeasurement(
 		return err
 	}
 
+	// TODO(bassosimone): we should also save the measurement summary.
+
 	// save the measurement
 	return saver.SaveMeasurement(ctx, meas)
 }
@@ -82,7 +84,7 @@ func (s *State) newMeasurement(
 	// TODO(bassosimone): how to adapt the current model with a model where
 	// we have both IPv4 and IPv6 is an open problem.
 	//
-	// For now, the following code is going to alway use the IPv4 location
+	// For now, the following code is going to always use the IPv4 location
 
 	meas := &enginemodel.Measurement{
 		DataFormatVersion:         enginemodel.OOAPIReportDefaultDataFormatVersion,
