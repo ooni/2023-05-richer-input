@@ -50,9 +50,7 @@ func NewState(
 	}
 }
 
-// TODO(bassosimone): location should be passed to the constructor.
-
-// Run runs the nettest indicated by a given check-in response.
+// Run runs the nettest indicated by a given plan.
 func (s *State) Run(ctx context.Context, plan *model.RunnerPlan) error {
 	for _, suite := range plan.Suites {
 		for _, rd := range suite.Nettests {

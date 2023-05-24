@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/apex/log"
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
@@ -192,4 +193,9 @@ func (rs *runxSettings) IsNettestEnabled(name string) bool {
 	default:
 		return false
 	}
+}
+
+// MaxRuntime implements model.Settings
+func (rs *runxSettings) MaxRuntime() time.Duration {
+	return 90 * time.Second
 }

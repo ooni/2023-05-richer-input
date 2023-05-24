@@ -44,10 +44,10 @@ func (s *State) runMeasurement(
 	// modify the way we interface with experiments such that a single
 	// run takes richer input from the target struct
 
-	// create fake callbacks
+	// create callbacks
 	callbacks := enginemodel.NewPrinterCallbacks(s.logger)
 
-	// create a fake session
+	// create session
 	session := s.newSession(s.logger, plan.Conf.TestHelpers)
 
 	// fill the nettest arguments
