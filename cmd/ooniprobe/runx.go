@@ -9,7 +9,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/runner"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/ooniprobe/runner"
 	enginemodel "github.com/ooni/probe-engine/pkg/model"
 	"github.com/spf13/cobra"
 )
