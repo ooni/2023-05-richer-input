@@ -12,7 +12,7 @@ func (s *State) runReport(
 	ctx context.Context,
 	saver model.MeasurementSaver,
 	location *model.ProbeLocation,
-	cr *model.CheckInResponse,
+	plan *model.RunnerPlan,
 	rd *model.ReportDescriptor,
 ) error {
 	// make sure this nettest is enabled
@@ -35,7 +35,7 @@ func (s *State) runReport(
 
 	// measure each target
 	for _, target := range targets {
-		if err := s.runMeasurement(ctx, saver, location, cr, rd, t0, &target); err != nil {
+		if err := s.runMeasurement(ctx, saver, location, plan, rd, t0, &target); err != nil {
 			return err
 		}
 	}

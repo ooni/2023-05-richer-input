@@ -25,14 +25,14 @@ func newRunxSubcommand() *cobra.Command {
 		RunE:  state.Main,
 	}
 
-	// register the required --check-in flag
+	// register the required --runner-plan flag
 	cmd.Flags().StringVar(
 		&state.checkIn,
-		"check-in",
+		"runner-plan",
 		"",
-		"path of the input check-in response file",
+		"path of the input runner-plan file",
 	)
-	cmd.MarkFlagRequired("check-in")
+	cmd.MarkFlagRequired("runner-plan")
 
 	// register the required --location flag
 	cmd.Flags().StringVar(
@@ -70,7 +70,7 @@ type runxSubcommand struct {
 // Main is the main of the [runxSubcommand]
 func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 	// load the check-in response from disk
-	cr, err := sc.loadCheckInResponse()
+	plan, err := sc.loadRunnerPlan()
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 	ctx := context.Background()
 
 	// perform all the measurements
-	if err := rs.Run(ctx, mw, location, cr); err != nil {
+	if err := rs.Run(ctx, mw, location, plan); err != nil {
 		return err
 	}
 
@@ -103,17 +103,17 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 	return mw.Close()
 }
 
-// loadCheckInResponse loads the check-in response from file
-func (sc *runxSubcommand) loadCheckInResponse() (*model.CheckInResponse, error) {
+// loadRunnerPlan loads the runner-plan from file
+func (sc *runxSubcommand) loadRunnerPlan() (*model.RunnerPlan, error) {
 	data, err := os.ReadFile(sc.checkIn)
 	if err != nil {
 		return nil, err
 	}
-	var cr model.CheckInResponse
-	if err := json.Unmarshal(data, &cr); err != nil {
+	var plan model.RunnerPlan
+	if err := json.Unmarshal(data, &plan); err != nil {
 		return nil, err
 	}
-	return &cr, nil
+	return &plan, nil
 }
 
 // loadProbeLocation loads the probe location from file

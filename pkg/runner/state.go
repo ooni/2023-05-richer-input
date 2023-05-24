@@ -45,15 +45,14 @@ func (s *State) Run(
 	ctx context.Context,
 	saver model.MeasurementSaver,
 	location *model.ProbeLocation,
-	cr *model.CheckInResponse,
+	plan *model.RunnerPlan,
 ) error {
-	// TODO(bassosimone): the first naive version of this function is
-	// going to just execute the data returned by check-in in the order
-	// in which the check-in API returned it w/o grouping
-
-	for _, rd := range cr.Nettests {
-		if err := s.runReport(ctx, saver, location, cr, &rd); err != nil {
-			return err
+	for _, suite := range plan.Suites {
+		for _, rd := range suite.Nettests {
+			s.logger.Infof("running %s::%s", suite.ShortName, rd.NettestName)
+			if err := s.runReport(ctx, saver, location, plan, &rd); err != nil {
+				return err
+			}
 		}
 	}
 	return nil

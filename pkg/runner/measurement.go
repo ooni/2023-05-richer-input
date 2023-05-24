@@ -17,7 +17,7 @@ func (s *State) runMeasurement(
 	ctx context.Context,
 	saver model.MeasurementSaver,
 	location *model.ProbeLocation,
-	cr *model.CheckInResponse,
+	plan *model.RunnerPlan,
 	rd *model.ReportDescriptor,
 	t0 time.Time,
 	target *model.MeasurementTarget,
@@ -48,7 +48,7 @@ func (s *State) runMeasurement(
 	callbacks := enginemodel.NewPrinterCallbacks(s.logger)
 
 	// create a fake session
-	session := s.newSession(location, s.logger, cr.Conf.TestHelpers)
+	session := s.newSession(location, s.logger, plan.Conf.TestHelpers)
 
 	// fill the nettest arguments
 	args := &enginemodel.ExperimentArgs{

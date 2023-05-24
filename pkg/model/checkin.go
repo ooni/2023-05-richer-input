@@ -11,8 +11,7 @@ type CheckInResponse struct {
 	// Conf contains configuration information.
 	Conf CheckInResponseConf `json:"conf"`
 
-	// Nettests contains information about the nettests we
-	// should run as part of this session.
+	// Nettests contains information about the nettests we should run.
 	Nettests []ReportDescriptor `json:"nettests"`
 
 	// UTCTime contains the backend time in UTC.

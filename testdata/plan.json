@@ -1,0 +1,262 @@
+{
+	"conf": {
+		"features": {
+			"webconnectivity_0.5": true
+		},
+		"test_helpers": {
+			"dns": [
+				{
+					"address": "37.218.241.93:57004",
+					"type": "legacy"
+				},
+				{
+					"address": "37.218.241.93:57004",
+					"type": "legacy"
+				}
+			],
+			"http-return-json-headers": [
+				{
+					"address": "http://37.218.241.94:80",
+					"type": "legacy"
+				},
+				{
+					"address": "http://37.218.241.94:80",
+					"type": "legacy"
+				}
+			],
+			"ssl": [
+				{
+					"address": "https://37.218.241.93",
+					"type": "legacy"
+				},
+				{
+					"address": "https://37.218.241.93",
+					"type": "legacy"
+				}
+			],
+			"tcp-echo": [
+				{
+					"address": "37.218.241.93",
+					"type": "legacy"
+				},
+				{
+					"address": "37.218.241.93",
+					"type": "legacy"
+				}
+			],
+			"traceroute": [
+				{
+					"address": "37.218.241.93",
+					"type": "legacy"
+				},
+				{
+					"address": "37.218.241.93",
+					"type": "legacy"
+				}
+			],
+			"web-connectivity": [
+				{
+					"address": "https://1.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://2.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://3.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://0.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://d33d1gs9kpq1c5.cloudfront.net",
+					"front": "d33d1gs9kpq1c5.cloudfront.net",
+					"type": "cloudfront"
+				}
+			]
+		}
+	},
+	"suites": [
+		{
+			"short_name": "websites",
+			"nettests": [
+				{
+					"report_id": "20230406T142431Z_webconnectivity_IT_30722_n1_QY8E8jHBkSr7kUWu",
+					"targets": [
+						{
+							"attributes": {
+								"category_code": "MMED",
+								"country_code": "XX"
+							},
+							"input": "https://www.instagram.com/",
+							"options": {}
+						},
+						{
+							"attributes": {
+								"category_code": "GRP",
+								"country_code": "XX"
+							},
+							"input": "https://www.facebook.com/",
+							"options": {}
+						},
+						{
+							"attributes": {
+								"category_code": "CULTR",
+								"country_code": "IT"
+							},
+							"input": "https://en.wiktionary.org/",
+							"options": {}
+						}
+					],
+					"nettest_name": "web_connectivity"
+				}
+			]
+		},
+		{
+			"short_name": "im",
+			"nettests": [
+				{
+					"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
+					"nettest_name": "facebook_messenger"
+				},
+				{
+					"report_id": "20230406T142431Z_signal_IT_30722_n1_8vFVXzjCjfUFbOA5",
+					"nettest_name": "signal"
+				},
+				{
+					"report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
+					"nettest_name": "telegram"
+				},
+				{
+					"report_id": "20230406T142431Z_whatsapp_IT_30722_n1_8vFVXzjCjfUFbOA5",
+					"nettest_name": "whatsapp"
+				}
+			]
+		},
+		{
+			"short_name": "performance",
+			"nettests": [
+				{
+					"report_id": "20230406T142431Z_dash_IT_30722_n1_ldAWcG94R1xigSo2",
+					"nettest_name": "dash"
+				},
+				{
+					"report_id": "20230406T142431Z_ndt_IT_30722_n1_yXHa0JH88iYyBdVh",
+					"nettest_name": "ndt"
+				}
+			]
+		},
+		{
+			"short_name": "middlebox",
+			"nettests": [
+				{
+					"report_id": "20230406T142431Z_httpheaderfieldmanipulation_IT_30722_n1_LSFoxGt03W9TFQYv",
+					"nettest_name": "http_header_field_manipulation"
+				},
+				{
+					"report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
+					"nettest_name": "http_invalid_request_line"
+				}
+			]
+		},
+		{
+			"short_name": "circumvention",
+			"nettests": [
+				{
+					"report_id": "20230406T142431Z_psiphon_IT_30722_n1_JndR2OBVs9h2UY4c",
+					"nettest_name": "psiphon"
+				},
+				{
+					"report_id": "20230406T142431Z_tor_IT_30722_n1_yC3sir64oGz2zS2o",
+					"nettest_name": "tor"
+				}
+			]
+		},
+		{
+			"short_name": "experimental",
+			"nettests": [
+				{
+					"report_id": "20230406T142431Z_dnscheck_IT_30722_n1_CtRwDkl5cJFLrsDn",
+					"targets": [
+						{
+							"attributes": {},
+							"input": "https://dns.google/dns-query",
+							"options": {}
+						},
+						{
+							"attributes": {},
+							"input": "https://8.8.8.8/dns-query",
+							"options": {}
+						},
+						{
+							"attributes": {},
+							"input": "https://cloudflare-dns.com/dns-query",
+							"options": {}
+						},
+						{
+							"attributes": {},
+							"input": "https://1.1.1.1/dns-query",
+							"options": {}
+						}
+					],
+					"nettest_name": "dnscheck"
+				},
+				{
+					"report_id": "20230406T142431Z_stunreachability_IT_30722_n1_8vFVXzjCjfUFbOA5",
+					"targets": [
+						{
+							"attributes": {},
+							"input": "stun://stun.voip.blackberry.com:3478",
+							"options": {}
+						},
+						{
+							"attributes": {},
+							"input": "stun://stun.antisip.com:3478",
+							"options": {}
+						}
+					],
+					"nettest_name": "stunreachability"
+				},
+				{
+					"report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5",
+					"nettest_name": "torsf"
+				},
+				{
+					"report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy",
+					"nettest_name": "vanilla_tor"
+				},
+				{
+					"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
+					"nettest_name": "urlgetter",
+					"targets": [
+						{
+							"annotations": {
+								"check_type": "tls"
+							},
+							"input": "https://8.8.8.8/",
+							"options": {
+								"HTTPHost": "dns.google",
+								"TLSServerName": "dns.google"
+							}
+						},
+						{
+							"annotations": {
+								"check_type": "quic"
+							},
+							"input": "https://8.8.8.8/",
+							"options": {
+								"HTTP3Enabled": true,
+								"HTTPHost": "dns.google",
+								"TLSServerName": "dns.google"
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"v": 2
+}
