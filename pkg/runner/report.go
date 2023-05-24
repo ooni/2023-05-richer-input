@@ -20,12 +20,6 @@ func (s *State) runReport(
 		return nil
 	}
 
-	// create the nettest instance
-	nettest, err := s.newNettest(rd.NettestName)
-	if err != nil {
-		return err
-	}
-
 	// save the start time
 	t0 := time.Now()
 
@@ -41,7 +35,7 @@ func (s *State) runReport(
 
 	// measure each target
 	for _, target := range targets {
-		if err := s.runMeasurement(ctx, saver, location, cr, rd, nettest, t0, &target); err != nil {
+		if err := s.runMeasurement(ctx, saver, location, cr, rd, t0, &target); err != nil {
 			return err
 		}
 	}

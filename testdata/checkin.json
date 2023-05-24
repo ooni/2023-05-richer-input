@@ -231,10 +231,6 @@
 			"nettest_name": "torsf"
 		},
 		{
-			"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_bo0sJqaj2MNEx7lS",
-			"nettest_name": "urlgetter"
-		},
-		{
 			"report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy",
 			"nettest_name": "vanilla_tor"
 		},
@@ -271,6 +267,33 @@
 		{
 			"report_id": "20230406T142431Z_whatsapp_IT_30722_n1_8vFVXzjCjfUFbOA5",
 			"nettest_name": "whatsapp"
+		},
+		{
+			"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
+			"nettest_name": "urlgetter",
+			"targets": [
+				{
+					"annotations": {
+						"check_type": "tls"
+					},
+					"input": "https://8.8.8.8/",
+					"options": {
+						"HTTPHost": "dns.google",
+						"TLSServerName": "dns.google"
+					}
+				},
+				{
+					"annotations": {
+						"check_type": "quic"
+					},
+					"input": "https://8.8.8.8/",
+					"options": {
+						"HTTP3Enabled": true,
+						"HTTPHost": "dns.google",
+						"TLSServerName": "dns.google"
+					}
+				}
+			]
 		}
 	],
 	"v": 2

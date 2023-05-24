@@ -19,7 +19,6 @@ func (s *State) runMeasurement(
 	location *model.ProbeLocation,
 	cr *model.CheckInResponse,
 	rd *model.ReportDescriptor,
-	nettest runnerNettest,
 	t0 time.Time,
 	target *model.MeasurementTarget,
 ) error {
@@ -29,8 +28,17 @@ func (s *State) runMeasurement(
 		"either location.IPv4 is nil or location.IPv6 is nil",
 	)
 
+	// create the nettest instance
+	nettest, err := s.newNettest(rd.NettestName, target.Options)
+	if err != nil {
+		return err
+	}
+
 	// create a new measurement instance
 	meas := s.newMeasurement(location, rd, nettest, t0, target)
+
+	// make sure we include extra annotations
+	meas.AddAnnotations(target.Annotations)
 
 	// TODO(bassosimone): once ooniprobe uses this code, we should
 	// modify the way we interface with experiments such that a single

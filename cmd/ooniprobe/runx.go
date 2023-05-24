@@ -175,7 +175,12 @@ var _ model.Settings = &runxSettings{}
 // IsNettestEnabled implements model.Settings
 func (rs *runxSettings) IsNettestEnabled(name string) bool {
 	switch name {
-	case "web_connectivity", "facebook_messenger", "telegram", "signal", "whatsapp":
+	case "web_connectivity",
+		"facebook_messenger",
+		"telegram",
+		"signal",
+		"urlgetter",
+		"whatsapp":
 		return true
 	default:
 		return false
