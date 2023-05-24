@@ -27,8 +27,22 @@ func (s *State) runReport(ctx context.Context, plan *model.RunnerPlan, rd *model
 		targets = []model.MeasurementTarget{{}}
 	}
 
+	// honour the maximum runtime for experiments with more than one input
+	if maxRuntime := s.settings.MaxRuntime(); maxRuntime > 0 && len(targets) > 1 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, maxRuntime)
+		defer cancel()
+	}
+
 	// measure each target
 	for _, target := range targets {
+		// handle the case where the user cancelled the measurement or the
+		// measurement timed out because of the max-runtime
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+
+		// perform the actual measurement
 		if err := s.runMeasurement(ctx, plan, rd, t0, &target); err != nil {
 			return err
 		}

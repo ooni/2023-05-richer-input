@@ -1,7 +1,9 @@
 package runner
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"runtime"
 	"time"
 
@@ -60,13 +62,14 @@ func (s *State) runMeasurement(
 		return err
 	}
 
-	// TODO(bassosimone): we should have a dedicated function for scrubbing
-
-	// scrub the IPv4 and IPv6 addresses
-	if err := enginemodel.ScrubMeasurement(meas, s.location.IPv4.ProbeIP); err != nil {
+	// in case the context expired, consider the measurement failed
+	if err := ctx.Err(); err != nil {
 		return err
 	}
-	if err := enginemodel.ScrubMeasurement(meas, s.location.IPv6.ProbeIP); err != nil {
+
+	// scrub the IP addresses from the measurement
+	meas, err = s.scrubMeasurement(meas)
+	if err != nil {
 		return err
 	}
 
@@ -124,4 +127,46 @@ func (s *State) newMeasurement(
 	meas.AddAnnotation("vcs_tool", runtimex.BuildInfo.VcsTool)
 
 	return meas
+}
+
+// scrubbed is the string that replaces IP addresses.
+const scrubbed = `[scrubbed]`
+
+// scrubMeasurement takes in input a measurement and scrubs it using both
+// the IPv4 and the IPv6 addresses provided by the location. The return
+// value is another measurement that has been scrubbed. For safety reasons,
+// this function MUTATES the measurement passed as argument such that it
+// is empty after this function has returned.
+func (s *State) scrubMeasurement(incoming *enginemodel.Measurement) (*enginemodel.Measurement, error) {
+	// TODO(bassosimone): this code should replace the code that we
+	// currently use for scrubbing measurements
+
+	// serialize incoming measurement
+	data, err := json.Marshal(incoming)
+	if err != nil {
+		return nil, err
+	}
+
+	// assign the incoming measurement to the empty measurement
+	// as documented, to avoid using it by mistake
+	*incoming = enginemodel.Measurement{}
+
+	// compute the list of values to scrub
+	ips := []string{
+		s.location.IPv4.ProbeIP,
+		s.location.IPv6.ProbeIP,
+	}
+
+	// scrub each value we would need to scrub
+	for _, ip := range ips {
+		data = bytes.ReplaceAll(data, []byte(ip), []byte(scrubbed))
+	}
+
+	// serialize the result
+	var outgoing enginemodel.Measurement
+	if err := json.Unmarshal(data, &outgoing); err != nil {
+		return nil, err
+	}
+
+	return &outgoing, nil
 }
