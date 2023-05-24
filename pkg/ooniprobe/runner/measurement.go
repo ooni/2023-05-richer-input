@@ -15,8 +15,6 @@ import (
 // runMeasurement measures the given measurement target.
 func (s *State) runMeasurement(
 	ctx context.Context,
-	saver model.MeasurementSaver,
-	location *model.ProbeLocation,
 	plan *model.RunnerPlan,
 	rd *model.ReportDescriptor,
 	t0 time.Time,
@@ -24,7 +22,7 @@ func (s *State) runMeasurement(
 ) error {
 	// make sure we know both the IPv4 and the IPv6 locations
 	runtimex.Assert(
-		location.IPv4 != nil && location.IPv6 != nil,
+		s.location.IPv4 != nil && s.location.IPv6 != nil,
 		"either location.IPv4 is nil or location.IPv6 is nil",
 	)
 
@@ -35,7 +33,7 @@ func (s *State) runMeasurement(
 	}
 
 	// create a new measurement instance
-	meas := s.newMeasurement(location, rd, nettest, t0, target)
+	meas := s.newMeasurement(rd, nettest, t0, target)
 
 	// make sure we include extra annotations
 	meas.AddAnnotations(target.Annotations)
@@ -48,7 +46,7 @@ func (s *State) runMeasurement(
 	callbacks := enginemodel.NewPrinterCallbacks(s.logger)
 
 	// create a fake session
-	session := s.newSession(location, s.logger, plan.Conf.TestHelpers)
+	session := s.newSession(s.logger, plan.Conf.TestHelpers)
 
 	// fill the nettest arguments
 	args := &enginemodel.ExperimentArgs{
@@ -62,18 +60,20 @@ func (s *State) runMeasurement(
 		return err
 	}
 
+	// TODO(bassosimone): we should have a dedicated function for scrubbing
+
 	// scrub the IPv4 and IPv6 addresses
-	if err := enginemodel.ScrubMeasurement(meas, location.IPv4.ProbeIP); err != nil {
+	if err := enginemodel.ScrubMeasurement(meas, s.location.IPv4.ProbeIP); err != nil {
 		return err
 	}
-	if err := enginemodel.ScrubMeasurement(meas, location.IPv6.ProbeIP); err != nil {
+	if err := enginemodel.ScrubMeasurement(meas, s.location.IPv6.ProbeIP); err != nil {
 		return err
 	}
 
 	// TODO(bassosimone): we should also save the measurement summary.
 
 	// save the measurement
-	return saver.SaveMeasurement(ctx, meas)
+	return s.saver.SaveMeasurement(ctx, meas)
 }
 
 // measurementDateFormat is the date format used by a measurement.
@@ -81,7 +81,6 @@ const measurementDateFormat = "2006-01-02 15:04:05"
 
 // newMeasurement creates a new [model.Measurement] instance.
 func (s *State) newMeasurement(
-	location *model.ProbeLocation,
 	rd *model.ReportDescriptor,
 	nettest runnerNettest,
 	t0 time.Time,
@@ -100,13 +99,13 @@ func (s *State) newMeasurement(
 		MeasurementStartTime:      utctimenow.Format(measurementDateFormat),
 		MeasurementStartTimeSaved: utctimenow,
 		ProbeIP:                   enginemodel.DefaultProbeIP,
-		ProbeASN:                  location.IPv4.ProbeASN.String(),
-		ProbeCC:                   location.IPv4.ProbeCC,
-		ProbeNetworkName:          location.IPv4.ProbeNetworkName,
+		ProbeASN:                  s.location.IPv4.ProbeASN.String(),
+		ProbeCC:                   s.location.IPv4.ProbeCC,
+		ProbeNetworkName:          s.location.IPv4.ProbeNetworkName,
 		ReportID:                  rd.ReportID,
-		ResolverASN:               location.IPv4.ResolverASN.String(),
-		ResolverIP:                location.IPv4.ResolverIP,
-		ResolverNetworkName:       location.IPv4.ResolverNetworkName,
+		ResolverASN:               s.location.IPv4.ResolverASN.String(),
+		ResolverIP:                s.location.IPv4.ResolverIP,
+		ResolverNetworkName:       s.location.IPv4.ResolverNetworkName,
 		SoftwareName:              s.softwareName,
 		SoftwareVersion:           s.softwareVersion,
 		TestName:                  nettest.ExperimentName(),

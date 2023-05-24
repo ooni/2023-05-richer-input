@@ -89,13 +89,20 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 	defer mw.Close()
 
 	// create the runner state
-	rs := runner.NewState(log.Log, &runxSettings{}, "miniooni", "0.1.0-dev")
+	rs := runner.NewState(
+		location,
+		log.Log,
+		mw,
+		&runxSettings{},
+		"miniooni",
+		"0.1.0-dev",
+	)
 
 	// create context
 	ctx := context.Background()
 
 	// perform all the measurements
-	if err := rs.Run(ctx, mw, location, plan); err != nil {
+	if err := rs.Run(ctx, plan); err != nil {
 		return err
 	}
 

@@ -8,13 +8,7 @@ import (
 )
 
 // runReport runs the measurements in the given report descriptor
-func (s *State) runReport(
-	ctx context.Context,
-	saver model.MeasurementSaver,
-	location *model.ProbeLocation,
-	plan *model.RunnerPlan,
-	rd *model.ReportDescriptor,
-) error {
+func (s *State) runReport(ctx context.Context, plan *model.RunnerPlan, rd *model.ReportDescriptor) error {
 	// make sure this nettest is enabled
 	if !s.settings.IsNettestEnabled(rd.NettestName) {
 		return nil
@@ -35,7 +29,7 @@ func (s *State) runReport(
 
 	// measure each target
 	for _, target := range targets {
-		if err := s.runMeasurement(ctx, saver, location, plan, rd, t0, &target); err != nil {
+		if err := s.runMeasurement(ctx, plan, rd, t0, &target); err != nil {
 			return err
 		}
 	}

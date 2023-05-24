@@ -11,12 +11,11 @@ import (
 
 // newSession creates a [model.ExperimentSession] instance.
 func (s *State) newSession(
-	location *model.ProbeLocation,
 	logger enginemodel.Logger,
 	testHelpers map[string][]enginemodel.OOAPIService,
 ) enginemodel.ExperimentSession {
 	return &runnerSession{
-		location:    location,
+		location:    s.location,
 		logger:      logger,
 		testHelpers: testHelpers,
 	}
