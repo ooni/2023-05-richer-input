@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -105,7 +106,7 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 	defer progressView.Close()
 
 	// create the file logger
-	flogger, err := NewFileLogger(sc.logfile, true)
+	flogger, err := NewFileLogger(sc.logfile, verbose)
 	if err != nil {
 		return err
 	}
@@ -113,6 +114,9 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 
 	// make sure we intercept the standard library logger
 	log.SetOutput(flogger)
+
+	// tell the user where the logfile is
+	fmt.Fprintf(os.Stdout, "Appending logs to %s\n", sc.logfile)
 
 	// create the runner state
 	rs := runner.NewState(

@@ -75,7 +75,7 @@ func (pv *ProgressView) SetRegionProgress(progress float64) {
 	progress = pv.rmin + (progress * (pv.rmax - pv.rmin))
 
 	// generate the title
-	title := fmt.Sprintf("running %s (part of %s)...", pv.nettestName, pv.suiteName)
+	title := fmt.Sprintf("Running %s (part of %s)...", pv.nettestName, pv.suiteName)
 
 	// emit progress information
 	fmt.Fprintf(os.Stdout, "%-45s %10d%%     \r", title, int64(progress*100))
