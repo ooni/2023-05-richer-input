@@ -19,6 +19,9 @@ type State struct {
 	// logger is the [model.Logger] to use.
 	logger enginemodel.Logger
 
+	// progressView is the view used to show progress.
+	progressView model.ProgressView
+
 	// saver is used to save measurements results.
 	saver model.MeasurementSaver
 
@@ -36,13 +39,16 @@ type State struct {
 func NewState(
 	location *model.ProbeLocation,
 	logger enginemodel.Logger,
+	progressView model.ProgressView,
 	saver model.MeasurementSaver,
 	settings model.Settings,
 	softwareName string,
 	softwareVersion string,
 ) *State {
 	return &State{
+		location:        location,
 		logger:          logger,
+		progressView:    progressView,
 		saver:           saver,
 		settings:        settings,
 		softwareName:    softwareName,
@@ -53,8 +59,15 @@ func NewState(
 // Run runs the nettest indicated by a given plan.
 func (s *State) Run(ctx context.Context, plan *model.RunnerPlan) error {
 	for _, suite := range plan.Suites {
-		for _, rd := range suite.Nettests {
-			s.logger.Infof("running %s::%s", suite.ShortName, rd.NettestName)
+		// set the suite name in the output view
+		s.progressView.SetSuiteName(suite.ShortName)
+
+		// run each nettest in the suite
+		for idx, rd := range suite.Nettests {
+			// make sure the progress bar knows the operating region
+			s.progressView.SetRegionBoundaries(idx, len(suite.Nettests))
+
+			// perform each measurement into the report
 			if err := s.runReport(ctx, plan, &rd); err != nil {
 				return err
 			}

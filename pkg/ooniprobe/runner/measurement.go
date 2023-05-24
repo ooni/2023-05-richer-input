@@ -20,6 +20,7 @@ func (s *State) runMeasurement(
 	plan *model.RunnerPlan,
 	rd *model.ReportDescriptor,
 	t0 time.Time,
+	callbacks enginemodel.ExperimentCallbacks,
 	target *model.MeasurementTarget,
 ) error {
 	// make sure we know both the IPv4 and the IPv6 locations
@@ -43,9 +44,6 @@ func (s *State) runMeasurement(
 	// TODO(bassosimone): once ooniprobe uses this code, we should
 	// modify the way we interface with experiments such that a single
 	// run takes richer input from the target struct
-
-	// create callbacks
-	callbacks := enginemodel.NewPrinterCallbacks(s.logger)
 
 	// create session
 	session := s.newSession(s.logger, plan.Conf.TestHelpers)

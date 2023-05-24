@@ -4,11 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"log"
 	"os"
 	"sync"
 	"time"
 
-	"github.com/apex/log"
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/ooniprobe/runner"
 	enginemodel "github.com/ooni/probe-engine/pkg/model"
@@ -44,6 +44,14 @@ func newRunxSubcommand() *cobra.Command {
 	)
 	cmd.MarkFlagRequired("location")
 
+	// register the --logfile flag
+	cmd.Flags().StringVar(
+		&state.logfile,
+		"logfile",
+		"LOG.txt",
+		"path of the output log file",
+	)
+
 	// register the -o,--output flag
 	cmd.Flags().StringVarP(
 		&state.output,
@@ -63,6 +71,9 @@ type runxSubcommand struct {
 
 	// location is the name of the file containing the probe location.
 	location string
+
+	// logfile is the output logfile
+	logfile string
 
 	// output is the name of the output file
 	output string
@@ -89,10 +100,25 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 	}
 	defer mw.Close()
 
+	// create the progress view
+	progressView := &ProgressView{}
+	defer progressView.Close()
+
+	// create the file logger
+	flogger, err := NewFileLogger(sc.logfile, true)
+	if err != nil {
+		return err
+	}
+	defer flogger.Close()
+
+	// make sure we intercept the standard library logger
+	log.SetOutput(flogger)
+
 	// create the runner state
 	rs := runner.NewState(
 		location,
-		log.Log,
+		flogger,
+		progressView,
 		mw,
 		&runxSettings{},
 		"miniooni",
@@ -197,5 +223,5 @@ func (rs *runxSettings) IsNettestEnabled(name string) bool {
 
 // MaxRuntime implements model.Settings
 func (rs *runxSettings) MaxRuntime() time.Duration {
-	return 90 * time.Second
+	return 0
 }
