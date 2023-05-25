@@ -24,7 +24,7 @@ func newRunxSubcommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "runx",
 		Short: "Run a properly-initialized report descriptor",
-		RunE:  state.Main,
+		Run:   state.Main,
 	}
 
 	// register the required --runner-plan flag
@@ -81,23 +81,26 @@ type runxSubcommand struct {
 }
 
 // Main is the main of the [runxSubcommand]
-func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
+func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 	// load the check-in response from disk
 	plan, err := sc.loadRunnerPlan()
 	if err != nil {
-		return err
+		fmt.Fprintf(os.Stderr, "ERROR: loadRunnerPlan: %s\n", err.Error())
+		os.Exit(1)
 	}
 
 	// load the location from disk
 	location, err := sc.loadProbeLocation()
 	if err != nil {
-		return err
+		fmt.Fprintf(os.Stderr, "ERROR: loadProbeLocation: %s\n", err.Error())
+		os.Exit(1)
 	}
 
 	// create the measurement writer
 	mw, err := newRunxMeasurementWriter(sc.output)
 	if err != nil {
-		return err
+		fmt.Fprintf(os.Stderr, "ERROR: newRunxMeasurementWriter: %s\n", err.Error())
+		os.Exit(1)
 	}
 	defer mw.Close()
 
@@ -108,7 +111,8 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 	// create the file logger
 	flogger, err := NewFileLogger(sc.logfile, verbose)
 	if err != nil {
-		return err
+		fmt.Fprintf(os.Stderr, "ERROR: newFileLogger: %s\n", err.Error())
+		os.Exit(1)
 	}
 	defer flogger.Close()
 
@@ -134,11 +138,15 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) error {
 
 	// perform all the measurements
 	if err := rs.Run(ctx, plan); err != nil {
-		return err
+		fmt.Fprintf(os.Stderr, "ERROR: rs.Run: %s\n", err.Error())
+		os.Exit(1)
 	}
 
 	// make sure we flushed the output file
-	return mw.Close()
+	if err := mw.Close(); err != nil {
+		fmt.Fprintf(os.Stderr, "ERROR: mw.Close: %s\n", err.Error())
+		os.Exit(1)
+	}
 }
 
 // loadRunnerPlan loads the runner-plan from file

@@ -1,0 +1,75 @@
+{
+	"conf": {
+		"features": {
+			"webconnectivity_0.5": true
+		}
+	},
+	"suites": [
+		{
+			"short_name": "im",
+			"nettests": [
+				{
+					"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
+					"nettest_name": "facebook_messenger",
+					"targets": [
+						{
+							"options": {
+								"nettestlets": [
+									{
+										"uses": "dns-lookup@v1",
+										"with": {
+											"domain": "stun.fbsbx.com"
+										}
+									},
+									{
+										"uses": "tcp-connect-domain@v1",
+										"with": {
+											"domain": "b-api.facebook.com",
+											"port": 443
+										}
+									},
+									{
+										"uses": "tcp-connect-domain@v1",
+										"with": {
+											"domain": "b-graph.facebook.com",
+											"port": 443
+										}
+									},
+									{
+										"uses": "tcp-connect-domain@v1",
+										"with": {
+											"domain": "edge-mqtt.facebook.com",
+											"port": 443
+										}
+									},
+									{
+										"uses": "tcp-connect-domain@v1",
+										"with": {
+											"domain": "external.xx.fbcdn.net",
+											"port": 443
+										}
+									},
+									{
+										"uses": "tcp-connect-domain@v1",
+										"with": {
+											"domain": "scontent.xx.fbcdn.net",
+											"port": 443
+										}
+									},
+									{
+										"uses": "tcp-connect-domain@v1",
+										"with": {
+											"domain": "star.c10r.facebook.com",
+											"port": 443
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"v": 2
+}

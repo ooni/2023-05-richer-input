@@ -1,0 +1,76 @@
+{
+	"conf": {
+		"features": {
+			"webconnectivity_0.5": true
+		}
+	},
+	"suites": [
+		{
+			"short_name": "im",
+			"nettests": [
+				{
+					"report_id": "20230406T142431Z_whatsapp_IT_30722_n1_8vFVXzjCjfUFbOA5",
+					"nettest_name": "whatsapp",
+					"targets": [
+						{
+							"options": {
+								"nettestlets": [
+									{
+										"uses": "tcp-connect-domain@v1",
+										"with": {
+											"domain": "e1.whatsapp.net",
+											"port": 443
+										}
+									},
+									{
+										"uses": "tcp-connect-domain@v1",
+										"with": {
+											"domain": "e1.whatsapp.net",
+											"port": 5222
+										}
+									},
+									{
+										"uses": "tcp-connect-domain@v1",
+										"with": {
+											"domain": "e2.whatsapp.net",
+											"port": 443
+										}
+									},
+									{
+										"uses": "tcp-connect-domain@v1",
+										"with": {
+											"domain": "e2.whatsapp.net",
+											"port": 5222
+										}
+									},
+									{
+										"uses": "https-domain@v1",
+										"with": {
+											"domain": "v.whatsapp.net",
+											"http_header_host": "v.whatsapp.net",
+											"http_method": "GET",
+											"port": 443,
+											"tls_server_name": "v.whatsapp.net",
+											"url_path": "/v2/register"
+										}
+									},
+									{
+										"uses": "https-domain@v1",
+										"with": {
+											"domain": "web.whatsapp.com",
+											"http_header_host": "web.whatsapp.com",
+											"http_method": "GET",
+											"port": 443,
+											"tls_server_name": "web.whatsapp.com"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"v": 2
+}

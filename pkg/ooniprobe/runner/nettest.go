@@ -6,19 +6,21 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ooni/probe-engine/pkg/experiment/fbmessenger"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/experiment/fbmessenger"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/experiment/signal"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/experiment/telegram"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/experiment/whatsapp"
 	"github.com/ooni/probe-engine/pkg/experiment/hhfm"
 	"github.com/ooni/probe-engine/pkg/experiment/hirl"
-	"github.com/ooni/probe-engine/pkg/experiment/signal"
-	"github.com/ooni/probe-engine/pkg/experiment/telegram"
 	"github.com/ooni/probe-engine/pkg/experiment/urlgetter"
 	"github.com/ooni/probe-engine/pkg/experiment/webconnectivity"
-	"github.com/ooni/probe-engine/pkg/experiment/whatsapp"
 	enginemodel "github.com/ooni/probe-engine/pkg/model"
 )
 
 // TODO(bassosimone): the [runnerNettest] should probably also expose the
 // method to get the experiment summary as well
+//
+// Also, why not using directly the model exposed by the pkg/model in probe-engine?
 
 // runnerNettest is the nettest as seen by this package
 type runnerNettest interface {
@@ -42,9 +44,7 @@ func (s *State) newNettest(name string, options json.RawMessage) (runnerNettest,
 
 	switch name {
 	case "facebook_messenger":
-		// TODO(bassosimone): this experiment should take a pointer to config
-		config := fbmessenger.Config{}
-		return fbmessenger.NewExperimentMeasurer(config), nil
+		return fbmessenger.NewMeasurer(options), nil
 
 	case "http_invalid_request_line":
 		// TODO(bassosimone): this experiment should take a pointer to config
@@ -57,9 +57,7 @@ func (s *State) newNettest(name string, options json.RawMessage) (runnerNettest,
 		return hhfm.NewExperimentMeasurer(config), nil
 
 	case "signal":
-		// TODO(bassosimone): this experiment should take a pointer to config
-		config := signal.Config{}
-		return signal.NewExperimentMeasurer(config), nil
+		return signal.NewMeasurer(options), nil
 
 	case "web_connectivity":
 		// TODO(bassosimone): this experiment should take a pointer to config
@@ -68,8 +66,7 @@ func (s *State) newNettest(name string, options json.RawMessage) (runnerNettest,
 
 	case "telegram":
 		// TODO(bassosimone): this experiment should take a pointer to config
-		config := telegram.Config{}
-		return telegram.NewExperimentMeasurer(config), nil
+		return telegram.NewMeasurer(options), nil
 
 	case "urlgetter":
 		// TODO(bassosimone): this experiment should take a pointer to config
@@ -80,9 +77,7 @@ func (s *State) newNettest(name string, options json.RawMessage) (runnerNettest,
 		return urlgetter.NewExperimentMeasurer(*config), nil
 
 	case "whatsapp":
-		// TODO(bassosimone): this experiment should take a pointer to config
-		config := whatsapp.Config{}
-		return whatsapp.NewExperimentMeasurer(config), nil
+		return whatsapp.NewMeasurer(options), nil
 
 	default:
 		return nil, fmt.Errorf("%w: %s", errNoSuchNettest, name)
