@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/ooni/probe-engine/pkg/model"
 )
@@ -20,7 +21,7 @@ type MeasurementTarget struct {
 	Input string `json:"input"`
 
 	// Options contains options modifying the nettest behavior.
-	Options map[string]any `json:"options"`
+	Options json.RawMessage `json:"options"`
 
 	// UIAttributes contains attributes used by the UI.
 	UIAttributes map[string]any `json:"ui_attributes"`

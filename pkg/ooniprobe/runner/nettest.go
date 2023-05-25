@@ -36,7 +36,7 @@ type runnerNettest interface {
 var errNoSuchNettest = errors.New("no such nettest")
 
 // newNettest creates a new nettest instance
-func (s *State) newNettest(name string, options map[string]any) (runnerNettest, error) {
+func (s *State) newNettest(name string, options json.RawMessage) (runnerNettest, error) {
 	// TODO(bassosimone): this function is just a stub and it should actually
 	// be able to instantiate all the possible nettests
 
@@ -91,13 +91,9 @@ func (s *State) newNettest(name string, options map[string]any) (runnerNettest, 
 
 // nettestNewURLGetterOptions converts the options expressed as a map from string to any
 // into specific options for the urlgetter experiment.
-func nettestNewURLGetterOptions(options map[string]any) (*urlgetter.Config, error) {
-	data, err := json.Marshal(options)
-	if err != nil {
-		return nil, err
-	}
+func nettestNewURLGetterOptions(options json.RawMessage) (*urlgetter.Config, error) {
 	var cfg urlgetter.Config
-	if err := json.Unmarshal(data, &cfg); err != nil {
+	if err := json.Unmarshal(options, &cfg); err != nil {
 		return nil, err
 	}
 	return &cfg, nil
