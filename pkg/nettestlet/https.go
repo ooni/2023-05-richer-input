@@ -64,11 +64,13 @@ func (c *httpsDomainV1Config) tlsHandshakeOptions() (out []dslx.TLSHandshakeOpti
 
 // httpsDomainV1Main is the main function of https-domain@v1.
 func (env *Environment) httpsDomainV1Main(
-	ctx context.Context, desc *model.NettestletDescriptor) error {
+	ctx context.Context,
+	desc *model.NettestletDescriptor,
+) (*dslx.Observations, error) {
 	// parse the raw config
 	var config httpsDomainV1Config
 	if err := json.Unmarshal(desc.With, &config); err != nil {
-		return err
+		return nil, err
 	}
 
 	// create the domain to resolve.
@@ -88,9 +90,6 @@ func (env *Environment) httpsDomainV1Main(
 	// extract DNS observations
 	dnsLookupObservations := dslx.ExtractObservations(dnsLookupResults)
 
-	// save observations
-	env.tkw.AppendObservations(dnsLookupObservations...)
-
 	// obtain the endpoints to connect to
 	addressSet := dslx.NewAddressSet(dnsLookupResults).RemoveBogons()
 
@@ -100,7 +99,7 @@ func (env *Environment) httpsDomainV1Main(
 	// obtain TLS handshake options
 	tlsOptions, err := config.tlsHandshakeOptions()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// create function that performs the HTTPS transaction
@@ -116,12 +115,6 @@ func (env *Environment) httpsDomainV1Main(
 			dslx.HTTPRequestOptionURLPath(config.URLPath),
 		),
 	)
-
-	// TODO(bassosimone): not setting the domain when creating endpoints
-	// from address sets causes IPv6 to misbehave. This may possibly be a
-	// bug of how the stdlib handles IPv6 addresses in the URL?
-	//
-	// A good test case for this scenario is v.whatsapp.net.
 
 	// create endpoints
 	endpoints := addressSet.ToEndpoints(
@@ -144,14 +137,9 @@ func (env *Environment) httpsDomainV1Main(
 	// extract observations
 	httpsObservations := dslx.ExtractObservations(dslx.Collect(httpsResults)...)
 
-	// save observations
-	env.tkw.AppendObservations(httpsObservations...)
-
-	// XXX: this seems good but we still need to
-	// do something about
-	//
-	// 1. how to analyze the results.
+	// merge observations
+	mergedObservations := MergeObservationsLists(dnsLookupObservations, httpsObservations)
 
 	// return to the caller
-	return nil
+	return mergedObservations, nil
 }

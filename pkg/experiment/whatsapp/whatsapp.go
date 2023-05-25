@@ -7,6 +7,7 @@ import (
 
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/nettestlet"
+	"github.com/ooni/probe-engine/pkg/dslx"
 	enginemodel "github.com/ooni/probe-engine/pkg/model"
 )
 
@@ -69,14 +70,26 @@ func (m *Measurer) Run(ctx context.Context, args *enginemodel.ExperimentArgs) er
 		args.Measurement.MeasurementStartTimeSaved,
 	)
 
+	// create the testkeys
+	tk := &dslx.Observations{
+		NetworkEvents:  []*enginemodel.ArchivalNetworkEvent{},
+		Queries:        []*enginemodel.ArchivalDNSLookupResult{},
+		Requests:       []*enginemodel.ArchivalHTTPRequestResult{},
+		TCPConnect:     []*enginemodel.ArchivalTCPConnectResult{},
+		TLSHandshakes:  []*enginemodel.ArchivalTLSOrQUICHandshakeResult{},
+		QUICHandshakes: []*enginemodel.ArchivalTLSOrQUICHandshakeResult{},
+	}
+
 	// execute the nettestlets
 	for _, descr := range options.Nettestlets {
-		if err := env.Run(ctx, &descr); err != nil {
+		observations, err := env.Run(ctx, &descr)
+		if err != nil {
 			return err
 		}
+		tk = nettestlet.MergeObservations(tk, observations)
 	}
 
 	// obtain the testkeys
-	args.Measurement.TestKeys = env.Observations()
+	args.Measurement.TestKeys = tk
 	return nil
 }

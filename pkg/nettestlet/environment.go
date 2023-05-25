@@ -20,9 +20,6 @@ type Environment struct {
 	// logger is the logger to use.
 	logger enginemodel.Logger
 
-	// tkw is the test keys writer to use.
-	tkw *testKeysWriter
-
 	// zeroTime is the reference time of the measurement.
 	zeroTime time.Time
 }
@@ -32,7 +29,6 @@ func NewEnvironment(logger enginemodel.Logger, zeroTime time.Time) *Environment 
 	return &Environment{
 		idGenerator: &atomic.Int64{},
 		logger:      logger,
-		tkw:         newTestKeysWriter(),
 		zeroTime:    zeroTime,
 	}
 }
@@ -43,7 +39,10 @@ var ErrNoSuchNettestlet = errors.New("nettestlet: no such nettestlet")
 // Run runs the given nettestlet in the current goroutine. This function only
 // returns an error only in case a fundamental error has occurred (e.g., not
 // being able to parse the descriptor With field).
-func (env *Environment) Run(ctx context.Context, descr *model.NettestletDescriptor) error {
+func (env *Environment) Run(
+	ctx context.Context,
+	descr *model.NettestletDescriptor,
+) (*dslx.Observations, error) {
 	switch descr.Uses {
 	case "dns-lookup@v1":
 		return env.dnsLookupV1Main(ctx, descr)
@@ -64,11 +63,6 @@ func (env *Environment) Run(ctx context.Context, descr *model.NettestletDescript
 		return env.tcpConnectDomainV1Main(ctx, descr)
 
 	default:
-		return ErrNoSuchNettestlet
+		return nil, ErrNoSuchNettestlet
 	}
-}
-
-// Observations returns a copy of the collected observations.
-func (env *Environment) Observations() *dslx.Observations {
-	return env.tkw.Observations()
 }

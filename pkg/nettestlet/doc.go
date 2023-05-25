@@ -1,3 +1,3 @@
 // Package nettestlet contains the implementation of nettestlets. A nettestlet
-// is a nettest running embedded as part of a OONI nettest.
+// is a sub-nettest running embedded as part of another OONI nettest.
 package nettestlet

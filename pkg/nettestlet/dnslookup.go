@@ -1,5 +1,9 @@
 package nettestlet
 
+//
+// DNS lookup nettestlets
+//
+
 import (
 	"context"
 	"encoding/json"
@@ -16,11 +20,13 @@ type dnsLookupV1Config struct {
 
 // dnsLookupV1Main is the main function of dns-lookup@v1.
 func (env *Environment) dnsLookupV1Main(
-	ctx context.Context, desc *model.NettestletDescriptor) error {
+	ctx context.Context,
+	desc *model.NettestletDescriptor,
+) (*dslx.Observations, error) {
 	// parse the raw config
 	var config dnsLookupV1Config
 	if err := json.Unmarshal(desc.With, &config); err != nil {
-		return err
+		return nil, err
 	}
 
 	// create the domain to resolve.
@@ -40,14 +46,9 @@ func (env *Environment) dnsLookupV1Main(
 	// extract DNS observations
 	dnsLookupObservations := dslx.ExtractObservations(dnsLookupResults)
 
-	// save observations
-	env.tkw.AppendObservations(dnsLookupObservations...)
-
-	// XXX: this seems good but we still need to
-	// do something about
-	//
-	// 1. how to analyze the results.
+	// merge observations
+	mergedObservations := MergeObservationsLists(dnsLookupObservations)
 
 	// return to the caller
-	return nil
+	return mergedObservations, nil
 }

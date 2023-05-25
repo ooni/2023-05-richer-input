@@ -39,11 +39,13 @@ type httpDomainV1Config struct {
 
 // httpDomainV1Main is the main function of http-domain@v1.
 func (env *Environment) httpDomainV1Main(
-	ctx context.Context, desc *model.NettestletDescriptor) error {
+	ctx context.Context,
+	desc *model.NettestletDescriptor,
+) (*dslx.Observations, error) {
 	// parse the raw config
 	var config httpDomainV1Config
 	if err := json.Unmarshal(desc.With, &config); err != nil {
-		return err
+		return nil, err
 	}
 
 	// create the domain to resolve.
@@ -63,16 +65,13 @@ func (env *Environment) httpDomainV1Main(
 	// extract DNS observations
 	dnsLookupObservations := dslx.ExtractObservations(dnsLookupResults)
 
-	// save observations
-	env.tkw.AppendObservations(dnsLookupObservations...)
-
 	// obtain the endpoints to connect to
 	addressSet := dslx.NewAddressSet(dnsLookupResults).RemoveBogons()
 
 	// create pool for autoclosing connections
 	pool := &dslx.ConnPool{}
 
-	// create function that performs the http transaction
+	// create function that performs the HTTP transaction
 	httpFunc := dslx.Compose2(
 		dslx.TCPConnect(pool),
 		dslx.HTTPRequestOverTCP(
@@ -85,12 +84,6 @@ func (env *Environment) httpDomainV1Main(
 		),
 	)
 
-	// TODO(bassosimone): not setting the domain when creating endpoints
-	// from address sets causes IPv6 to misbehave. This may possibly be a
-	// bug of how the stdlib handles IPv6 addresses in the URL?
-	//
-	// A good test case for this scenario is v.whatsapp.net.
-
 	// create endpoints
 	endpoints := addressSet.ToEndpoints(
 		dslx.EndpointNetwork("tcp"),
@@ -101,7 +94,7 @@ func (env *Environment) httpDomainV1Main(
 		dslx.EndpointOptionZeroTime(env.zeroTime),
 	)
 
-	// perform all the TCP connects that we need
+	// perform all the HTTP transactions we need
 	httpResults := dslx.Map(
 		ctx,
 		dslx.Parallelism(2),
@@ -112,16 +105,11 @@ func (env *Environment) httpDomainV1Main(
 	// extract observations
 	httpObservations := dslx.ExtractObservations(dslx.Collect(httpResults)...)
 
-	// save observations
-	env.tkw.AppendObservations(httpObservations...)
-
-	// XXX: this seems good but we still need to
-	// do something about
-	//
-	// 1. how to analyze the results.
+	// merge observations
+	mergedObservations := MergeObservationsLists(dnsLookupObservations, httpObservations)
 
 	// return to the caller
-	return nil
+	return mergedObservations, nil
 }
 
 // httpAddressV1Config contains config for http-address@v1.
@@ -153,11 +141,13 @@ type httpAddressV1Config struct {
 
 // httpAddressV1Main is the main function of http-address@v1.
 func (env *Environment) httpAddressV1Main(
-	ctx context.Context, desc *model.NettestletDescriptor) error {
+	ctx context.Context,
+	desc *model.NettestletDescriptor,
+) (*dslx.Observations, error) {
 	// parse the raw config
 	var config httpAddressV1Config
 	if err := json.Unmarshal(desc.With, &config); err != nil {
-		return err
+		return nil, err
 	}
 
 	// create pool for autoclosing connections
@@ -191,14 +181,9 @@ func (env *Environment) httpAddressV1Main(
 	// extract observations
 	httpObservations := dslx.ExtractObservations(httpResults)
 
-	// save observations
-	env.tkw.AppendObservations(httpObservations...)
-
-	// XXX: this seems good but we still need to
-	// do something about
-	//
-	// 1. how to analyze the results.
+	// merge observations
+	mergedObservations := MergeObservationsLists(httpObservations)
 
 	// return to the caller
-	return nil
+	return mergedObservations, nil
 }

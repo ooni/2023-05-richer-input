@@ -21,11 +21,13 @@ type tcpConnectAddressV1Config struct {
 
 // tcpConnectAddressV1Main is the main function of tcp-connect-address@v1.
 func (env *Environment) tcpConnectAddressV1Main(
-	ctx context.Context, desc *model.NettestletDescriptor) error {
+	ctx context.Context,
+	desc *model.NettestletDescriptor,
+) (*dslx.Observations, error) {
 	// parse the raw config
 	var config tcpConnectAddressV1Config
 	if err := json.Unmarshal(desc.With, &config); err != nil {
-		return err
+		return nil, err
 	}
 
 	// create pool for autoclosing connections
@@ -49,16 +51,11 @@ func (env *Environment) tcpConnectAddressV1Main(
 	// extract observations
 	tcpObservations := dslx.ExtractObservations(tcpConnectResults)
 
-	// save observations
-	env.tkw.AppendObservations(tcpObservations...)
-
-	// XXX: this seems good but we still need to
-	// do something about
-	//
-	// 1. how to analyze the results.
+	// merge observations
+	mergedObservations := MergeObservationsLists(tcpObservations)
 
 	// return to the caller
-	return nil
+	return mergedObservations, nil
 }
 
 // tcpConnectDomainV1Config contains config for tcp-connect-domain@v1.
@@ -72,11 +69,13 @@ type tcpConnectDomainV1Config struct {
 
 // tcpConnectDomainV1Main is the main function of tcp-connect-domain@v1.
 func (env *Environment) tcpConnectDomainV1Main(
-	ctx context.Context, desc *model.NettestletDescriptor) error {
+	ctx context.Context,
+	desc *model.NettestletDescriptor,
+) (*dslx.Observations, error) {
 	// parse the raw config
 	var config tcpConnectDomainV1Config
 	if err := json.Unmarshal(desc.With, &config); err != nil {
-		return err
+		return nil, err
 	}
 
 	// create the domain to resolve.
@@ -95,9 +94,6 @@ func (env *Environment) tcpConnectDomainV1Main(
 
 	// extract DNS observations
 	dnsLookupObservations := dslx.ExtractObservations(dnsLookupResults)
-
-	// save observations
-	env.tkw.AppendObservations(dnsLookupObservations...)
 
 	// obtain the endpoints to connect to
 	addressSet := dslx.NewAddressSet(dnsLookupResults).RemoveBogons()
@@ -128,14 +124,9 @@ func (env *Environment) tcpConnectDomainV1Main(
 	// extract observations
 	tcpObservations := dslx.ExtractObservations(dslx.Collect(tcpConnectResults)...)
 
-	// save observations
-	env.tkw.AppendObservations(tcpObservations...)
-
-	// XXX: this seems good but we still need to
-	// do something about
-	//
-	// 1. how to analyze the results.
+	// merge observations
+	mergedObservations := MergeObservationsLists(dnsLookupObservations, tcpObservations)
 
 	// return to the caller
-	return nil
+	return mergedObservations, nil
 }
