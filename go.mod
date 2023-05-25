@@ -41,7 +41,7 @@ require (
 	github.com/apex/log v1.9.0
 	github.com/armon/go-proxyproto v0.0.0-20210323213023-7e956b284f0a // indirect
 	github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 // indirect
-	github.com/bifurcation/mint v0.0.0-20180306135233-198357931e61 
+	github.com/bifurcation/mint v0.0.0-20180306135233-198357931e61
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/cheekybits/genny v1.0.0 // indirect
 	github.com/cognusion/go-cache-lru v0.0.0-20170419142635-f73e2280ecea // indirect
