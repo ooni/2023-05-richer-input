@@ -19,49 +19,56 @@
 										"uses": "dns-lookup@v1",
 										"with": {
 											"domain": "stun.fbsbx.com"
-										}
+										},
+										"tags": ["fbmessenger-stun"]
 									},
 									{
 										"uses": "tcp-connect-domain@v1",
 										"with": {
 											"domain": "b-api.facebook.com",
 											"port": 443
-										}
+										},
+										"tags": ["fbmessenger-b-api"]
 									},
 									{
 										"uses": "tcp-connect-domain@v1",
 										"with": {
 											"domain": "b-graph.facebook.com",
 											"port": 443
-										}
+										},
+										"tags": ["fbmessenger-b-graph"]
 									},
 									{
 										"uses": "tcp-connect-domain@v1",
 										"with": {
 											"domain": "edge-mqtt.facebook.com",
 											"port": 443
-										}
+										},
+										"tags": ["fbmessenger-b-edge-mqtt"]
 									},
 									{
 										"uses": "tcp-connect-domain@v1",
 										"with": {
 											"domain": "external.xx.fbcdn.net",
 											"port": 443
-										}
+										},
+										"tags": ["fbmessenger-external-cdn"]
 									},
 									{
 										"uses": "tcp-connect-domain@v1",
 										"with": {
 											"domain": "scontent.xx.fbcdn.net",
 											"port": 443
-										}
+										},
+										"tags": ["fbmessenger-scontent-cdn"]
 									},
 									{
 										"uses": "tcp-connect-domain@v1",
 										"with": {
 											"domain": "star.c10r.facebook.com",
 											"port": 443
-										}
+										},
+										"tags": ["fbmessenger-star"]
 									}
 								]
 							}

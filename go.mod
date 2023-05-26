@@ -2,7 +2,7 @@ module github.com/bassosimone/2023-05-sbs-probe-spec
 
 go 1.19
 
-require github.com/ooni/probe-engine v0.24.1-0.20230524143458-55d5a8c14c40
+require github.com/ooni/probe-engine v0.24.1-0.20230526125301-d3612972787b
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect

@@ -54,6 +54,7 @@ func (env *Environment) httpDomainV1Main(
 		dslx.DNSLookupOptionIDGenerator(env.idGenerator),
 		dslx.DNSLookupOptionLogger(env.logger),
 		dslx.DNSLookupOptionZeroTime(env.zeroTime),
+		dslx.DNSLookupOptionTags(desc.Tags...),
 	)
 
 	// create function that performs the DNS lookup
@@ -70,6 +71,7 @@ func (env *Environment) httpDomainV1Main(
 
 	// create pool for autoclosing connections
 	pool := &dslx.ConnPool{}
+	defer pool.Close()
 
 	// create function that performs the HTTP transaction
 	httpFunc := dslx.Compose2(
@@ -92,6 +94,7 @@ func (env *Environment) httpDomainV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
+		dslx.EndpointOptionTags(desc.Tags...),
 	)
 
 	// perform all the HTTP transactions we need
@@ -152,6 +155,7 @@ func (env *Environment) httpAddressV1Main(
 
 	// create pool for autoclosing connections
 	pool := &dslx.ConnPool{}
+	defer pool.Close()
 
 	// create function that performs the http transaction
 	httpFunc := dslx.Compose2(
@@ -173,6 +177,7 @@ func (env *Environment) httpAddressV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
+		dslx.EndpointOptionTags(desc.Tags...),
 	)
 
 	// perform all the HTTP round trips that we need

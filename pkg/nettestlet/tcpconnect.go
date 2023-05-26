@@ -32,6 +32,7 @@ func (env *Environment) tcpConnectAddressV1Main(
 
 	// create pool for autoclosing connections
 	pool := &dslx.ConnPool{}
+	defer pool.Close()
 
 	// create function that performs the TCP connect
 	tcpConnectFunc := dslx.TCPConnect(pool)
@@ -43,6 +44,7 @@ func (env *Environment) tcpConnectAddressV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
+		dslx.EndpointOptionTags(desc.Tags...),
 	)
 
 	// perform the measurement
@@ -84,6 +86,7 @@ func (env *Environment) tcpConnectDomainV1Main(
 		dslx.DNSLookupOptionIDGenerator(env.idGenerator),
 		dslx.DNSLookupOptionLogger(env.logger),
 		dslx.DNSLookupOptionZeroTime(env.zeroTime),
+		dslx.DNSLookupOptionTags(desc.Tags...),
 	)
 
 	// create function that performs the DNS lookup
@@ -100,6 +103,7 @@ func (env *Environment) tcpConnectDomainV1Main(
 
 	// create pool for autoclosing connections
 	pool := &dslx.ConnPool{}
+	defer pool.Close()
 
 	// create function that performs the TCP connect
 	tcpConnectFunc := dslx.TCPConnect(pool)
@@ -111,6 +115,7 @@ func (env *Environment) tcpConnectDomainV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
+		dslx.EndpointOptionTags(desc.Tags...),
 	)
 
 	// perform all the TCP connects that we need
