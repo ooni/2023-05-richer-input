@@ -23,6 +23,11 @@ type MeasurementTarget struct {
 	// Options contains options modifying the nettest behavior.
 	Options json.RawMessage `json:"options"`
 
+	// SecretOptions contains secret options modifying the nettest
+	// behavior. Unlike Options, these secret options won't be
+	// included in the submitted measurement JSON.
+	SecretOptions json.RawMessage `json:"secret_options"`
+
 	// UIAttributes contains attributes used by the UI.
 	UIAttributes map[string]any `json:"ui_attributes"`
 }
