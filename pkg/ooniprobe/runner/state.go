@@ -67,10 +67,16 @@ func (s *State) Run(ctx context.Context, plan *model.RunnerPlan) error {
 		// set the suite name in the output view
 		s.progressView.SetSuiteName(suite.ShortName)
 
+		// log that we're running this suite
+		s.logger.Infof("=== RUNNING SUITE '%s' ===", suite.ShortName)
+
 		// run each nettest in the suite
 		for idx, rd := range suite.Nettests {
 			// make sure the progress bar knows the operating region
 			s.progressView.SetRegionBoundaries(idx, len(suite.Nettests))
+
+			// log that we're running this nettest
+			s.logger.Infof("~~~ running nettest '%s' ~~~", rd.NettestName)
 
 			// perform each measurement into the report
 			if err := s.runReport(ctx, plan, &rd); err != nil {

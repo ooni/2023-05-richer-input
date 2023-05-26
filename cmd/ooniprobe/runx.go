@@ -53,6 +53,14 @@ func newRunxSubcommand() *cobra.Command {
 		"path of the output log file",
 	)
 
+	// register the --nettest flag
+	cmd.Flags().StringSliceVar(
+		&state.enabledNettests,
+		"nettest",
+		[]string{},
+		"only run the given nettest (can be provided multiple times)",
+	)
+
 	// register the -o,--output flag
 	cmd.Flags().StringVarP(
 		&state.output,
@@ -77,6 +85,9 @@ func newRunxSubcommand() *cobra.Command {
 type runxSubcommand struct {
 	// checkIn is the name of the file containing the check-in response.
 	checkIn string
+
+	// enabledNettests contains the enabled nettests.
+	enabledNettests []string
 
 	// enabledSuites contains the enabled suites.
 	enabledSuites []string
@@ -139,7 +150,10 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 		flogger,
 		progressView,
 		mw,
-		&runxSettings{sc.enabledSuites},
+		&runxSettings{
+			enabledNettests: sc.enabledNettests,
+			enabledSuites:   sc.enabledSuites,
+		},
 		"miniooni",
 		"0.1.0-dev",
 	)
@@ -226,6 +240,9 @@ func (mw *runxMeasurementWriter) SaveMeasurement(ctx context.Context, meas *engi
 
 // runxSettings implements [model.Settings]
 type runxSettings struct {
+	// enabledNettests contains the list of enabled nettests
+	enabledNettests []string
+
 	// enabledSuites contains the list of enabled suites
 	enabledSuites []string
 }
@@ -234,17 +251,15 @@ var _ model.Settings = &runxSettings{}
 
 // IsNettestEnabled implements model.Settings
 func (rs *runxSettings) IsNettestEnabled(name string) bool {
-	switch name {
-	case "web_connectivity",
-		"facebook_messenger",
-		"telegram",
-		"signal",
-		"urlgetter",
-		"whatsapp":
+	if len(rs.enabledNettests) <= 0 {
 		return true
-	default:
-		return false
 	}
+	for _, enabled := range rs.enabledNettests {
+		if name == enabled {
+			return true
+		}
+	}
+	return false
 }
 
 // IsSuiteEnabled implements model.Settings
