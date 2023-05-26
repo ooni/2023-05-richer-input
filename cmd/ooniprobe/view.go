@@ -81,15 +81,13 @@ func (pv *ProgressView) SetRegionProgress(progress float64) {
 	// scale down the progress using the current minimum and maximum
 	progress = pv.rmin + (progress * (pv.rmax - pv.rmin))
 
-	// generate the title
-	title := fmt.Sprintf("Running %s (part of %s)...", pv.nettestName, pv.suiteName)
-
 	// emit progress information
 	switch pv.ownsStdout {
 	case true:
-		fmt.Fprintf(os.Stdout, "%-45s %10d%%     \r", title, int64(progress*100))
+		fmt.Fprintf(os.Stdout, "PROGRESS: %-30s %10d%%\n", pv.nettestName, int64(progress*100))
+
 	case false:
-		fmt.Fprintf(os.Stdout, "PROGRESS: %s %10d%%\n", title, int64(progress*100))
+		fmt.Fprintf(os.Stdout, "PROGRESS: %s %10d%%\n", pv.nettestName, int64(progress*100))
 	}
 }
 
