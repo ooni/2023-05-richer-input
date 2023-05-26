@@ -81,12 +81,18 @@ func (m *Measurer) Run(ctx context.Context, args *enginemodel.ExperimentArgs) er
 	}
 
 	// execute the nettestlets
+	var completed int
 	for _, descr := range options.Nettestlets {
 		observations, err := env.Run(ctx, &descr)
 		if err != nil {
 			return err
 		}
 		tk = nettestlet.MergeObservations(tk, observations)
+		completed++
+		args.Callbacks.OnProgress(
+			float64(completed)/float64(len(options.Nettestlets)),
+			"telegram",
+		)
 	}
 
 	// obtain the testkeys

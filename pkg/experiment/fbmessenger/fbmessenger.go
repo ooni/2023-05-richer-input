@@ -117,7 +117,11 @@ func (m *Measurer) Run(ctx context.Context, args *enginemodel.ExperimentArgs) er
 		}
 		tk.runAnalysis(args.Session.Logger(), descr.Name, observations)
 		tk.Observations = nettestlet.MergeObservations(tk.Observations, observations)
-		completed++ // make sure we run at least one nettestlet
+		completed++
+		args.Callbacks.OnProgress(
+			float64(completed)/float64(len(options.Nettestlets)),
+			"fbmessenger",
+		)
 	}
 
 	// finalize the testkeys by flipping overall results

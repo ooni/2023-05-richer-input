@@ -18,6 +18,17 @@ type FileLogger struct {
 	verbose bool
 }
 
+// NewStdoutLogger creates a new [FileLogger] using the standard output.
+func NewStdoutLogger(verbose bool) *FileLogger {
+	logger := &FileLogger{
+		fp:      os.Stdout,
+		mtx:     sync.Mutex{},
+		once:    sync.Once{},
+		verbose: verbose,
+	}
+	return logger
+}
+
 // NewFileLogger creates a new [FileLogger] using the given file.
 func NewFileLogger(filename string, verbose bool) (*FileLogger, error) {
 	fp, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)

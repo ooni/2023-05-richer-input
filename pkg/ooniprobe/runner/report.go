@@ -2,6 +2,7 @@ package runner
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
@@ -60,6 +61,14 @@ func (s *State) runReport(ctx context.Context, plan *model.RunnerPlan, rd *model
 
 		// perform the actual measurement
 		if err := s.runMeasurement(ctx, plan, rd, t0, callbacks, &target); err != nil {
+
+			// special case for when a nettest does not exist, which
+			// may happen if we serve new nettest names to old probes
+			// using the v2 check-in API.
+			if errors.Is(err, errNoSuchNettest) {
+				return nil
+			}
+
 			return err
 		}
 

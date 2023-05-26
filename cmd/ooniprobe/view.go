@@ -17,6 +17,10 @@ type ProgressView struct {
 	// nettestName is the nettest name
 	nettestName string
 
+	// ownsStdout indicates whether this view owns the stdout or needs
+	// to share it with the logger because there's no logfile.
+	ownsStdout bool
+
 	// rmax is the maximum value in the region
 	rmax float64
 
@@ -28,10 +32,11 @@ type ProgressView struct {
 }
 
 // NewProgressView creates a new [ProgressView].
-func NewProgressView() *ProgressView {
+func NewProgressView(ownStdout bool) *ProgressView {
 	return &ProgressView{
 		mu:          sync.Mutex{},
 		nettestName: "",
+		ownsStdout:  ownStdout,
 		rmax:        0,
 		rmin:        0,
 		suiteName:   "",
@@ -42,7 +47,9 @@ var _ model.ProgressView = &ProgressView{}
 
 // Close closes the progress view
 func (pv *ProgressView) Close() error {
-	fmt.Fprintf(os.Stdout, "\n")
+	if pv.ownsStdout {
+		fmt.Fprintf(os.Stdout, "\n")
+	}
 	return nil
 }
 
@@ -78,7 +85,12 @@ func (pv *ProgressView) SetRegionProgress(progress float64) {
 	title := fmt.Sprintf("Running %s (part of %s)...", pv.nettestName, pv.suiteName)
 
 	// emit progress information
-	fmt.Fprintf(os.Stdout, "%-45s %10d%%     \r", title, int64(progress*100))
+	switch pv.ownsStdout {
+	case true:
+		fmt.Fprintf(os.Stdout, "%-45s %10d%%     \r", title, int64(progress*100))
+	case false:
+		fmt.Fprintf(os.Stdout, "PROGRESS: %s %10d%%\n", title, int64(progress*100))
+	}
 }
 
 // SetRegionBoundaries implements model.ProgressView

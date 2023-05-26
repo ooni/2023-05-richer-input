@@ -27,15 +27,6 @@ func newRunxSubcommand() *cobra.Command {
 		Run:   state.Main,
 	}
 
-	// register the required --runner-plan flag
-	cmd.Flags().StringVar(
-		&state.checkIn,
-		"runner-plan",
-		"",
-		"path of the input runner-plan file",
-	)
-	cmd.MarkFlagRequired("runner-plan")
-
 	// register the required --location flag
 	cmd.Flags().StringVar(
 		&state.location,
@@ -49,7 +40,7 @@ func newRunxSubcommand() *cobra.Command {
 	cmd.Flags().StringVar(
 		&state.logfile,
 		"logfile",
-		"LOG.txt",
+		"",
 		"path of the output log file",
 	)
 
@@ -69,6 +60,15 @@ func newRunxSubcommand() *cobra.Command {
 		"report.jsonl",
 		"path of the output report file",
 	)
+
+	// register the required --runner-plan flag
+	cmd.Flags().StringVar(
+		&state.checkIn,
+		"runner-plan",
+		"",
+		"path of the input runner-plan file",
+	)
+	cmd.MarkFlagRequired("runner-plan")
 
 	// register the --suite flag
 	cmd.Flags().StringSliceVar(
@@ -126,29 +126,22 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 	}
 	defer mw.Close()
 
-	// create the progress view
-	progressView := &ProgressView{}
-	defer progressView.Close()
-
-	// create the file logger
-	flogger, err := NewFileLogger(sc.logfile, verbose)
+	// create the output configuration
+	output, err := NewOutput(sc.logfile, verbose)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR: newFileLogger: %s\n", err.Error())
+		fmt.Fprintf(os.Stderr, "ERROR: newOutput: %s\n", err.Error())
 		os.Exit(1)
 	}
-	defer flogger.Close()
+	defer output.Close()
 
 	// make sure we intercept the standard library logger
-	log.SetOutput(flogger)
-
-	// tell the user where the logfile is
-	fmt.Fprintf(os.Stdout, "Appending logs to %s\n", sc.logfile)
+	log.SetOutput(output.Logger)
 
 	// create the runner state
 	rs := runner.NewState(
 		location,
-		flogger,
-		progressView,
+		output.Logger,
+		output.View,
 		mw,
 		&runxSettings{
 			enabledNettests: sc.enabledNettests,
