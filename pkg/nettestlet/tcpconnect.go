@@ -44,7 +44,7 @@ func (env *Environment) tcpConnectAddressV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
-		dslx.EndpointOptionTags(desc.Tags...),
+		dslx.EndpointOptionTags(desc.Name),
 	)
 
 	// perform the measurement
@@ -86,7 +86,7 @@ func (env *Environment) tcpConnectDomainV1Main(
 		dslx.DNSLookupOptionIDGenerator(env.idGenerator),
 		dslx.DNSLookupOptionLogger(env.logger),
 		dslx.DNSLookupOptionZeroTime(env.zeroTime),
-		dslx.DNSLookupOptionTags(desc.Tags...),
+		dslx.DNSLookupOptionTags(desc.Name),
 	)
 
 	// create function that performs the DNS lookup
@@ -115,7 +115,7 @@ func (env *Environment) tcpConnectDomainV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
-		dslx.EndpointOptionTags(desc.Tags...),
+		dslx.EndpointOptionTags(desc.Name),
 	)
 
 	// perform all the TCP connects that we need

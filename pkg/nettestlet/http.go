@@ -54,7 +54,7 @@ func (env *Environment) httpDomainV1Main(
 		dslx.DNSLookupOptionIDGenerator(env.idGenerator),
 		dslx.DNSLookupOptionLogger(env.logger),
 		dslx.DNSLookupOptionZeroTime(env.zeroTime),
-		dslx.DNSLookupOptionTags(desc.Tags...),
+		dslx.DNSLookupOptionTags(desc.Name),
 	)
 
 	// create function that performs the DNS lookup
@@ -94,7 +94,7 @@ func (env *Environment) httpDomainV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
-		dslx.EndpointOptionTags(desc.Tags...),
+		dslx.EndpointOptionTags(desc.Name),
 	)
 
 	// perform all the HTTP transactions we need
@@ -177,7 +177,7 @@ func (env *Environment) httpAddressV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
-		dslx.EndpointOptionTags(desc.Tags...),
+		dslx.EndpointOptionTags(desc.Name),
 	)
 
 	// perform all the HTTP round trips that we need

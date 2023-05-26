@@ -2,6 +2,8 @@ package model
 
 import (
 	"time"
+
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // CheckInResponse is the check-in API response.
@@ -26,4 +28,7 @@ type CheckInResponse struct {
 type CheckInResponseConf struct {
 	// Features contains feature flags.
 	Features map[string]bool `json:"features"`
+
+	// TestHelpers contains test-helpers information.
+	TestHelpers map[string][]model.OOAPIService `json:"test_helpers"`
 }

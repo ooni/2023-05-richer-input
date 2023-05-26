@@ -35,7 +35,7 @@ func (env *Environment) dnsLookupV1Main(
 		dslx.DNSLookupOptionIDGenerator(env.idGenerator),
 		dslx.DNSLookupOptionLogger(env.logger),
 		dslx.DNSLookupOptionZeroTime(env.zeroTime),
-		dslx.DNSLookupOptionTags(desc.Tags...),
+		dslx.DNSLookupOptionTags(desc.Name),
 	)
 
 	// create function that performs the DNS lookup
