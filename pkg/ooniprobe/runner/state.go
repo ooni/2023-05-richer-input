@@ -56,9 +56,14 @@ func NewState(
 	}
 }
 
-// Run runs the nettest indicated by a given plan.
+// Run runs the nettest indicated by the given runner plan.
 func (s *State) Run(ctx context.Context, plan *model.RunnerPlan) error {
 	for _, suite := range plan.Suites {
+		// make sure this suite is allowed to run
+		if !s.settings.IsSuiteEnabled(suite.ShortName) {
+			continue
+		}
+
 		// set the suite name in the output view
 		s.progressView.SetSuiteName(suite.ShortName)
 

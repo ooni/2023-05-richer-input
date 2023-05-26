@@ -62,6 +62,14 @@ func newRunxSubcommand() *cobra.Command {
 		"path of the output report file",
 	)
 
+	// register the --suite flag
+	cmd.Flags().StringSliceVar(
+		&state.enabledSuites,
+		"suite",
+		[]string{},
+		"only run the given suite (can be provided multiple times)",
+	)
+
 	return cmd
 }
 
@@ -69,6 +77,9 @@ func newRunxSubcommand() *cobra.Command {
 type runxSubcommand struct {
 	// checkIn is the name of the file containing the check-in response.
 	checkIn string
+
+	// enabledSuites contains the enabled suites.
+	enabledSuites []string
 
 	// location is the name of the file containing the probe location.
 	location string
@@ -128,7 +139,7 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 		flogger,
 		progressView,
 		mw,
-		&runxSettings{},
+		&runxSettings{sc.enabledSuites},
 		"miniooni",
 		"0.1.0-dev",
 	)
@@ -214,7 +225,10 @@ func (mw *runxMeasurementWriter) SaveMeasurement(ctx context.Context, meas *engi
 }
 
 // runxSettings implements [model.Settings]
-type runxSettings struct{}
+type runxSettings struct {
+	// enabledSuites contains the list of enabled suites
+	enabledSuites []string
+}
 
 var _ model.Settings = &runxSettings{}
 
@@ -231,6 +245,19 @@ func (rs *runxSettings) IsNettestEnabled(name string) bool {
 	default:
 		return false
 	}
+}
+
+// IsSuiteEnabled implements model.Settings
+func (rs *runxSettings) IsSuiteEnabled(name string) bool {
+	if len(rs.enabledSuites) <= 0 {
+		return true
+	}
+	for _, enabled := range rs.enabledSuites {
+		if name == enabled {
+			return true
+		}
+	}
+	return false
 }
 
 // MaxRuntime implements model.Settings

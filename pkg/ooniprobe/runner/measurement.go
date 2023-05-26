@@ -41,8 +41,8 @@ func (s *State) runMeasurement(
 	// make sure we include extra annotations
 	meas.AddAnnotations(target.Annotations)
 
-	// TODO(bassosimone): once ooniprobe uses this code, we should
-	// modify the way we interface with experiments such that a single
+	// TODO(bassosimone): once ooniprobe uses this code, we may want
+	// to modify the way we interface with experiments such that a single
 	// run takes richer input from the target struct
 
 	// create session
