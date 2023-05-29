@@ -31,6 +31,12 @@ type ProgressView struct {
 	suiteName string
 }
 
+// TODO(bassosimone): with the current mechanism, there's no point in
+// owning the stdout since we have a very simpler progress.
+
+// TODO(bassosimone): Output should implement Logger and ProgressView
+// since it does not make sense to have two separate objects.
+
 // NewProgressView creates a new [ProgressView].
 func NewProgressView(ownStdout bool) *ProgressView {
 	return &ProgressView{
