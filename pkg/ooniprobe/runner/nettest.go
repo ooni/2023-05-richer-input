@@ -14,7 +14,7 @@ import (
 	"github.com/ooni/probe-engine/pkg/experiment/hirl"
 	"github.com/ooni/probe-engine/pkg/experiment/urlgetter"
 	"github.com/ooni/probe-engine/pkg/experiment/webconnectivity"
-	enginemodel "github.com/ooni/probe-engine/pkg/model"
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // TODO(bassosimone): the [runnerNettest] should probably also expose the
@@ -31,7 +31,7 @@ type runnerNettest interface {
 	ExperimentVersion() string
 
 	// Run runs the experiment algorithm
-	Run(ctx context.Context, args *enginemodel.ExperimentArgs) error
+	Run(ctx context.Context, args *model.ExperimentArgs) error
 }
 
 // errNoSuchNettest indicates that the given nettest does not exist

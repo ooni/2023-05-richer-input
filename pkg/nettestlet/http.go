@@ -6,7 +6,7 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
@@ -40,7 +40,7 @@ type httpDomainV1Config struct {
 // httpDomainV1Main is the main function of http-domain@v1.
 func (env *Environment) httpDomainV1Main(
 	ctx context.Context,
-	desc *model.NettestletDescriptor,
+	desc *modelx.NettestletDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config httpDomainV1Config
@@ -145,7 +145,7 @@ type httpAddressV1Config struct {
 // httpAddressV1Main is the main function of http-address@v1.
 func (env *Environment) httpAddressV1Main(
 	ctx context.Context,
-	desc *model.NettestletDescriptor,
+	desc *modelx.NettestletDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config httpAddressV1Config

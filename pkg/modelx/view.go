@@ -1,4 +1,4 @@
-package model
+package modelx
 
 // ProgressView is the view that shows progress while running nettests.
 type ProgressView interface {

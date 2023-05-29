@@ -1,4 +1,4 @@
-package model
+package modelx
 
 // ReportDescriptor describes how to create a report.
 type ReportDescriptor struct {

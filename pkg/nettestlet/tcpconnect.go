@@ -6,7 +6,7 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
@@ -22,7 +22,7 @@ type tcpConnectAddressV1Config struct {
 // tcpConnectAddressV1Main is the main function of tcp-connect-address@v1.
 func (env *Environment) tcpConnectAddressV1Main(
 	ctx context.Context,
-	desc *model.NettestletDescriptor,
+	desc *modelx.NettestletDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config tcpConnectAddressV1Config
@@ -72,7 +72,7 @@ type tcpConnectDomainV1Config struct {
 // tcpConnectDomainV1Main is the main function of tcp-connect-domain@v1.
 func (env *Environment) tcpConnectDomainV1Main(
 	ctx context.Context,
-	desc *model.NettestletDescriptor,
+	desc *modelx.NettestletDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config tcpConnectDomainV1Config

@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
 )
 
 // ProgressView is the view that emits progress. The zero value of this
@@ -49,7 +49,7 @@ func NewProgressView(ownStdout bool) *ProgressView {
 	}
 }
 
-var _ model.ProgressView = &ProgressView{}
+var _ modelx.ProgressView = &ProgressView{}
 
 // Close closes the progress view
 func (pv *ProgressView) Close() error {
@@ -59,21 +59,21 @@ func (pv *ProgressView) Close() error {
 	return nil
 }
 
-// SetNettestName implements model.ProgressView
+// SetNettestName implements modelx.ProgressView
 func (pv *ProgressView) SetNettestName(name string) {
 	defer pv.mu.Unlock()
 	pv.mu.Lock()
 	pv.nettestName = name
 }
 
-// SetSuiteName implements model.ProgressView
+// SetSuiteName implements modelx.ProgressView
 func (pv *ProgressView) SetSuiteName(name string) {
 	defer pv.mu.Unlock()
 	pv.mu.Lock()
 	pv.suiteName = name
 }
 
-// SetRegionProgress implements model.ProgressView
+// SetRegionProgress implements modelx.ProgressView
 func (pv *ProgressView) SetRegionProgress(progress float64) {
 	// make sure we operate in mutual exclusion
 	defer pv.mu.Unlock()
@@ -97,7 +97,7 @@ func (pv *ProgressView) SetRegionProgress(progress float64) {
 	}
 }
 
-// SetRegionBoundaries implements model.ProgressView
+// SetRegionBoundaries implements modelx.ProgressView
 func (pv *ProgressView) SetRegionBoundaries(current, total int) {
 	// make sure we're in mutual exclusion
 	defer pv.mu.Unlock()

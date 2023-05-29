@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
 	"github.com/ooni/probe-engine/pkg/dslx"
 	enginemodel "github.com/ooni/probe-engine/pkg/model"
 )
@@ -41,7 +41,7 @@ var ErrNoSuchNettestlet = errors.New("nettestlet: no such nettestlet")
 // being able to parse the descriptor With field).
 func (env *Environment) Run(
 	ctx context.Context,
-	descr *model.NettestletDescriptor,
+	descr *modelx.NettestletDescriptor,
 ) (*dslx.Observations, error) {
 	switch descr.Uses {
 	case "dns-lookup@v1":

@@ -5,15 +5,15 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
-	enginemodel "github.com/ooni/probe-engine/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // newSession creates a [model.ExperimentSession] instance.
 func (s *State) newSession(
-	logger enginemodel.Logger,
-	testHelpers map[string][]enginemodel.OOAPIService,
-) enginemodel.ExperimentSession {
+	logger model.Logger,
+	testHelpers map[string][]model.OOAPIService,
+) model.ExperimentSession {
 	return &runnerSession{
 		location:    s.location,
 		logger:      logger,
@@ -23,15 +23,15 @@ func (s *State) newSession(
 
 // runnerSession is the [model.ExperimentSession] returned by [State.newSession]
 type runnerSession struct {
-	location    *model.ProbeLocation
-	logger      enginemodel.Logger
-	testHelpers map[string][]enginemodel.OOAPIService
+	location    *modelx.ProbeLocation
+	logger      model.Logger
+	testHelpers map[string][]model.OOAPIService
 }
 
-var _ enginemodel.ExperimentSession = &runnerSession{}
+var _ model.ExperimentSession = &runnerSession{}
 
 // DefaultHTTPClient implements model.ExperimentSession
-func (rs *runnerSession) DefaultHTTPClient() enginemodel.HTTPClient {
+func (rs *runnerSession) DefaultHTTPClient() model.HTTPClient {
 	// TODO(bassosimone): stub
 	return http.DefaultClient
 }
@@ -43,19 +43,19 @@ func (rs *runnerSession) FetchPsiphonConfig(ctx context.Context) ([]byte, error)
 }
 
 // FetchTorTargets implements model.ExperimentSession
-func (rs *runnerSession) FetchTorTargets(ctx context.Context, cc string) (map[string]enginemodel.OOAPITorTarget, error) {
+func (rs *runnerSession) FetchTorTargets(ctx context.Context, cc string) (map[string]model.OOAPITorTarget, error) {
 	// TODO(bassosimone): stub
 	return nil, errors.New("not implemented")
 }
 
 // GetTestHelpersByName implements model.ExperimentSession
-func (rs *runnerSession) GetTestHelpersByName(name string) ([]enginemodel.OOAPIService, bool) {
+func (rs *runnerSession) GetTestHelpersByName(name string) ([]model.OOAPIService, bool) {
 	svc, good := rs.testHelpers[name]
 	return svc, good
 }
 
 // Logger implements model.ExperimentSession
-func (rs *runnerSession) Logger() enginemodel.Logger {
+func (rs *runnerSession) Logger() model.Logger {
 	return rs.logger
 }
 

@@ -1,4 +1,4 @@
-package model
+package modelx
 
 // ProbeLocation is the location of a probe.
 type ProbeLocation struct {

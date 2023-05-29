@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
@@ -65,7 +65,7 @@ func (c *httpsDomainV1Config) tlsHandshakeOptions() (out []dslx.TLSHandshakeOpti
 // httpsDomainV1Main is the main function of https-domain@v1.
 func (env *Environment) httpsDomainV1Main(
 	ctx context.Context,
-	desc *model.NettestletDescriptor,
+	desc *modelx.NettestletDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config httpsDomainV1Config

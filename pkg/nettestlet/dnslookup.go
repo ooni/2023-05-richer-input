@@ -8,7 +8,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
@@ -21,7 +21,7 @@ type dnsLookupV1Config struct {
 // dnsLookupV1Main is the main function of dns-lookup@v1.
 func (env *Environment) dnsLookupV1Main(
 	ctx context.Context,
-	desc *model.NettestletDescriptor,
+	desc *modelx.NettestletDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config dnsLookupV1Config

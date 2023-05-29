@@ -6,10 +6,10 @@ import (
 	"encoding/json"
 
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/analysis"
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/nettestlet"
 	"github.com/ooni/probe-engine/pkg/dslx"
-	enginemodel "github.com/ooni/probe-engine/pkg/model"
+	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/ooni/probe-engine/pkg/optional"
 )
 
@@ -24,7 +24,7 @@ type Measurer struct {
 	RawOptions json.RawMessage
 }
 
-var _ enginemodel.ExperimentMeasurer = &Measurer{}
+var _ model.ExperimentMeasurer = &Measurer{}
 
 // ExperimentName implements model.ExperimentMeasurer
 func (m *Measurer) ExperimentName() string {
@@ -47,7 +47,7 @@ type SummaryKeys struct {
 }
 
 // GetSummaryKeys implements model.ExperimentMeasurer
-func (m *Measurer) GetSummaryKeys(*enginemodel.Measurement) (any, error) {
+func (m *Measurer) GetSummaryKeys(*model.Measurement) (any, error) {
 	sk := SummaryKeys{IsAnomaly: false}
 	return sk, nil
 }
@@ -55,7 +55,7 @@ func (m *Measurer) GetSummaryKeys(*enginemodel.Measurement) (any, error) {
 // Options contains the options controlling this experiment.
 type Options struct {
 	// Nettestlets is the list of nettestlets to run.
-	Nettestlets []model.NettestletDescriptor `json:"nettestlets"`
+	Nettestlets []modelx.NettestletDescriptor `json:"nettestlets"`
 }
 
 // TestKeys contains the experiment test keys.
@@ -84,7 +84,7 @@ type TestKeys struct {
 }
 
 // Run implements model.ExperimentMeasurer
-func (m *Measurer) Run(ctx context.Context, args *enginemodel.ExperimentArgs) error {
+func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 	// parse options
 	var options Options
 	if err := json.Unmarshal(m.RawOptions, &options); err != nil {
@@ -139,7 +139,7 @@ func (m *Measurer) Run(ctx context.Context, args *enginemodel.ExperimentArgs) er
 }
 
 // runAnalysis MUTATES the test keys using the given observations and nettestlet name.
-func (tk *TestKeys) runAnalysis(logger enginemodel.Logger, name string, observations *dslx.Observations) {
+func (tk *TestKeys) runAnalysis(logger model.Logger, name string, observations *dslx.Observations) {
 	// select what to do depending on the name of the nettestlet
 	switch name {
 	case "fbmessenger-stun":

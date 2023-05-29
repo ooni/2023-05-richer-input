@@ -10,9 +10,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/ooniprobe/runner"
-	enginemodel "github.com/ooni/probe-engine/pkg/model"
+	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/spf13/cobra"
 )
 
@@ -168,12 +168,12 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 }
 
 // loadRunnerPlan loads the runner-plan from file
-func (sc *runxSubcommand) loadRunnerPlan() (*model.RunnerPlan, error) {
+func (sc *runxSubcommand) loadRunnerPlan() (*modelx.RunnerPlan, error) {
 	data, err := os.ReadFile(sc.checkIn)
 	if err != nil {
 		return nil, err
 	}
-	var plan model.RunnerPlan
+	var plan modelx.RunnerPlan
 	if err := json.Unmarshal(data, &plan); err != nil {
 		return nil, err
 	}
@@ -181,12 +181,12 @@ func (sc *runxSubcommand) loadRunnerPlan() (*model.RunnerPlan, error) {
 }
 
 // loadProbeLocation loads the probe location from file
-func (sc *runxSubcommand) loadProbeLocation() (*model.ProbeLocation, error) {
+func (sc *runxSubcommand) loadProbeLocation() (*modelx.ProbeLocation, error) {
 	data, err := os.ReadFile(sc.location)
 	if err != nil {
 		return nil, err
 	}
-	var location model.ProbeLocation
+	var location modelx.ProbeLocation
 	if err := json.Unmarshal(data, &location); err != nil {
 		return nil, err
 	}
@@ -221,7 +221,7 @@ func (mw *runxMeasurementWriter) Close() (err error) {
 }
 
 // SaveMeasurement implements model.MeasurementSaver
-func (mw *runxMeasurementWriter) SaveMeasurement(ctx context.Context, meas *enginemodel.Measurement) error {
+func (mw *runxMeasurementWriter) SaveMeasurement(ctx context.Context, meas *model.Measurement) error {
 	data, err := json.Marshal(meas)
 	if err != nil {
 		return err
@@ -231,7 +231,7 @@ func (mw *runxMeasurementWriter) SaveMeasurement(ctx context.Context, meas *engi
 	return err
 }
 
-// runxSettings implements [model.Settings]
+// runxSettings implements [modelx.Settings]
 type runxSettings struct {
 	// enabledNettests contains the list of enabled nettests
 	enabledNettests []string
@@ -240,7 +240,7 @@ type runxSettings struct {
 	enabledSuites []string
 }
 
-var _ model.Settings = &runxSettings{}
+var _ modelx.Settings = &runxSettings{}
 
 // IsNettestEnabled implements model.Settings
 func (rs *runxSettings) IsNettestEnabled(name string) bool {

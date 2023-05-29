@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
-	enginemodel "github.com/ooni/probe-engine/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
+	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/ooni/probe-engine/pkg/platform"
 	"github.com/ooni/probe-engine/pkg/runtimex"
 	"github.com/ooni/probe-engine/pkg/version"
@@ -17,11 +17,11 @@ import (
 // runMeasurement measures the given measurement target.
 func (s *State) runMeasurement(
 	ctx context.Context,
-	plan *model.RunnerPlan,
-	rd *model.ReportDescriptor,
+	plan *modelx.RunnerPlan,
+	rd *modelx.ReportDescriptor,
 	t0 time.Time,
-	callbacks enginemodel.ExperimentCallbacks,
-	target *model.MeasurementTarget,
+	callbacks model.ExperimentCallbacks,
+	target *modelx.MeasurementTarget,
 ) error {
 	// make sure we know both the IPv4 and the IPv6 locations
 	runtimex.Assert(
@@ -49,7 +49,7 @@ func (s *State) runMeasurement(
 	session := s.newSession(s.logger, plan.Conf.TestHelpers)
 
 	// fill the nettest arguments
-	args := &enginemodel.ExperimentArgs{
+	args := &model.ExperimentArgs{
 		Callbacks:   callbacks,
 		Measurement: meas,
 		Session:     session,
@@ -82,11 +82,11 @@ const measurementDateFormat = "2006-01-02 15:04:05"
 
 // newMeasurement creates a new [model.Measurement] instance.
 func (s *State) newMeasurement(
-	rd *model.ReportDescriptor,
+	rd *modelx.ReportDescriptor,
 	nettest runnerNettest,
 	t0 time.Time,
-	target *model.MeasurementTarget,
-) *enginemodel.Measurement {
+	target *modelx.MeasurementTarget,
+) *model.Measurement {
 	utctimenow := time.Now().UTC()
 
 	// TODO(bassosimone): how to adapt the current model with a model where
@@ -94,12 +94,12 @@ func (s *State) newMeasurement(
 	//
 	// For now, the following code is going to always use the IPv4 location
 
-	meas := &enginemodel.Measurement{
-		DataFormatVersion:         enginemodel.OOAPIReportDefaultDataFormatVersion,
-		Input:                     enginemodel.MeasurementTarget(target.Input),
+	meas := &model.Measurement{
+		DataFormatVersion:         model.OOAPIReportDefaultDataFormatVersion,
+		Input:                     model.MeasurementTarget(target.Input),
 		MeasurementStartTime:      utctimenow.Format(measurementDateFormat),
 		MeasurementStartTimeSaved: utctimenow,
-		ProbeIP:                   enginemodel.DefaultProbeIP,
+		ProbeIP:                   model.DefaultProbeIP,
 		ProbeASN:                  s.location.IPv4.ProbeASN.String(),
 		ProbeCC:                   s.location.IPv4.ProbeCC,
 		ProbeNetworkName:          s.location.IPv4.ProbeNetworkName,
@@ -135,7 +135,7 @@ const scrubbed = `[scrubbed]`
 // value is another measurement that has been scrubbed. For safety reasons,
 // this function MUTATES the measurement passed as argument such that it
 // is empty after this function has returned.
-func (s *State) scrubMeasurement(incoming *enginemodel.Measurement) (*enginemodel.Measurement, error) {
+func (s *State) scrubMeasurement(incoming *model.Measurement) (*model.Measurement, error) {
 	// TODO(bassosimone): this code should replace the code that we
 	// currently use for scrubbing measurements
 
@@ -147,7 +147,7 @@ func (s *State) scrubMeasurement(incoming *enginemodel.Measurement) (*enginemode
 
 	// assign the incoming measurement to the empty measurement
 	// as documented, to avoid using it by mistake
-	*incoming = enginemodel.Measurement{}
+	*incoming = model.Measurement{}
 
 	// compute the list of values to scrub
 	ips := []string{
@@ -161,7 +161,7 @@ func (s *State) scrubMeasurement(incoming *enginemodel.Measurement) (*enginemode
 	}
 
 	// serialize the result
-	var outgoing enginemodel.Measurement
+	var outgoing model.Measurement
 	if err := json.Unmarshal(data, &outgoing); err != nil {
 		return nil, err
 	}

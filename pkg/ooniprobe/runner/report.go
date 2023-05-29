@@ -5,12 +5,12 @@ import (
 	"errors"
 	"time"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
-	enginemodel "github.com/ooni/probe-engine/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // runReport runs the measurements in the given report descriptor
-func (s *State) runReport(ctx context.Context, plan *model.RunnerPlan, rd *model.ReportDescriptor) error {
+func (s *State) runReport(ctx context.Context, plan *modelx.RunnerPlan, rd *modelx.ReportDescriptor) error {
 	// make sure this nettest is enabled
 	if !s.settings.IsNettestEnabled(rd.NettestName) {
 		return nil
@@ -24,9 +24,9 @@ func (s *State) runReport(ctx context.Context, plan *model.RunnerPlan, rd *model
 
 	// make sure we have an empty target if targets is empty, which is nice
 	// towards people writing their own check-in response manually
-	targets := append([]model.MeasurementTarget{}, rd.Targets...)
+	targets := append([]modelx.MeasurementTarget{}, rd.Targets...)
 	if len(targets) <= 0 {
-		targets = []model.MeasurementTarget{{}}
+		targets = []modelx.MeasurementTarget{{}}
 	}
 
 	// create the report run controller
@@ -89,10 +89,10 @@ type reportRunController struct {
 	deadlineGood bool
 
 	// expCallbacks contains the callbacks
-	expCallbacks enginemodel.ExperimentCallbacks
+	expCallbacks model.ExperimentCallbacks
 
 	// progressView saves the progress view
-	progressView model.ProgressView
+	progressView modelx.ProgressView
 
 	// t0 is the start time
 	t0 time.Time
@@ -104,9 +104,9 @@ type reportRunController struct {
 // newReportRunController creates a new [reportRunController].
 func newReportRunController(
 	maxRuntime time.Duration,
-	progressView model.ProgressView,
+	progressView modelx.ProgressView,
 	t0 time.Time,
-	targets []model.MeasurementTarget,
+	targets []modelx.MeasurementTarget,
 ) *reportRunController {
 	rrc := &reportRunController{
 		deadline:     time.Time{},
@@ -128,11 +128,11 @@ func newReportRunController(
 		rrc.deadlineGood = true
 
 		// make sure the experiment callbacks are not harmful
-		rrc.expCallbacks = enginemodel.NewPrinterCallbacks(enginemodel.DiscardLogger)
+		rrc.expCallbacks = model.NewPrinterCallbacks(model.DiscardLogger)
 
 	case len(targets) > 1:
 		// make sure the experiment callbacks are not harmful
-		rrc.expCallbacks = enginemodel.NewPrinterCallbacks(enginemodel.DiscardLogger)
+		rrc.expCallbacks = model.NewPrinterCallbacks(model.DiscardLogger)
 
 	default:
 		rrc.expCallbacks = &reportPassthroughCbs{progressView}
@@ -147,7 +147,7 @@ func (rrc *reportRunController) Deadline() (time.Time, bool) {
 }
 
 // ExperimentCallbacks returns the callbacks we should use
-func (rrc *reportRunController) ExperimentCallbacks() enginemodel.ExperimentCallbacks {
+func (rrc *reportRunController) ExperimentCallbacks() model.ExperimentCallbacks {
 	return rrc.expCallbacks
 }
 
@@ -170,10 +170,10 @@ func (rrc *reportRunController) Tick(idx int) {
 // reportPassthroughCbs passes the [model.ExperimentCallbacks]
 // progress events directly to the upstream callbacks.
 type reportPassthroughCbs struct {
-	pv model.ProgressView
+	pv modelx.ProgressView
 }
 
-var _ enginemodel.ExperimentCallbacks = &reportPassthroughCbs{}
+var _ model.ExperimentCallbacks = &reportPassthroughCbs{}
 
 // OnProgress implements model.ExperimentCallbacks
 func (rpc *reportPassthroughCbs) OnProgress(progress float64, message string) {

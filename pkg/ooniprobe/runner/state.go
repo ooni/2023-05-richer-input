@@ -3,8 +3,8 @@ package runner
 import (
 	"context"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
-	enginemodel "github.com/ooni/probe-engine/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // TODO(bassosimone): the location should actually be dynamic such that
@@ -14,19 +14,19 @@ import (
 // invalid; construct using [NewState].
 type State struct {
 	// location contains the probe location.
-	location *model.ProbeLocation
+	location *modelx.ProbeLocation
 
 	// logger is the [model.Logger] to use.
-	logger enginemodel.Logger
+	logger model.Logger
 
 	// progressView is the view used to show progress.
-	progressView model.ProgressView
+	progressView modelx.ProgressView
 
 	// saver is used to save measurements results.
-	saver model.MeasurementSaver
+	saver modelx.MeasurementSaver
 
 	// settings contains the settings.
-	settings model.Settings
+	settings modelx.Settings
 
 	// softwareName contains the software name.
 	softwareName string
@@ -37,11 +37,11 @@ type State struct {
 
 // NewState creates a new [State] instance.
 func NewState(
-	location *model.ProbeLocation,
-	logger enginemodel.Logger,
-	progressView model.ProgressView,
-	saver model.MeasurementSaver,
-	settings model.Settings,
+	location *modelx.ProbeLocation,
+	logger model.Logger,
+	progressView modelx.ProgressView,
+	saver modelx.MeasurementSaver,
+	settings modelx.Settings,
 	softwareName string,
 	softwareVersion string,
 ) *State {
@@ -57,7 +57,7 @@ func NewState(
 }
 
 // Run runs the nettest indicated by the given runner plan.
-func (s *State) Run(ctx context.Context, plan *model.RunnerPlan) error {
+func (s *State) Run(ctx context.Context, plan *modelx.RunnerPlan) error {
 	for _, suite := range plan.Suites {
 		// make sure this suite is allowed to run
 		if !s.settings.IsSuiteEnabled(suite.ShortName) {

@@ -5,10 +5,10 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/model"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/nettestlet"
 	"github.com/ooni/probe-engine/pkg/dslx"
-	enginemodel "github.com/ooni/probe-engine/pkg/model"
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // NewMeasurer returns a new [Measurer] instance.
@@ -22,7 +22,7 @@ type Measurer struct {
 	RawOptions json.RawMessage
 }
 
-var _ enginemodel.ExperimentMeasurer = &Measurer{}
+var _ model.ExperimentMeasurer = &Measurer{}
 
 // ExperimentName implements model.ExperimentMeasurer
 func (m *Measurer) ExperimentName() string {
@@ -45,7 +45,7 @@ type SummaryKeys struct {
 }
 
 // GetSummaryKeys implements model.ExperimentMeasurer
-func (m *Measurer) GetSummaryKeys(*enginemodel.Measurement) (any, error) {
+func (m *Measurer) GetSummaryKeys(*model.Measurement) (any, error) {
 	sk := SummaryKeys{IsAnomaly: false}
 	return sk, nil
 }
@@ -53,11 +53,11 @@ func (m *Measurer) GetSummaryKeys(*enginemodel.Measurement) (any, error) {
 // Options contains the options controlling this experiment.
 type Options struct {
 	// Nettestlets is the list of nettestlets to run.
-	Nettestlets []model.NettestletDescriptor `json:"nettestlets"`
+	Nettestlets []modelx.NettestletDescriptor `json:"nettestlets"`
 }
 
 // Run implements model.ExperimentMeasurer
-func (m *Measurer) Run(ctx context.Context, args *enginemodel.ExperimentArgs) error {
+func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 	// parse options
 	var options Options
 	if err := json.Unmarshal(m.RawOptions, &options); err != nil {
@@ -72,12 +72,12 @@ func (m *Measurer) Run(ctx context.Context, args *enginemodel.ExperimentArgs) er
 
 	// create the testkeys
 	tk := &dslx.Observations{
-		NetworkEvents:  []*enginemodel.ArchivalNetworkEvent{},
-		Queries:        []*enginemodel.ArchivalDNSLookupResult{},
-		Requests:       []*enginemodel.ArchivalHTTPRequestResult{},
-		TCPConnect:     []*enginemodel.ArchivalTCPConnectResult{},
-		TLSHandshakes:  []*enginemodel.ArchivalTLSOrQUICHandshakeResult{},
-		QUICHandshakes: []*enginemodel.ArchivalTLSOrQUICHandshakeResult{},
+		NetworkEvents:  []*model.ArchivalNetworkEvent{},
+		Queries:        []*model.ArchivalDNSLookupResult{},
+		Requests:       []*model.ArchivalHTTPRequestResult{},
+		TCPConnect:     []*model.ArchivalTCPConnectResult{},
+		TLSHandshakes:  []*model.ArchivalTLSOrQUICHandshakeResult{},
+		QUICHandshakes: []*model.ArchivalTLSOrQUICHandshakeResult{},
 	}
 
 	// execute the nettestlets
