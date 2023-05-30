@@ -11,6 +11,7 @@ import (
 
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
 	"github.com/ooni/probe-engine/pkg/experiment/webconnectivity"
+	"github.com/ooni/probe-engine/pkg/experiment/webconnectivitylte"
 	"github.com/ooni/probe-engine/pkg/model"
 )
 
@@ -75,8 +76,16 @@ func (nt *webconnectivityNettest) Run(ctx context.Context) error {
 
 	// measure each target
 	for idx, target := range nt.targets {
-		// create a new experiment instance
-		exp := webconnectivity.NewExperimentMeasurer(webconnectivity.Config{})
+		// record the current target inside the logs
+		nt.ix.logger.Infof("--- input: idx=%d target=%+v ---", idx, target)
+
+		// create a new experiment instance honoring experimental flags
+		var exp model.ExperimentMeasurer
+		if nt.args.ExperimentalFlags["webconnectivity_0.5"] {
+			exp = webconnectivitylte.NewExperimentMeasurer(&webconnectivitylte.Config{})
+		} else {
+			exp = webconnectivity.NewExperimentMeasurer(webconnectivity.Config{})
+		}
 
 		// run with the given experiment and input
 		err := runExperiment(

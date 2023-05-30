@@ -75,6 +75,9 @@ func (nt *urlgetterNettest) Run(ctx context.Context) error {
 
 	// measure each target
 	for idx, target := range nt.targets {
+		// record the current target inside the logs
+		nt.ix.logger.Infof("--- input: idx=%d target=%+v ---", idx, target)
+
 		// create a new experiment instance
 		exp := urlgetter.NewExperimentMeasurer(target.Options)
 

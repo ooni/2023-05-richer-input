@@ -6,6 +6,7 @@ require github.com/ooni/probe-engine v0.24.1-0.20230529150556-083e9f0ea5d5
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
+	github.com/apex/log v1.9.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/gaukas/godicttls v0.0.3 // indirect
@@ -20,7 +21,6 @@ require (
 	github.com/quic-go/qtls-go1-20 v0.1.1 // indirect
 	github.com/quic-go/quic-go v0.33.0 // indirect
 	github.com/refraction-networking/conjure v0.4.0 // indirect
-	github.com/smartystreets/assertions v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.8.3 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

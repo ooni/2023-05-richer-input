@@ -78,7 +78,7 @@ type interpreterRunState struct {
 func newInterpreterRunState() *interpreterRunState {
 	return &interpreterRunState{
 		MinValue: 0,
-		Scale:    0,
+		Scale:    1,
 		Suite:    "",
 	}
 }
@@ -165,9 +165,6 @@ func (ix *Interpreter) onNettestRunV1(
 		return err
 	}
 
-	// TODO(bassosimone): I am wondering whether the message should be about
-	// the card or about the suite; it is not clear to me yet.
-
 	// Return early if the suite or the nettest are not clear to run. Note
 	// that we should return nil here to continue running.
 	if !ix.settings.IsSuiteEnabled(state.Suite) {
@@ -179,6 +176,9 @@ func (ix *Interpreter) onNettestRunV1(
 		return nil
 	}
 
+	// record what we're trying to run inside the logs
+	ix.logger.Infof("~~~ running %s ~~~", value.NettestName)
+
 	// Create a nettest instance or return early if we don't know the
 	// nettest name. Note that we should not return error here because
 	// newer OONI probe versions may know this nettest.
@@ -189,7 +189,9 @@ func (ix *Interpreter) onNettestRunV1(
 	}
 
 	// update the view
-	ix.view.SetSuite(state.Suite)
+	if state.Suite != "" {
+		ix.view.SetSuite(state.Suite)
+	}
 	ix.view.SetNettest(value.NettestName)
 
 	// make sure we emit the correct begin and end events
