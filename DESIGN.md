@@ -406,7 +406,7 @@ such a case, the location should not be static; rather, it should be a
 capable of invalidating the location while running nettests. Therefore,
 the interpreter should generally see the location as a "location provider"
 interface rather than a static data structure. (The PoC does not implement
-this functionality yet, but performing this refactoring seems trivial.)
+this functionality, but the refactoring seems trivial.)
 
 We propose two algorithms for invalidating the location. The first
 algorithm resolves the probe's IPv4 and IPv6, performs geolocation and
