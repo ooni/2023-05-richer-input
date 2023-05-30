@@ -461,6 +461,17 @@ both the IPv4 and the IPv6 locations and we scrub both IP addrs from
 the measurement. However, how to represent both the IPv4 and the
 IPv6 geolocation into a measurement is still an open issue.
 
+## Handwaving: report ID for research
+
+When writing a script file manually, the user does not know the
+report ID. We currently have a component in OONI Probe that automatically
+sets the report ID when submitting, by opening a report every time this
+is needed. We could use this component. Or, we could choose to instead
+generate a random report ID inside the probe. If we follow the latter
+path, though, we must include a "session ID" as an annotation, since this
+is useful to ooni/data analysis. Adding a "session ID" anyway seems in
+any case an useful idea.
+
 ## Forward compatibility: breaking changes
 
 All OONI experiments have a minor version number of zero. If we need to
