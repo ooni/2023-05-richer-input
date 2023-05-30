@@ -247,7 +247,7 @@ experiments to run in the current run mode (manual or timed).
 
 Therefore, in the hypothetical scenario where I want to add more nettests
 to the "experimental" card, I could modify the above JSON document as
-follows (or change check-in v2 to serve it):
+follows (or change check-in v2 to serve something that leads to this):
 
 ```JSONC
 // ...
