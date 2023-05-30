@@ -39,7 +39,7 @@ Then build using:
 Try:
 
 ```console
-./ooniprobe --logfile LOG.txt \
+./ooniprobe runx --logfile LOG.txt \
 	--location testdata/location.json \
 	--script testdata/full.jsonc
 ```
