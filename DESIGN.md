@@ -399,7 +399,7 @@ and control over the feature flags.
 
 ## Minor idea: invalidating the geolocation
 
-In the typical case, OONI Probe will invoke the interpreter as a
+Typically, OONI Probe will invoke the interpreter as a
 subroutine and pass it data available on memory rather than JSON files. In
 such a case, the location should not be static; rather, it should be a
 "location provider" interface initialized with a known location and
