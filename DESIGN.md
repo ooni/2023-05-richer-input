@@ -455,7 +455,7 @@ will define the check-in v2 response as part of our future work.
 
 This PoC contains more robust IPv6 handling code that the stable
 version of ooniprobe. In particular, we provide to the interpreter
-both the IPv4 and the IPv6 locations and we scrub both IP addrs from
+both the IPv4 and the IPv6 locations and we scrub both IP addresses from
 the measurement. However, how to represent both the IPv4 and the
 IPv6 geolocation into a measurement is still an open issue.
 
