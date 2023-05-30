@@ -467,8 +467,8 @@ sets the report ID when submitting, by opening a report every time this
 is needed. We could use this component. Or, we could choose to instead
 generate a random report ID inside the probe. If we follow the latter
 path, though, we must include a "session ID" as an annotation, since this
-is useful to ooni/data analysis. Adding a "session ID" anyway seems in
-any case an useful idea.
+is useful to ooni/data analysis. Adding a "session ID" seems a useful
+idea anyway.
 
 ## Handwaving: running telegram with no backend support
 
