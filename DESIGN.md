@@ -189,7 +189,7 @@ Suppose that I, as an OONI Probe developer, want all OONI Probe users
 that have given consent to run experimental tests to run some extra tests
 meant to understand specific emerging censorship conditions. I can do
 that by including nettest-running instructions similar to the above in
-the check-in v2 response.
+the check-in v2 response (such that they somehow end up into the script).
 
 To illustrate how to do that, we must first take a detour and introduce
 specific instructions for driving the output. The script specifies
