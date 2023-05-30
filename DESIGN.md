@@ -449,7 +449,7 @@ This document mentions that, under normal operating circumstances,
 the OONI Probe somehow computes the script using data provided by the
 check-in v2 API. It also says that the idempotent transformation is the
 most straightforward (i.e., the check-in v2 API response is a script). We
-will address this issue in future work on richer input.
+will define the check-in v2 response as part of our future work.
 
 ## Handwaving: IPv6
 
