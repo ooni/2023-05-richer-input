@@ -472,6 +472,18 @@ path, though, we must include a "session ID" as an annotation, since this
 is useful to ooni/data analysis. Adding a "session ID" anyway seems in
 any case an useful idea.
 
+## Handwaving: running telegram with no backend support
+
+OONI Probe derives the script from the check-in v2 response applying
+some transformation. The script, in turn, defines telegram and
+other IM nettests by specifying what mini nettests they should run. If
+there is a partial internet shutdown, a user that cannot communicate
+with the OONI backend cannot obtain the correct mini nettests for
+telegram. Therefore, they cannot run the telegram experiment. We will
+address this issue as part of our future work. A possible solution
+to this issue consists of caching specific information, and refreshing
+the cache each time the check-in v2 completes successfully.
+
 ## Forward compatibility: breaking changes
 
 All OONI experiments have a minor version number of zero. If we need to
