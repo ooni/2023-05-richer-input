@@ -41,11 +41,7 @@ Try:
 ```console
 ./ooniprobe --logfile LOG.txt \
 	--location testdata/location.json \
-	--script testdata/plan.jsonc
+	--script testdata/full.jsonc
 ```
 
 To run a reasonably complete OONI measurements.
-
-The [testdata/planc.json](testdata/plan.jsonc) contains several
-comments explaining its structure. See also the [DESIGN.md](DESIGN.md)
-document for more information on the rationale.
