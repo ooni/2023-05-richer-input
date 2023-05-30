@@ -62,7 +62,7 @@ generate this information transparently to the user, but here we are
 only discussing the most fundamental functionality). This file would
 probably look like this:
 
-```JSON
+```JSONC
 // file: location.json
 {
     "ipv4": {
