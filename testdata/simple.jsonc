@@ -1,0 +1,36 @@
+// A simple set of instructions for research.
+{
+	"instructions": [
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "urlgetter",
+				"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
+				"targets": [
+					{
+						"annotations": {
+							"check_type": "tls"
+						},
+						"input": "https://8.8.8.8/",
+						"options": {
+							"HTTPHost": "dns.google",
+							"TLSServerName": "dns.google"
+						}
+					},
+					{
+						"annotations": {
+							"check_type": "quic"
+						},
+						"input": "https://8.8.8.8/",
+						"options": {
+							"HTTP3Enabled": true,
+							"HTTPHost": "dns.google",
+							"TLSServerName": "dns.google"
+						}
+					}
+				]
+			}
+		}
+	],
+	"v": 2
+}
