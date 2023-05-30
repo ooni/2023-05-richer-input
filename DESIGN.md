@@ -323,7 +323,7 @@ and consolidate the codebase.)
 This PoC rewrites the IM nettests to use mini nettests. A subset of the
 telegram nettest, for example, looks like this:
 
-```JSON
+```JSONC
 // ...
         {
             "run": "nettest:run@v1",
