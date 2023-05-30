@@ -44,7 +44,8 @@ addresses of the OONI Probe, along with their geolocation information
 (country code, ASN, and network name). Second, there is a script telling
 the interpreter what to do. How to obtain the script is still up for
 debate. The most straightforward approach would be for the check-in API
-to serve the script to probes.
+to serve the script to probes. We can also consider more complex
+transformations of the check-in v2 API response.
 
 In this PoC, the `ooniprobe` command exposes the interpreter through a
 `runx` ("run experimental") subcommand. Such a subcommand requires the
@@ -449,6 +450,14 @@ the OONI Probe somehow computes the script using data provided by the
 check-in v2 API. It also says that the idempotent transformation is the
 most straightforward (i.e., the check-in v2 API response is a script). We
 will address this issue in future work on richer input.
+
+## Handwaving: IPv6
+
+This PoC contains more robust IPv6 handling code that the stable
+version of ooniprobe. In particular, we provide to the interpreter
+both the IPv4 and the IPv6 locations and we scrub both IP addrs from
+the measurement. However, how to represent both the IPv4 and the
+IPv6 geolocation into a measurement is still an open issue.
 
 ## Forward compatibility: breaking changes
 
