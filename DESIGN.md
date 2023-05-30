@@ -437,10 +437,8 @@ to submit measurements to the OONI backend.
 
 This document does not provide specific details regarding how to save
 measurements into the local OONI-Probe database such that they end up
-inside the correct "Result" structure. It only says that the interpreter
-passes the required information to some downstream component that
-implements optional measurement submission and optionally writes the
-database. To this end, we could probably deduce the correct "Result"
+inside the correct "Result" structure. To this end, we could
+probably deduce the correct "Result"
 from the current card; though, it seems more in line with the spirit of
 this design to define instructions to tell the probe when to create a new
 "Result." We will investigate this topic as part of our future work.
