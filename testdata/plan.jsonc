@@ -1,0 +1,650 @@
+// This JSON object is either served by check-in directly or computed
+// by the OONI engine using the check-in response as the input.
+{
+	// The "instructions" section contains instructions interpreted
+	// by the probe engine. Each instruction has a given ID, which
+	// the engine interprets differently. When the engine parses an
+	// unknown instruction, it will ignore and skip it.
+	"instructions": [
+
+		// The ui:draw_card instruction tells the OONI engine to
+		// draw in output a card with the given name.
+		{
+			"run": "ui:draw_card@v1",
+			"with": {
+				"suite": "websites"
+			}
+		},
+
+		// The ui:set_progress_bar instruction tells the OONI engine
+		// to draw in output a progress bar with the given initial
+		// value and the given maximum value. Each nettest will have
+		// its own policy for emitting progress, as it is now.
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0,
+				"max_value": 1
+			}
+		},
+
+		// The nettest:run instruction tells the OONI engine
+		// to run the given nettest by name.
+		{
+			"run": "nettest:run@v1",
+			"with": {
+
+				// The experimental_flags field contains OPTIONAL feature flags. In this case
+				// we're asking the engine to run Web Connectivity LTE.
+				//
+				// This functionality allows us to run check-in directed A/B testing.
+				"experimental_flags": {
+					"webconnectivity_0.5": true
+				},
+
+				// The nettest_name field contains the name of the nettest.
+				"nettest_name": "web_connectivity",
+
+				// The report_id field contains the report ID to use
+				"report_id": "20230406T142431Z_webconnectivity_IT_30722_n1_QY8E8jHBkSr7kUWu",
+
+				// The targets field contains richer input specific of this
+				// experiment that the OONI engine needs to interpret.
+				"targets": [
+					{
+						"attributes": {
+							"category_code": "MMED",
+							"country_code": "XX"
+						},
+						"input": "https://www.instagram.com/"
+					},
+					{
+						"attributes": {
+							"category_code": "GRP",
+							"country_code": "XX"
+						},
+						"input": "https://www.facebook.com/"
+					},
+					{
+						"attributes": {
+							"category_code": "CULTR",
+							"country_code": "IT"
+						},
+						"input": "https://en.wiktionary.org/"
+					}
+				],
+
+				"test_helpers": {
+					"web-connectivity": [
+						{
+							"address": "https://1.th.ooni.org",
+							"type": "https"
+						},
+						{
+							"address": "https://2.th.ooni.org",
+							"type": "https"
+						},
+						{
+							"address": "https://3.th.ooni.org",
+							"type": "https"
+						},
+						{
+							"address": "https://0.th.ooni.org",
+							"type": "https"
+						},
+						{
+							"address": "https://d33d1gs9kpq1c5.cloudfront.net",
+							"front": "d33d1gs9kpq1c5.cloudfront.net",
+							"type": "cloudfront"
+						}
+					]
+				}
+			}
+		},
+
+		// Let us change suite.
+		{
+			"run": "ui:draw_card@v1",
+			"with": {
+				"suite": "im"
+			}
+		},
+
+		// Let us now run the facebook messenger experiment.
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0,
+				"max_value": 0.25
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "facebook_messenger",
+				"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
+
+				// Note how here the richer input contains mininettests that
+				// the experiment should run. This functionality allows us to
+				// tweak the behavior of experiments using the check-in API.
+				//
+				// The engine ignores the mininettests it does not know.
+				//
+				// We initially determine the results in the probe and later we
+				// will move the algorithm in the fastpath.
+				//
+				// We will not generate the top-level keys that cannot be
+				// generated given the available mininettest IDs.
+				"targets": [
+					{
+						"id": "fbmessenger-stun",
+						"run": "dns-lookup@v1",
+						"with": {
+							"domain": "stun.fbsbx.com"
+						}
+					},
+					{
+						"id": "fbmessenger-b-api",
+						"run": "tcp-connect-domain@v1",
+						"with": {
+							"domain": "b-api.facebook.com",
+							"port": 443
+						}
+					},
+					{
+						"id": "fbmessenger-b-graph",
+						"run": "tcp-connect-domain@v1",
+						"with": {
+							"domain": "b-graph.facebook.com",
+							"port": 443
+						}
+					},
+					{
+						"id": "fbmessenger-b-edge-mqtt",
+						"run": "tcp-connect-domain@v1",
+						"with": {
+							"domain": "edge-mqtt.facebook.com",
+							"port": 443
+						}
+					},
+					{
+						"id": "fbmessenger-external-cdn",
+						"run": "tcp-connect-domain@v1",
+						"with": {
+							"domain": "external.xx.fbcdn.net",
+							"port": 443
+						}
+					},
+					{
+						"id": "fbmessenger-scontent-cdn",
+						"run": "tcp-connect-domain@v1",
+						"with": {
+							"domain": "scontent.xx.fbcdn.net",
+							"port": 443
+						}
+					},
+					{
+						"id": "fbmessenger-star",
+						"run": "tcp-connect-domain@v1",
+						"with": {
+							"domain": "star.c10r.facebook.com",
+							"port": 443
+						}
+					}
+				]
+			}
+		},
+
+		// Let us now run the signal experiment
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.25,
+				"max_value": 0.5
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "signal",
+				"report_id": "20230406T142431Z_signal_IT_30722_n1_8vFVXzjCjfUFbOA5",
+				"targets": [
+					{
+						"run": "dns-lookup@v1",
+						"with": {
+							"domain": "uptime.signal.org"
+						}
+					},
+
+					// Here it is important to note that we're serving the
+					// correct X.509 certificates to the probe.
+					{
+						"run": "https-domain@v1",
+						"with": {
+							"domain": "textsecure-service.whispersystems.org",
+							"http_header_host": "textsecure-service.whispersystems.org",
+							"http_method": "GET",
+							"port": 443,
+							"tls_server_name": "textsecure-service.whispersystems.org",
+							"x509_certs": [
+								"-----BEGIN CERTIFICATE-----\nMIID7zCCAtegAwIBAgIJAIm6LatK5PNiMA0GCSqGSIb3DQEBBQUAMIGNMQswCQYD\nVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j\naXNjbzEdMBsGA1UECgwUT3BlbiBXaGlzcGVyIFN5c3RlbXMxHTAbBgNVBAsMFE9w\nZW4gV2hpc3BlciBTeXN0ZW1zMRMwEQYDVQQDDApUZXh0U2VjdXJlMB4XDTEzMDMy\nNTIyMTgzNVoXDTIzMDMyMzIyMTgzNVowgY0xCzAJBgNVBAYTAlVTMRMwEQYDVQQI\nDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMR0wGwYDVQQKDBRP\ncGVuIFdoaXNwZXIgU3lzdGVtczEdMBsGA1UECwwUT3BlbiBXaGlzcGVyIFN5c3Rl\nbXMxEzARBgNVBAMMClRleHRTZWN1cmUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw\nggEKAoIBAQDBSWBpOCBDF0i4q2d4jAXkSXUGpbeWugVPQCjaL6qD9QDOxeW1afvf\nPo863i6Crq1KDxHpB36EwzVcjwLkFTIMeo7t9s1FQolAt3mErV2U0vie6Ves+yj6\ngrSfxwIDAcdsKmI0a1SQCZlr3Q1tcHAkAKFRxYNawADyps5B+Zmqcgf653TXS5/0\nIPPQLocLn8GWLwOYNnYfBvILKDMItmZTtEbucdigxEA9mfIvvHADEbteLtVgwBm9\nR5vVvtwrD6CCxI3pgH7EH7kMP0Od93wLisvn1yhHY7FuYlrkYqdkMvWUrKoASVw4\njb69vaeJCUdU+HCoXOSP1PQcL6WenNCHAgMBAAGjUDBOMB0GA1UdDgQWBBQBixjx\nP/s5GURuhYa+lGUypzI8kDAfBgNVHSMEGDAWgBQBixjxP/s5GURuhYa+lGUypzI8\nkDAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUAA4IBAQB+Hr4hC56m0LvJAu1R\nK6NuPDbTMEN7/jMojFHxH4P3XPFfupjR+bkDq0pPOU6JjIxnrD1XD/EVmTTaTVY5\niOheyv7UzJOefb2pLOc9qsuvI4fnaESh9bhzln+LXxtCrRPGhkxA1IMIo3J/s2WF\n/KVYZyciu6b4ubJ91XPAuBNZwImug7/srWvbpk0hq6A6z140WTVSKtJG7EP41kJe\n/oF4usY5J7LPkxK3LWzMJnb5EIJDmRvyH8pyRwWg6Qm6qiGFaI4nL8QU4La1x2en\n4DGXRaLMPRwjELNgQPodR38zoCMuA8gHZfZYYoZ7D7Q1wNUiVHcxuFrEeBaYJbLE\nrwLV\n-----END CERTIFICATE-----",
+								"-----BEGIN CERTIFICATE-----\nMIIF2zCCA8OgAwIBAgIUAMHz4g60cIDBpPr1gyZ/JDaaPpcwDQYJKoZIhvcNAQEL\nBQAwdTELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcT\nDU1vdW50YWluIFZpZXcxHjAcBgNVBAoTFVNpZ25hbCBNZXNzZW5nZXIsIExMQzEZ\nMBcGA1UEAxMQU2lnbmFsIE1lc3NlbmdlcjAeFw0yMjAxMjYwMDQ1NTFaFw0zMjAx\nMjQwMDQ1NTBaMHUxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYw\nFAYDVQQHEw1Nb3VudGFpbiBWaWV3MR4wHAYDVQQKExVTaWduYWwgTWVzc2VuZ2Vy\nLCBMTEMxGTAXBgNVBAMTEFNpZ25hbCBNZXNzZW5nZXIwggIiMA0GCSqGSIb3DQEB\nAQUAA4ICDwAwggIKAoICAQDEecifxMHHlDhxbERVdErOhGsLO08PUdNkATjZ1kT5\n1uPf5JPiRbus9F4J/GgBQ4ANSAjIDZuFY0WOvG/i0qvxthpW70ocp8IjkiWTNiA8\n1zQNQdCiWbGDU4B1sLi2o4JgJMweSkQFiyDynqWgHpw+KmvytCzRWnvrrptIfE4G\nPxNOsAtXFbVH++8JO42IaKRVlbfpe/lUHbjiYmIpQroZPGPY4Oql8KM3o39ObPnT\no1WoM4moyOOZpU3lV1awftvWBx1sbTBL02sQWfHRxgNVF+Pj0fdDMMFdFJobArrL\nVfK2Ua+dYN4pV5XIxzVarSRW73CXqQ+2qloPW/ynpa3gRtYeGWV4jl7eD0PmeHpK\nOY78idP4H1jfAv0TAVeKpuB5ZFZ2szcySxrQa8d7FIf0kNJe9gIRjbQ+XrvnN+ZZ\nvj6d+8uBJq8LfQaFhlVfI0/aIdggScapR7w8oLpvdflUWqcTLeXVNLVrg15cEDwd\nlV8PVscT/KT0bfNzKI80qBq8LyRmauAqP0CDjayYGb2UAabnhefgmRY6aBE5mXxd\nbyAEzzCS3vDxjeTD8v8nbDq+SD6lJi0i7jgwEfNDhe9XK50baK15Udc8Cr/ZlhGM\njNmWqBd0jIpaZm1rzWA0k4VwXtDwpBXSz8oBFshiXs3FD6jHY2IhOR3ppbyd4qRU\npwIDAQABo2MwYTAOBgNVHQ8BAf8EBAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNV\nHQ4EFgQUtfNLxuXWS9DlgGuMUMNnW7yx83EwHwYDVR0jBBgwFoAUtfNLxuXWS9Dl\ngGuMUMNnW7yx83EwDQYJKoZIhvcNAQELBQADggIBABUeiryS0qjykBN75aoHO9bV\nPrrX+DSJIB9V2YzkFVyh/io65QJMG8naWVGOSpVRwUwhZVKh3JVp/miPgzTGAo7z\nhrDIoXc+ih7orAMb19qol/2Ha8OZLa75LojJNRbZoCR5C+gM8C+spMLjFf9k3JVx\ndajhtRUcR0zYhwsBS7qZ5Me0d6gRXD0ZiSbadMMxSw6KfKk3ePmPb9gX+MRTS63c\n8mLzVYB/3fe/bkpq4RUwzUHvoZf+SUD7NzSQRQQMfvAHlxk11TVNxScYPtxXDyiy\n3Cssl9gWrrWqQ/omuHipoH62J7h8KAYbr6oEIq+Czuenc3eCIBGBBfvCpuFOgckA\nXXE4MlBasEU0MO66GrTCgMt9bAmSw3TrRP12+ZUFxYNtqWluRU8JWQ4FCCPcz9pg\nMRBOgn4lTxDZG+I47OKNuSRjFEP94cdgxd3H/5BK7WHUz1tAGQ4BgepSXgmjzifF\nT5FVTDTl3ZnWUVBXiHYtbOBgLiSIkbqGMCLtrBtFIeQ7RRTb3L+IE9R0UB0cJB3A\nXbf1lVkOcmrdu2h8A32aCwtr5S1fBF1unlG7imPmqJfpOMWa8yIF/KWVm29JAPq8\nLrsybb0z5gg8w7ZblEuB9zOW9M3l60DXuJO6l7g+deV6P96rv2unHS8UlvWiVWDy\n9qfgAJizyy3kqM4lOwBH\n-----END CERTIFICATE-----"
+							]
+						}
+					},
+					{
+						"run": "https-domain@v1",
+						"with": {
+							"domain": "storage.signal.org",
+							"http_header_host": "storage.signal.org",
+							"http_method": "GET",
+							"port": 443,
+							"tls_server_name": "storage.signal.org",
+							"x509_certs": [
+								"-----BEGIN CERTIFICATE-----\nMIID7zCCAtegAwIBAgIJAIm6LatK5PNiMA0GCSqGSIb3DQEBBQUAMIGNMQswCQYD\nVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5j\naXNjbzEdMBsGA1UECgwUT3BlbiBXaGlzcGVyIFN5c3RlbXMxHTAbBgNVBAsMFE9w\nZW4gV2hpc3BlciBTeXN0ZW1zMRMwEQYDVQQDDApUZXh0U2VjdXJlMB4XDTEzMDMy\nNTIyMTgzNVoXDTIzMDMyMzIyMTgzNVowgY0xCzAJBgNVBAYTAlVTMRMwEQYDVQQI\nDApDYWxpZm9ybmlhMRYwFAYDVQQHDA1TYW4gRnJhbmNpc2NvMR0wGwYDVQQKDBRP\ncGVuIFdoaXNwZXIgU3lzdGVtczEdMBsGA1UECwwUT3BlbiBXaGlzcGVyIFN5c3Rl\nbXMxEzARBgNVBAMMClRleHRTZWN1cmUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw\nggEKAoIBAQDBSWBpOCBDF0i4q2d4jAXkSXUGpbeWugVPQCjaL6qD9QDOxeW1afvf\nPo863i6Crq1KDxHpB36EwzVcjwLkFTIMeo7t9s1FQolAt3mErV2U0vie6Ves+yj6\ngrSfxwIDAcdsKmI0a1SQCZlr3Q1tcHAkAKFRxYNawADyps5B+Zmqcgf653TXS5/0\nIPPQLocLn8GWLwOYNnYfBvILKDMItmZTtEbucdigxEA9mfIvvHADEbteLtVgwBm9\nR5vVvtwrD6CCxI3pgH7EH7kMP0Od93wLisvn1yhHY7FuYlrkYqdkMvWUrKoASVw4\njb69vaeJCUdU+HCoXOSP1PQcL6WenNCHAgMBAAGjUDBOMB0GA1UdDgQWBBQBixjx\nP/s5GURuhYa+lGUypzI8kDAfBgNVHSMEGDAWgBQBixjxP/s5GURuhYa+lGUypzI8\nkDAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBBQUAA4IBAQB+Hr4hC56m0LvJAu1R\nK6NuPDbTMEN7/jMojFHxH4P3XPFfupjR+bkDq0pPOU6JjIxnrD1XD/EVmTTaTVY5\niOheyv7UzJOefb2pLOc9qsuvI4fnaESh9bhzln+LXxtCrRPGhkxA1IMIo3J/s2WF\n/KVYZyciu6b4ubJ91XPAuBNZwImug7/srWvbpk0hq6A6z140WTVSKtJG7EP41kJe\n/oF4usY5J7LPkxK3LWzMJnb5EIJDmRvyH8pyRwWg6Qm6qiGFaI4nL8QU4La1x2en\n4DGXRaLMPRwjELNgQPodR38zoCMuA8gHZfZYYoZ7D7Q1wNUiVHcxuFrEeBaYJbLE\nrwLV\n-----END CERTIFICATE-----",
+								"-----BEGIN CERTIFICATE-----\nMIIF2zCCA8OgAwIBAgIUAMHz4g60cIDBpPr1gyZ/JDaaPpcwDQYJKoZIhvcNAQEL\nBQAwdTELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcT\nDU1vdW50YWluIFZpZXcxHjAcBgNVBAoTFVNpZ25hbCBNZXNzZW5nZXIsIExMQzEZ\nMBcGA1UEAxMQU2lnbmFsIE1lc3NlbmdlcjAeFw0yMjAxMjYwMDQ1NTFaFw0zMjAx\nMjQwMDQ1NTBaMHUxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYw\nFAYDVQQHEw1Nb3VudGFpbiBWaWV3MR4wHAYDVQQKExVTaWduYWwgTWVzc2VuZ2Vy\nLCBMTEMxGTAXBgNVBAMTEFNpZ25hbCBNZXNzZW5nZXIwggIiMA0GCSqGSIb3DQEB\nAQUAA4ICDwAwggIKAoICAQDEecifxMHHlDhxbERVdErOhGsLO08PUdNkATjZ1kT5\n1uPf5JPiRbus9F4J/GgBQ4ANSAjIDZuFY0WOvG/i0qvxthpW70ocp8IjkiWTNiA8\n1zQNQdCiWbGDU4B1sLi2o4JgJMweSkQFiyDynqWgHpw+KmvytCzRWnvrrptIfE4G\nPxNOsAtXFbVH++8JO42IaKRVlbfpe/lUHbjiYmIpQroZPGPY4Oql8KM3o39ObPnT\no1WoM4moyOOZpU3lV1awftvWBx1sbTBL02sQWfHRxgNVF+Pj0fdDMMFdFJobArrL\nVfK2Ua+dYN4pV5XIxzVarSRW73CXqQ+2qloPW/ynpa3gRtYeGWV4jl7eD0PmeHpK\nOY78idP4H1jfAv0TAVeKpuB5ZFZ2szcySxrQa8d7FIf0kNJe9gIRjbQ+XrvnN+ZZ\nvj6d+8uBJq8LfQaFhlVfI0/aIdggScapR7w8oLpvdflUWqcTLeXVNLVrg15cEDwd\nlV8PVscT/KT0bfNzKI80qBq8LyRmauAqP0CDjayYGb2UAabnhefgmRY6aBE5mXxd\nbyAEzzCS3vDxjeTD8v8nbDq+SD6lJi0i7jgwEfNDhe9XK50baK15Udc8Cr/ZlhGM\njNmWqBd0jIpaZm1rzWA0k4VwXtDwpBXSz8oBFshiXs3FD6jHY2IhOR3ppbyd4qRU\npwIDAQABo2MwYTAOBgNVHQ8BAf8EBAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNV\nHQ4EFgQUtfNLxuXWS9DlgGuMUMNnW7yx83EwHwYDVR0jBBgwFoAUtfNLxuXWS9Dl\ngGuMUMNnW7yx83EwDQYJKoZIhvcNAQELBQADggIBABUeiryS0qjykBN75aoHO9bV\nPrrX+DSJIB9V2YzkFVyh/io65QJMG8naWVGOSpVRwUwhZVKh3JVp/miPgzTGAo7z\nhrDIoXc+ih7orAMb19qol/2Ha8OZLa75LojJNRbZoCR5C+gM8C+spMLjFf9k3JVx\ndajhtRUcR0zYhwsBS7qZ5Me0d6gRXD0ZiSbadMMxSw6KfKk3ePmPb9gX+MRTS63c\n8mLzVYB/3fe/bkpq4RUwzUHvoZf+SUD7NzSQRQQMfvAHlxk11TVNxScYPtxXDyiy\n3Cssl9gWrrWqQ/omuHipoH62J7h8KAYbr6oEIq+Czuenc3eCIBGBBfvCpuFOgckA\nXXE4MlBasEU0MO66GrTCgMt9bAmSw3TrRP12+ZUFxYNtqWluRU8JWQ4FCCPcz9pg\nMRBOgn4lTxDZG+I47OKNuSRjFEP94cdgxd3H/5BK7WHUz1tAGQ4BgepSXgmjzifF\nT5FVTDTl3ZnWUVBXiHYtbOBgLiSIkbqGMCLtrBtFIeQ7RRTb3L+IE9R0UB0cJB3A\nXbf1lVkOcmrdu2h8A32aCwtr5S1fBF1unlG7imPmqJfpOMWa8yIF/KWVm29JAPq8\nLrsybb0z5gg8w7ZblEuB9zOW9M3l60DXuJO6l7g+deV6P96rv2unHS8UlvWiVWDy\n9qfgAJizyy3kqM4lOwBH\n-----END CERTIFICATE-----"
+							]
+						}
+					}
+				]
+			}
+		},
+
+		// Let us now run the telegram experiment
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.5,
+				"max_value": 0.75
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "telegram",
+				"report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
+				"targets": [
+					{
+						"run": "http-address@v1",
+						"with": {
+							"ip_address": "149.154.175.50",
+							"http_method": "POST",
+							"port": 443
+						}
+					},
+					{
+						"run": "http-address@v1",
+						"with": {
+							"ip_address": "149.154.175.50",
+							"http_method": "POST",
+							"port": 80
+						}
+					},
+					{
+						"run": "https-domain@v1",
+						"with": {
+							"domain": "web.telegram.org",
+							"http_header_host": "web.telegram.org",
+							"http_method": "GET",
+							"port": 443,
+							"tls_server_name": "web.telegram.org"
+						}
+					}
+				]
+			}
+		},
+
+		// Let us now run the whatsapp experiment
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.75,
+				"max_value": 1
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "whatsapp",
+				"report_id": "20230406T142431Z_whatsapp_IT_30722_n1_lMVwxE4oAaZ00mIM",
+				"targets": [
+					{
+						"run": "tcp-connect-domain@v1",
+						"with": {
+							"domain": "e1.whatsapp.net",
+							"port": 443
+						}
+					},
+					{
+						"run": "tcp-connect-domain@v1",
+						"with": {
+							"domain": "e1.whatsapp.net",
+							"port": 5222
+						}
+					},
+					{
+						"run": "tcp-connect-domain@v1",
+						"with": {
+							"domain": "e2.whatsapp.net",
+							"port": 443
+						}
+					},
+					{
+						"run": "tcp-connect-domain@v1",
+						"with": {
+							"domain": "e2.whatsapp.net",
+							"port": 5222
+						}
+					},
+					{
+						"run": "https-domain@v1",
+						"with": {
+							"domain": "v.whatsapp.net",
+							"http_header_host": "v.whatsapp.net",
+							"http_method": "GET",
+							"port": 443,
+							"tls_server_name": "v.whatsapp.net",
+							"url_path": "/v2/register"
+						}
+					},
+					{
+						"run": "https-domain@v1",
+						"with": {
+							"domain": "web.whatsapp.com",
+							"http_header_host": "web.whatsapp.com",
+							"http_method": "GET",
+							"port": 443,
+							"tls_server_name": "web.whatsapp.com"
+						}
+					}
+				]
+			}
+		},
+
+		// Now it's time to run the performance suite
+		{
+			"run": "ui:draw_card@v1",
+			"with": {
+				"suite": "performance"
+			}
+		},
+
+		// First we run the dash experiment
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0,
+				"max_value": 0.25
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "dash",
+				"report_id": "20230406T142431Z_dash_IT_30722_n1_ldAWcG94R1xigSo2"
+			}
+		},
+
+		// Then we run the NDT experiment
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.25,
+				"max_value": 0.5
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "ndt",
+				"report_id": "20230406T142431Z_ndt_IT_30722_n1_yXHa0JH88iYyBdVh"
+			}
+		},
+
+		// Then run the HHFM experiment
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.5,
+				"max_value": 0.75
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "http_header_field_manipulation",
+				"report_id": "20230406T142431Z_httpheaderfieldmanipulation_IT_30722_n1_LSFoxGt03W9TFQYv",
+				"test_helpers": {
+					"http-return-json-headers": [
+						{
+							"address": "http://37.218.241.94:80",
+							"type": "legacy"
+						},
+						{
+							"address": "http://37.218.241.94:80",
+							"type": "legacy"
+						}
+					]
+				}
+			}
+		},
+
+		// Then we run the HIRL experiment
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.75,
+				"max_value": 0.1
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "http_invalid_request_line",
+				"report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
+				"test_helpers": {
+					"tcp-echo": [
+						{
+							"address": "37.218.241.93",
+							"type": "legacy"
+						},
+						{
+							"address": "37.218.241.93",
+							"type": "legacy"
+						}
+					]
+				}
+			}
+		},
+
+		// Now it's time to run the circumvention suite
+		{
+			"run": "ui:draw_card@v1",
+			"with": {
+				"suite": "circumvention"
+			}
+		},
+
+		// We run the psiphon experiment first
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0,
+				"max_value": 0.5
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "psiphon",
+				"report_id": "20230406T142431Z_psiphon_IT_30722_n1_JndR2OBVs9h2UY4c"
+			}
+		},
+
+		// Then we run the tor experiment
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.5,
+				"max_value": 1
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "tor",
+				"report_id": "20230406T142431Z_tor_IT_30722_n1_yC3sir64oGz2zS2o"
+			}
+		},
+
+		// Now it is time to run the experimental suite.
+		{
+			"run": "ui:draw_card@v1",
+			"with": {
+				"suite": "experimental"
+			}
+		},
+
+		// Let us run the dnscheck experiment
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0,
+				"max_value": 0.2
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "dnscheck",
+				"report_id": "20230406T142431Z_dnscheck_IT_30722_n1_CtRwDkl5cJFLrsDn",
+
+				// Note how we're now able to control whether to run
+				// dnscheck and which targets to select.
+				"targets": [
+					{
+						"attributes": {},
+						"input": "https://dns.google/dns-query",
+						"options": {}
+					},
+					{
+						"attributes": {},
+						"input": "https://8.8.8.8/dns-query",
+						"options": {}
+					},
+					{
+						"attributes": {},
+						"input": "https://cloudflare-dns.com/dns-query",
+						"options": {}
+					},
+					{
+						"attributes": {},
+						"input": "https://1.1.1.1/dns-query",
+						"options": {}
+					}
+				]
+			}
+		},
+
+		// Let us now run the stun_reachability experiment
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.2,
+				"max_value": 0.4
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "stun_reachability",
+				"report_id": "20230406T142431Z_stunreachability_IT_30722_n1_8vFVXzjCjfUFbOA5",
+				"targets": [
+					{
+						"attributes": {},
+						"input": "stun://stun.voip.blackberry.com:3478",
+						"options": {}
+					},
+					{
+						"attributes": {},
+						"input": "stun://stun.antisip.com:3478",
+						"options": {}
+					}
+				]
+			}
+		},
+
+		// Let us now run torsf
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.4,
+				"max_value": 0.6
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "torsf",
+				"report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5"
+			}
+		},
+
+		// Let us now run vanilla_tor
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.6,
+				"max_value": 0.8
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "vanilla_tor",
+				"report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy"
+			}
+		},
+
+		// Now let's run urlgetter to collect some
+		// experimental measurements
+		{
+			"run": "ui:set_progress_bar@v1",
+			"with": {
+				"initial_value": 0.8,
+				"max_value": 1
+			}
+		},
+		{
+			"run": "nettest:run@v1",
+			"with": {
+				"nettest_name": "urlgetter",
+				"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
+				"targets": [
+					{
+						"annotations": {
+							"check_type": "tls"
+						},
+						"input": "https://8.8.8.8/",
+						"options": {
+							"HTTPHost": "dns.google",
+							"TLSServerName": "dns.google"
+						}
+					},
+					{
+						"annotations": {
+							"check_type": "quic"
+						},
+						"input": "https://8.8.8.8/",
+						"options": {
+							"HTTP3Enabled": true,
+							"HTTPHost": "dns.google",
+							"TLSServerName": "dns.google"
+						}
+					}
+				]
+			}
+		}
+	],
+	"v": 2
+}

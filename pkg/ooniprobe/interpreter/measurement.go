@@ -1,8 +1,11 @@
-package runner
+package interpreter
+
+//
+// measurement.go contains code to create and scrub measurements
+//
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"runtime"
 	"time"
@@ -14,78 +17,16 @@ import (
 	"github.com/ooni/probe-engine/pkg/version"
 )
 
-// runMeasurement measures the given measurement target.
-func (s *State) runMeasurement(
-	ctx context.Context,
-	plan *modelx.RunnerPlan,
-	rd *modelx.ReportDescriptor,
-	t0 time.Time,
-	callbacks model.ExperimentCallbacks,
-	target *modelx.MeasurementTarget,
-) error {
-	// make sure we know both the IPv4 and the IPv6 locations
-	runtimex.Assert(
-		s.location.IPv4 != nil && s.location.IPv6 != nil,
-		"either location.IPv4 is nil or location.IPv6 is nil",
-	)
-
-	// create the nettest instance
-	nettest, err := s.newNettest(rd.NettestName, target.Options)
-	if err != nil {
-		return err
-	}
-
-	// create a new measurement instance
-	meas := s.newMeasurement(rd, nettest, t0, target)
-
-	// make sure we include extra annotations
-	meas.AddAnnotations(target.Annotations)
-
-	// TODO(bassosimone): once ooniprobe uses this code, we may want
-	// to modify the way we interface with experiments such that a single
-	// run takes richer input from the target struct
-
-	// create session
-	session := s.newSession(s.logger, plan.Conf.TestHelpers)
-
-	// fill the nettest arguments
-	args := &model.ExperimentArgs{
-		Callbacks:   callbacks,
-		Measurement: meas,
-		Session:     session,
-	}
-
-	// perform the measurement
-	if err := nettest.Run(ctx, args); err != nil {
-		return err
-	}
-
-	// in case the context expired, consider the measurement failed
-	if err := ctx.Err(); err != nil {
-		return err
-	}
-
-	// scrub the IP addresses from the measurement
-	meas, err = s.scrubMeasurement(meas)
-	if err != nil {
-		return err
-	}
-
-	// TODO(bassosimone): we should also save the measurement summary.
-
-	// save the measurement
-	return s.saver.SaveMeasurement(ctx, meas)
-}
-
 // measurementDateFormat is the date format used by a measurement.
 const measurementDateFormat = "2006-01-02 15:04:05"
 
 // newMeasurement creates a new [model.Measurement] instance.
-func (s *State) newMeasurement(
-	rd *modelx.ReportDescriptor,
-	nettest runnerNettest,
+func newMeasurement(
+	exp model.ExperimentMeasurer,
+	input model.MeasurementTarget,
+	ix *Interpreter,
+	reportID string,
 	t0 time.Time,
-	target *modelx.MeasurementTarget,
 ) *model.Measurement {
 	utctimenow := time.Now().UTC()
 
@@ -96,22 +37,22 @@ func (s *State) newMeasurement(
 
 	meas := &model.Measurement{
 		DataFormatVersion:         model.OOAPIReportDefaultDataFormatVersion,
-		Input:                     model.MeasurementTarget(target.Input),
+		Input:                     model.MeasurementTarget(input),
 		MeasurementStartTime:      utctimenow.Format(measurementDateFormat),
 		MeasurementStartTimeSaved: utctimenow,
 		ProbeIP:                   model.DefaultProbeIP,
-		ProbeASN:                  s.location.IPv4.ProbeASN.String(),
-		ProbeCC:                   s.location.IPv4.ProbeCC,
-		ProbeNetworkName:          s.location.IPv4.ProbeNetworkName,
-		ReportID:                  rd.ReportID,
-		ResolverASN:               s.location.IPv4.ResolverASN.String(),
-		ResolverIP:                s.location.IPv4.ResolverIP,
-		ResolverNetworkName:       s.location.IPv4.ResolverNetworkName,
-		SoftwareName:              s.softwareName,
-		SoftwareVersion:           s.softwareVersion,
-		TestName:                  nettest.ExperimentName(),
+		ProbeASN:                  ix.location.IPv4.ProbeASN.String(),
+		ProbeCC:                   ix.location.IPv4.ProbeCC,
+		ProbeNetworkName:          ix.location.IPv4.ProbeNetworkName,
+		ReportID:                  reportID,
+		ResolverASN:               ix.location.IPv4.ResolverASN.String(),
+		ResolverIP:                ix.location.IPv4.ResolverIP,
+		ResolverNetworkName:       ix.location.IPv4.ResolverNetworkName,
+		SoftwareName:              ix.softwareName,
+		SoftwareVersion:           ix.softwareVersion,
+		TestName:                  exp.ExperimentName(),
 		TestStartTime:             t0.Format(measurementDateFormat),
-		TestVersion:               nettest.ExperimentVersion(),
+		TestVersion:               exp.ExperimentVersion(),
 	}
 
 	meas.AddAnnotation("architecture", runtime.GOARCH)
@@ -135,7 +76,8 @@ const scrubbed = `[scrubbed]`
 // value is another measurement that has been scrubbed. For safety reasons,
 // this function MUTATES the measurement passed as argument such that it
 // is empty after this function has returned.
-func (s *State) scrubMeasurement(incoming *model.Measurement) (*model.Measurement, error) {
+func scrubMeasurement(
+	incoming *model.Measurement, location *modelx.ProbeLocation) (*model.Measurement, error) {
 	// TODO(bassosimone): this code should replace the code that we
 	// currently use for scrubbing measurements
 
@@ -151,8 +93,8 @@ func (s *State) scrubMeasurement(incoming *model.Measurement) (*model.Measuremen
 
 	// compute the list of values to scrub
 	ips := []string{
-		s.location.IPv4.ProbeIP,
-		s.location.IPv6.ProbeIP,
+		location.IPv4.ProbeIP,
+		location.IPv6.ProbeIP,
 	}
 
 	// scrub each value we would need to scrub

@@ -1,4 +1,4 @@
-package nettestlet
+package mininettest
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	enginemodel "github.com/ooni/probe-engine/pkg/model"
 )
 
-// Environment is the environment in which we run nettestlet. The zero value
+// Environment is the environment in which we run mininettest. The zero value
 // of this structure is invalid; use [NewEnvironment] to instantiate.
 type Environment struct {
 	// idGenerator is used to generate identifiers.
@@ -33,17 +33,17 @@ func NewEnvironment(logger enginemodel.Logger, zeroTime time.Time) *Environment 
 	}
 }
 
-// ErrNoSuchNettestlet indicates a given nettestlet does not exist.
-var ErrNoSuchNettestlet = errors.New("nettestlet: no such nettestlet")
+// ErrNoSuchNettestlet indicates a given mininettest does not exist.
+var ErrNoSuchNettestlet = errors.New("mininettest: no such mininettest")
 
-// Run runs the given nettestlet in the current goroutine. This function only
+// Run runs the given mininettest in the current goroutine. This function only
 // returns an error only in case a fundamental error has occurred (e.g., not
 // being able to parse the descriptor With field).
 func (env *Environment) Run(
 	ctx context.Context,
-	descr *modelx.NettestletDescriptor,
+	descr *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
-	switch descr.Uses {
+	switch descr.Run {
 	case "dns-lookup@v1":
 		return env.dnsLookupV1Main(ctx, descr)
 

@@ -1,4 +1,4 @@
-package nettestlet
+package mininettest
 
 import (
 	"context"
@@ -39,20 +39,20 @@ type httpsDomainV1Config struct {
 	// URLPath is the URL path to use.
 	URLPath string `json:"url_path"`
 
-	// X509CertPool contains OPTIONAL TLS root CAs.
-	X509CertPool []string `json:"x509_cert_pool"`
+	// X509Certs contains OPTIONAL TLS root CAs.
+	X509Certs []string `json:"x509_certs"`
 }
 
 // ErrCannotParseTLSCert indicates we could not parse a TLS cert.
-var ErrCannotParseTLSCert = errors.New("nettestlet: cannot parse TLS cert")
+var ErrCannotParseTLSCert = errors.New("mininettest: cannot parse TLS cert")
 
 // tlsHandshakeOptions returns the list of TLS handshake options to apply.
 func (c *httpsDomainV1Config) tlsHandshakeOptions() (out []dslx.TLSHandshakeOption, err error) {
 	out = append(out, dslx.TLSHandshakeOptionServerName(c.TLSServerName))
 	out = append(out, dslx.TLSHandshakeOptionNextProto([]string{"h2", "http/1.1"}))
-	if len(c.X509CertPool) > 0 {
+	if len(c.X509Certs) > 0 {
 		pool := x509.NewCertPool()
-		for _, entry := range c.X509CertPool {
+		for _, entry := range c.X509Certs {
 			if !pool.AppendCertsFromPEM([]byte(entry)) {
 				return nil, ErrCannotParseTLSCert
 			}
@@ -65,7 +65,7 @@ func (c *httpsDomainV1Config) tlsHandshakeOptions() (out []dslx.TLSHandshakeOpti
 // httpsDomainV1Main is the main function of https-domain@v1.
 func (env *Environment) httpsDomainV1Main(
 	ctx context.Context,
-	desc *modelx.NettestletDescriptor,
+	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config httpsDomainV1Config
@@ -79,7 +79,7 @@ func (env *Environment) httpsDomainV1Main(
 		dslx.DNSLookupOptionIDGenerator(env.idGenerator),
 		dslx.DNSLookupOptionLogger(env.logger),
 		dslx.DNSLookupOptionZeroTime(env.zeroTime),
-		dslx.DNSLookupOptionTags(desc.Name),
+		dslx.DNSLookupOptionTags(desc.ID),
 	)
 
 	// create function that performs the DNS lookup
@@ -126,7 +126,7 @@ func (env *Environment) httpsDomainV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
-		dslx.EndpointOptionTags(desc.Name),
+		dslx.EndpointOptionTags(desc.ID),
 	)
 
 	// perform all the TCP connects that we need

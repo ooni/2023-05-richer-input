@@ -1,4 +1,4 @@
-package nettestlet
+package mininettest
 
 import (
 	"context"
@@ -40,7 +40,7 @@ type httpDomainV1Config struct {
 // httpDomainV1Main is the main function of http-domain@v1.
 func (env *Environment) httpDomainV1Main(
 	ctx context.Context,
-	desc *modelx.NettestletDescriptor,
+	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config httpDomainV1Config
@@ -54,7 +54,7 @@ func (env *Environment) httpDomainV1Main(
 		dslx.DNSLookupOptionIDGenerator(env.idGenerator),
 		dslx.DNSLookupOptionLogger(env.logger),
 		dslx.DNSLookupOptionZeroTime(env.zeroTime),
-		dslx.DNSLookupOptionTags(desc.Name),
+		dslx.DNSLookupOptionTags(desc.ID),
 	)
 
 	// create function that performs the DNS lookup
@@ -94,7 +94,7 @@ func (env *Environment) httpDomainV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
-		dslx.EndpointOptionTags(desc.Name),
+		dslx.EndpointOptionTags(desc.ID),
 	)
 
 	// perform all the HTTP transactions we need
@@ -145,7 +145,7 @@ type httpAddressV1Config struct {
 // httpAddressV1Main is the main function of http-address@v1.
 func (env *Environment) httpAddressV1Main(
 	ctx context.Context,
-	desc *modelx.NettestletDescriptor,
+	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config httpAddressV1Config
@@ -177,7 +177,7 @@ func (env *Environment) httpAddressV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
-		dslx.EndpointOptionTags(desc.Name),
+		dslx.EndpointOptionTags(desc.ID),
 	)
 
 	// perform all the HTTP round trips that we need

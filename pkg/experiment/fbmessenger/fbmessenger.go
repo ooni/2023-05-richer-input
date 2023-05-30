@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/analysis"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/mininettest"
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/nettestlet"
 	"github.com/ooni/probe-engine/pkg/dslx"
 	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/ooni/probe-engine/pkg/optional"
@@ -52,12 +52,6 @@ func (m *Measurer) GetSummaryKeys(*model.Measurement) (any, error) {
 	return sk, nil
 }
 
-// Options contains the options controlling this experiment.
-type Options struct {
-	// Nettestlets is the list of nettestlets to run.
-	Nettestlets []modelx.NettestletDescriptor `json:"nettestlets"`
-}
-
 // TestKeys contains the experiment test keys.
 type TestKeys struct {
 	// The TestKeys embed Observations.
@@ -85,14 +79,14 @@ type TestKeys struct {
 
 // Run implements model.ExperimentMeasurer
 func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
-	// parse options
-	var options Options
-	if err := json.Unmarshal(m.RawOptions, &options); err != nil {
+	// parse the mini nettests
+	var miniNettests []modelx.MiniNettestDescriptor
+	if err := json.Unmarshal(m.RawOptions, &miniNettests); err != nil {
 		return err
 	}
 
 	// instantiate the nettestlet environment
-	env := nettestlet.NewEnvironment(
+	env := mininettest.NewEnvironment(
 		args.Session.Logger(),
 		args.Measurement.MeasurementStartTimeSaved,
 	)
@@ -110,16 +104,16 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 
 	// execute the nettestlets
 	var completed int
-	for _, descr := range options.Nettestlets {
+	for _, descr := range miniNettests {
 		observations, err := env.Run(ctx, &descr)
 		if err != nil {
 			return err
 		}
-		tk.runAnalysis(args.Session.Logger(), descr.Name, observations)
-		tk.Observations = nettestlet.MergeObservations(tk.Observations, observations)
+		tk.runAnalysis(args.Session.Logger(), descr.ID, observations)
+		tk.Observations = mininettest.MergeObservations(tk.Observations, observations)
 		completed++
 		args.Callbacks.OnProgress(
-			float64(completed)/float64(len(options.Nettestlets)),
+			float64(completed)/float64(len(miniNettests)),
 			"fbmessenger",
 		)
 	}
@@ -138,9 +132,9 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 	return nil
 }
 
-// runAnalysis MUTATES the test keys using the given observations and nettestlet name.
+// runAnalysis MUTATES the test keys using the given observations and mininettest name.
 func (tk *TestKeys) runAnalysis(logger model.Logger, name string, observations *dslx.Observations) {
-	// select what to do depending on the name of the nettestlet
+	// select what to do depending on the name of the mininettest
 	switch name {
 	case "fbmessenger-stun":
 		placeholder := optional.None[bool]()

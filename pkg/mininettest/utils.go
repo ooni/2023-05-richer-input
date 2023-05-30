@@ -1,4 +1,4 @@
-package nettestlet
+package mininettest
 
 import (
 	"github.com/ooni/probe-engine/pkg/dslx"

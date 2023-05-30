@@ -1,4 +1,9 @@
-package runner
+package interpreter
+
+//
+// session.go contains code to create a model.ExperimentSession. This is a data
+// type required by the current OONI probe engine to execute experiments.
+//
 
 import (
 	"context"
@@ -9,94 +14,95 @@ import (
 	"github.com/ooni/probe-engine/pkg/model"
 )
 
-// newSession creates a [model.ExperimentSession] instance.
-func (s *State) newSession(
+// newSession creates a new [model.ExperimentSession] instance.
+func newSession(
+	location *modelx.ProbeLocation,
 	logger model.Logger,
 	testHelpers map[string][]model.OOAPIService,
 ) model.ExperimentSession {
-	return &runnerSession{
-		location:    s.location,
+	return &session{
+		location:    location,
 		logger:      logger,
 		testHelpers: testHelpers,
 	}
 }
 
-// runnerSession is the [model.ExperimentSession] returned by [State.newSession]
-type runnerSession struct {
+// session is the [model.ExperimentSession] returned by [State.newSession]
+type session struct {
 	location    *modelx.ProbeLocation
 	logger      model.Logger
 	testHelpers map[string][]model.OOAPIService
 }
 
-var _ model.ExperimentSession = &runnerSession{}
+var _ model.ExperimentSession = &session{}
 
 // DefaultHTTPClient implements model.ExperimentSession
-func (rs *runnerSession) DefaultHTTPClient() model.HTTPClient {
+func (s *session) DefaultHTTPClient() model.HTTPClient {
 	// TODO(bassosimone): stub
 	return http.DefaultClient
 }
 
 // FetchPsiphonConfig implements model.ExperimentSession
-func (rs *runnerSession) FetchPsiphonConfig(ctx context.Context) ([]byte, error) {
+func (s *session) FetchPsiphonConfig(ctx context.Context) ([]byte, error) {
 	// TODO(bassosimone): stub
 	return nil, errors.New("not implemented")
 }
 
 // FetchTorTargets implements model.ExperimentSession
-func (rs *runnerSession) FetchTorTargets(ctx context.Context, cc string) (map[string]model.OOAPITorTarget, error) {
+func (s *session) FetchTorTargets(ctx context.Context, cc string) (map[string]model.OOAPITorTarget, error) {
 	// TODO(bassosimone): stub
 	return nil, errors.New("not implemented")
 }
 
-// GetTestHelpersByName implements model.ExperimentSession
-func (rs *runnerSession) GetTestHelpersByName(name string) ([]model.OOAPIService, bool) {
-	svc, good := rs.testHelpers[name]
+// GetTestHelpesByName implements model.ExperimentSession
+func (s *session) GetTestHelpersByName(name string) ([]model.OOAPIService, bool) {
+	svc, good := s.testHelpers[name]
 	return svc, good
 }
 
 // Logger implements model.ExperimentSession
-func (rs *runnerSession) Logger() model.Logger {
-	return rs.logger
+func (s *session) Logger() model.Logger {
+	return s.logger
 }
 
 // ProbeCC implements model.ExperimentSession
-func (rs *runnerSession) ProbeCC() string {
+func (s *session) ProbeCC() string {
 	// TODO(bassosimone): stub
-	return rs.location.IPv4.ProbeCC
+	return s.location.IPv4.ProbeCC
 }
 
 // ResolverIP implements model.ExperimentSession
-func (rs *runnerSession) ResolverIP() string {
+func (s *session) ResolverIP() string {
 	// TODO(bassosimone): stub
-	return rs.location.IPv4.ResolverIP
+	return s.location.IPv4.ResolverIP
 }
 
 // TempDir implements model.ExperimentSession
-func (rs *runnerSession) TempDir() string {
+func (s *session) TempDir() string {
 	// TODO(bassosimone): stub
 	return "/tmp"
 }
 
 // TorArgs implements model.ExperimentSession
-func (rs *runnerSession) TorArgs() []string {
+func (s *session) TorArgs() []string {
 	// TODO(bassosimone): stub
 	return nil
 }
 
 // TorBinary implements model.ExperimentSession
-func (rs *runnerSession) TorBinary() string {
+func (s *session) TorBinary() string {
 	// TODO(bassosimone): stub
 	return "tor"
 }
 
 // TunnelDir implements model.ExperimentSession
-func (rs *runnerSession) TunnelDir() string {
+func (s *session) TunnelDir() string {
 	// TODO(bassosimone): stub
 	return "/tmp"
 }
 
 // UserAgent implements model.ExperimentSession
-func (rs *runnerSession) UserAgent() string {
+func (s *session) UserAgent() string {
 	// TODO(bassosimone): stub
 	return "miniooni/0.1.0-dev"
 }

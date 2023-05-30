@@ -5,8 +5,8 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/mininettest"
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/nettestlet"
 	"github.com/ooni/probe-engine/pkg/dslx"
 	"github.com/ooni/probe-engine/pkg/model"
 )
@@ -50,22 +50,16 @@ func (m *Measurer) GetSummaryKeys(*model.Measurement) (any, error) {
 	return sk, nil
 }
 
-// Options contains the options controlling this experiment.
-type Options struct {
-	// Nettestlets is the list of nettestlets to run.
-	Nettestlets []modelx.NettestletDescriptor `json:"nettestlets"`
-}
-
 // Run implements model.ExperimentMeasurer
 func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
-	// parse options
-	var options Options
-	if err := json.Unmarshal(m.RawOptions, &options); err != nil {
+	// parse the mini nettests
+	var miniNettests []modelx.MiniNettestDescriptor
+	if err := json.Unmarshal(m.RawOptions, &miniNettests); err != nil {
 		return err
 	}
 
-	// instantiate the nettestlet environment
-	env := nettestlet.NewEnvironment(
+	// instantiate the mininettest environment
+	env := mininettest.NewEnvironment(
 		args.Session.Logger(),
 		args.Measurement.MeasurementStartTimeSaved,
 	)
@@ -80,17 +74,17 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 		QUICHandshakes: []*model.ArchivalTLSOrQUICHandshakeResult{},
 	}
 
-	// execute the nettestlets
+	// execute the mininettests
 	var completed int
-	for _, descr := range options.Nettestlets {
+	for _, descr := range miniNettests {
 		observations, err := env.Run(ctx, &descr)
 		if err != nil {
 			return err
 		}
-		tk = nettestlet.MergeObservations(tk, observations)
+		tk = mininettest.MergeObservations(tk, observations)
 		completed++
 		args.Callbacks.OnProgress(
-			float64(completed)/float64(len(options.Nettestlets)),
+			float64(completed)/float64(len(miniNettests)),
 			"telegram",
 		)
 	}

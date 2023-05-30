@@ -35,7 +35,7 @@ func newOutputWithLogfile(logfile string, verbose bool) (*Output, error) {
 	}
 	output := &Output{
 		Logger: fileLogger,
-		View:   NewProgressView(true),
+		View:   NewProgressView(),
 	}
 	return output, nil
 }
@@ -44,7 +44,7 @@ func newOutputWithLogfile(logfile string, verbose bool) (*Output, error) {
 func newOutputStdout(verbose bool) (*Output, error) {
 	output := &Output{
 		Logger: NewStdoutLogger(verbose),
-		View:   NewProgressView(false),
+		View:   NewProgressView(),
 	}
 	return output, nil
 }

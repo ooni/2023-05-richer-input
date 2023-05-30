@@ -1,4 +1,4 @@
-package nettestlet
+package mininettest
 
 import (
 	"context"
@@ -22,7 +22,7 @@ type tcpConnectAddressV1Config struct {
 // tcpConnectAddressV1Main is the main function of tcp-connect-address@v1.
 func (env *Environment) tcpConnectAddressV1Main(
 	ctx context.Context,
-	desc *modelx.NettestletDescriptor,
+	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config tcpConnectAddressV1Config
@@ -44,7 +44,7 @@ func (env *Environment) tcpConnectAddressV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
-		dslx.EndpointOptionTags(desc.Name),
+		dslx.EndpointOptionTags(desc.ID),
 	)
 
 	// perform the measurement
@@ -72,7 +72,7 @@ type tcpConnectDomainV1Config struct {
 // tcpConnectDomainV1Main is the main function of tcp-connect-domain@v1.
 func (env *Environment) tcpConnectDomainV1Main(
 	ctx context.Context,
-	desc *modelx.NettestletDescriptor,
+	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
 	var config tcpConnectDomainV1Config
@@ -86,7 +86,7 @@ func (env *Environment) tcpConnectDomainV1Main(
 		dslx.DNSLookupOptionIDGenerator(env.idGenerator),
 		dslx.DNSLookupOptionLogger(env.logger),
 		dslx.DNSLookupOptionZeroTime(env.zeroTime),
-		dslx.DNSLookupOptionTags(desc.Name),
+		dslx.DNSLookupOptionTags(desc.ID),
 	)
 
 	// create function that performs the DNS lookup
@@ -115,7 +115,7 @@ func (env *Environment) tcpConnectDomainV1Main(
 		dslx.EndpointOptionIDGenerator(env.idGenerator),
 		dslx.EndpointOptionLogger(env.logger),
 		dslx.EndpointOptionZeroTime(env.zeroTime),
-		dslx.EndpointOptionTags(desc.Name),
+		dslx.EndpointOptionTags(desc.ID),
 	)
 
 	// perform all the TCP connects that we need

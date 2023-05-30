@@ -11,9 +11,10 @@ import (
 	"time"
 
 	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/ooniprobe/runner"
+	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/ooniprobe/interpreter"
 	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/spf13/cobra"
+	"github.com/tailscale/hujson"
 )
 
 func newRunxSubcommand() *cobra.Command {
@@ -61,14 +62,14 @@ func newRunxSubcommand() *cobra.Command {
 		"path of the output report file",
 	)
 
-	// register the required --runner-plan flag
+	// register the required --script flag
 	cmd.Flags().StringVar(
-		&state.checkIn,
-		"runner-plan",
+		&state.script,
+		"script",
 		"",
-		"path of the input runner-plan file",
+		"path of the input script file",
 	)
-	cmd.MarkFlagRequired("runner-plan")
+	cmd.MarkFlagRequired("script")
 
 	// register the --suite flag
 	cmd.Flags().StringSliceVar(
@@ -83,9 +84,6 @@ func newRunxSubcommand() *cobra.Command {
 
 // runxSubcommand contains the state bound to the runx subcommand.
 type runxSubcommand struct {
-	// checkIn is the name of the file containing the check-in response.
-	checkIn string
-
 	// enabledNettests contains the enabled nettests.
 	enabledNettests []string
 
@@ -100,12 +98,15 @@ type runxSubcommand struct {
 
 	// output is the name of the output file
 	output string
+
+	// script is the name of the file containing the script to run.
+	script string
 }
 
 // Main is the main of the [runxSubcommand]
 func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
-	// load the check-in response from disk
-	plan, err := sc.loadRunnerPlan()
+	// load script from disk
+	script, err := sc.loadScript()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: loadRunnerPlan: %s\n", err.Error())
 		os.Exit(1)
@@ -137,11 +138,10 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 	// make sure we intercept the standard library logger
 	log.SetOutput(output.Logger)
 
-	// create the runner state
-	rs := runner.NewState(
+	// create the interpreter
+	ix := interpreter.New(
 		location,
 		output.Logger,
-		output.View,
 		mw,
 		&runxSettings{
 			enabledNettests: sc.enabledNettests,
@@ -149,13 +149,14 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 		},
 		"miniooni",
 		"0.1.0-dev",
+		output.View,
 	)
 
 	// create context
 	ctx := context.Background()
 
 	// perform all the measurements
-	if err := rs.Run(ctx, plan); err != nil {
+	if err := ix.Run(ctx, script); err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: rs.Run: %s\n", err.Error())
 		os.Exit(1)
 	}
@@ -167,17 +168,26 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 	}
 }
 
-// loadRunnerPlan loads the runner-plan from file
-func (sc *runxSubcommand) loadRunnerPlan() (*modelx.RunnerPlan, error) {
-	data, err := os.ReadFile(sc.checkIn)
+// loadScript loads the script from file.
+func (sc *runxSubcommand) loadScript() (*modelx.InterpreterScript, error) {
+	// read raw script
+	data, err := os.ReadFile(sc.script)
 	if err != nil {
 		return nil, err
 	}
-	var plan modelx.RunnerPlan
-	if err := json.Unmarshal(data, &plan); err != nil {
+
+	// make sure we remove comments
+	data, err = hujson.Standardize(data)
+	if err != nil {
 		return nil, err
 	}
-	return &plan, nil
+
+	// parse the script from JSON
+	var script modelx.InterpreterScript
+	if err := json.Unmarshal(data, &script); err != nil {
+		return nil, err
+	}
+	return &script, nil
 }
 
 // loadProbeLocation loads the probe location from file
