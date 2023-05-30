@@ -63,6 +63,7 @@ only discussing the most fundamental functionality). This file would
 probably look like this:
 
 ```JSON
+// file: location.json
 {
     "ipv4": {
         "probe_ip": "88.99.81.188",
@@ -91,6 +92,7 @@ Then, I could manually write or generate instructions telling the
 interpreter what to measure. For example:
 
 ```JSONC
+// file: simple.jsonc
 // A simple set of instructions for research.
 {
     "instructions": [
@@ -132,7 +134,7 @@ interpreter what to measure. For example:
 In the PoC, one could run this script as follows:
 
 ```console
-./ooniprobe runx --location location.jsonc --script simple.jsonc
+./ooniprobe runx --location location.json --script simple.jsonc
 ```
 
 The script consists of a sequence of instructions, and the interpreter
