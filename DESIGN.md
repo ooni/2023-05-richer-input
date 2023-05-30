@@ -27,13 +27,13 @@ allowing users to run nettests given (a) the probe location and (b)
 knowledge of what they wanted to measure. The OONI Probe implementation
 included in this PoC provides the same functionality. We obtained this
 functionality by taking existing code and factoring away all that was
-unnecessary by replacing large codebase swaths with data structures
-and interfaces. We will rebuild the rest of the OONI Probe around this
+unnecessary. We will rebuild the rest of the OONI Probe around this
 fundamental core.
 
 We call this fundamental core "the interpreter." This name is because we
 express "knowledge about what users want to measure" as a JSON document
-(with comments and other user-friendly syntactical sugar). This design
+(with comments and other user-friendly syntactical sugar) that the
+"interpreter" interprets. This design
 follows the typical split between mechanism and policy often seen in
 UNIX tools. The interpreter is the mechanism, and the JSON document,
 called the "script," allows users to tell the OONI Probe core what to do.
