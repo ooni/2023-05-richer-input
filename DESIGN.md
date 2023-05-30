@@ -482,6 +482,17 @@ address this issue as part of our future work. A possible solution
 to this issue consists of caching specific information, and refreshing
 the cache each time the check-in v2 completes successfully.
 
+## Forward compatibility: instructions and nettests
+
+The definition of unknown instructions encompasses both unknown
+instructions names and unknown versions. The same applies to nettests and
+mini nettests. At any given time, an interpreter must only implement a
+single version of the instructions and a single version of the nettests
+and the mini nettests. All other versions (future and past) are unknown.
+
+The interpreter will ignore unknown instructions, nettests, and mini
+nettests and only execute the ones it knows.
+
 ## Forward compatibility: breaking changes
 
 All OONI experiments have a minor version number of zero. If we need to
@@ -494,8 +505,7 @@ interpreter will assume that we mean version zero (e.g., "telegram@v0").
 This strategy allows us to serve multiple nettests inside the same
 script, with the understanding that the interpreter will only execute
 the version number that it knows about. Therefore, older OONI Probes
-could use "telegram@v0," and newer ones would instead use the more recent
-"telegram@v1" nettest.
+could use "telegram@v0," and newer ones would instead use "telegram@v1".
 
 ## Forward compatibility: OONI Run v2
 
@@ -505,14 +515,3 @@ whether the check-in v2 API will serve a script structure directly. In
 any case, eventually, OONI Run v2 information will translate into
 instructions related to (a) drawing the UI; (b) running nettests; and
 (c) saving measurements.
-
-## Forward compatibility: instructions and nettests
-
-The definition of unknown instructions encompasses both unknown
-instructions names and unknown versions. The same applies to nettests and
-mini nettests. At any given time, an interpreter must only implement a
-single version of the instructions and a single version of the nettests
-and the mini nettests. All other versions (future and past) are unknown.
-
-The interpreter will ignore unknown instructions, nettests, and mini
-nettests and only execute the ones it knows.
