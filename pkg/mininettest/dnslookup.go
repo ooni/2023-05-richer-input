@@ -8,7 +8,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
+	"github.com/ooni/2023-05-richer-input/pkg/modelx"
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 

@@ -1,4 +1,4 @@
-module github.com/bassosimone/2023-05-sbs-probe-spec
+module github.com/ooni/2023-05-richer-input
 
 go 1.19
 

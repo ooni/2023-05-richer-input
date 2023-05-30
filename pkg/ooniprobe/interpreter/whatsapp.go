@@ -8,8 +8,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/experiment/fbmessenger"
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
+	"github.com/ooni/2023-05-richer-input/pkg/experiment/fbmessenger"
+	"github.com/ooni/2023-05-richer-input/pkg/modelx"
 )
 
 // fbmessengerNettest is the facebook_messenger nettest.

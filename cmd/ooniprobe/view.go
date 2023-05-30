@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
+	"github.com/ooni/2023-05-richer-input/pkg/modelx"
 )
 
 // ProgressView is the view that emits progress. The zero value of this

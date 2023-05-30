@@ -8,8 +8,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/experiment/whatsapp"
-	"github.com/bassosimone/2023-05-sbs-probe-spec/pkg/modelx"
+	"github.com/ooni/2023-05-richer-input/pkg/experiment/whatsapp"
+	"github.com/ooni/2023-05-richer-input/pkg/modelx"
 )
 
 // whatsappNettest is the whatsapp nettest.
