@@ -64,26 +64,26 @@ probably look like this:
 
 ```JSON
 {
-	"ipv4": {
-		"probe_ip": "88.99.81.188",
-		"probe_asn": 24940,
-		"probe_cc": "DE",
-		"probe_network_name": "Hetzner Online GmbH",
-		"resolver_ip": "78.46.173.81",
-		"resolver_asn": 24940,
-		"resolver_cc": "DE",
-		"resolver_network_name": "Hetzner Online GmbH"
-	},
-	"ipv6": {
-		"probe_ip": "2a01:4f8:c012:8aa4::1",
-		"probe_asn": 24940,
-		"probe_cc": "DE",
-		"probe_network_name": "Hetzner Online GmbH",
-		"resolver_ip": "2a01:4f8:0:a231::add:2b",
-		"resolver_asn": 24940,
-		"resolver_cc": "DE",
-		"resolver_network_name": "Hetzner Online GmbH"
-	}
+    "ipv4": {
+        "probe_ip": "88.99.81.188",
+        "probe_asn": 24940,
+        "probe_cc": "DE",
+        "probe_network_name": "Hetzner Online GmbH",
+        "resolver_ip": "78.46.173.81",
+        "resolver_asn": 24940,
+        "resolver_cc": "DE",
+        "resolver_network_name": "Hetzner Online GmbH"
+    },
+    "ipv6": {
+        "probe_ip": "2a01:4f8:c012:8aa4::1",
+        "probe_asn": 24940,
+        "probe_cc": "DE",
+        "probe_network_name": "Hetzner Online GmbH",
+        "resolver_ip": "2a01:4f8:0:a231::add:2b",
+        "resolver_asn": 24940,
+        "resolver_cc": "DE",
+        "resolver_network_name": "Hetzner Online GmbH"
+    }
 }
 ```
 
@@ -93,39 +93,39 @@ interpreter what to measure. For example:
 ```JSONC
 // A simple set of instructions for research.
 {
-	"instructions": [
-		{
-			"run": "nettest:run@v1",
-			"with": {
-				"nettest_name": "urlgetter",
-				"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
-				"targets": [
-					{
-						"annotations": {
-							"check_type": "tls"
-						},
-						"input": "https://8.8.8.8/",
-						"options": {
-							"HTTPHost": "dns.google",
-							"TLSServerName": "dns.google"
-						}
-					},
-					{
-						"annotations": {
-							"check_type": "quic"
-						},
-						"input": "https://8.8.8.8/",
-						"options": {
-							"HTTP3Enabled": true,
-							"HTTPHost": "dns.google",
-							"TLSServerName": "dns.google"
-						}
-					}
-				]
-			}
-		}
-	],
-	"v": 2
+    "instructions": [
+        {
+            "run": "nettest:run@v1",
+            "with": {
+                "nettest_name": "urlgetter",
+                "report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
+                "targets": [
+                    {
+                        "annotations": {
+                            "check_type": "tls"
+                        },
+                        "input": "https://8.8.8.8/",
+                        "options": {
+                            "HTTPHost": "dns.google",
+                            "TLSServerName": "dns.google"
+                        }
+                    },
+                    {
+                        "annotations": {
+                            "check_type": "quic"
+                        },
+                        "input": "https://8.8.8.8/",
+                        "options": {
+                            "HTTP3Enabled": true,
+                            "HTTPHost": "dns.google",
+                            "TLSServerName": "dns.google"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "v": 2
 }
 ```
 
@@ -156,25 +156,25 @@ snippet shows how to include test helpers' information:
 
 ```JSONC
 // ...
-		{
-			"run": "nettest:run@v1",
-			"with": {
-				"nettest_name": "http_invalid_request_line",
-				"report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
-				"test_helpers": {
-					"tcp-echo": [
-						{
-							"address": "37.218.241.93",
-							"type": "legacy"
-						},
-						{
-							"address": "37.218.241.93",
-							"type": "legacy"
-						}
-					]
-				}
-			}
-		},
+        {
+            "run": "nettest:run@v1",
+            "with": {
+                "nettest_name": "http_invalid_request_line",
+                "report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
+                "test_helpers": {
+                    "tcp-echo": [
+                        {
+                            "address": "37.218.241.93",
+                            "type": "legacy"
+                        },
+                        {
+                            "address": "37.218.241.93",
+                            "type": "legacy"
+                        }
+                    ]
+                }
+            }
+        },
 // ...
 ```
 
@@ -196,40 +196,40 @@ should increment. Consider this snippet:
 
 ```JSONC
 // ...
-		{
-			"run": "ui:draw_card@v1",
-			"with": {
-				"suite": "circumvention"
-			}
-		},
-		{
-			"run": "ui:set_progress_bar@v1",
-			"with": {
-				"initial_value": 0,
-				"max_value": 0.5
-			}
-		},
-		{
-			"run": "nettest:run@v1",
-			"with": {
-				"nettest_name": "torsf",
-				"report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5"
-			}
-		},
-		{
-			"run": "ui:set_progress_bar@v1",
-			"with": {
-				"initial_value": 0.5,
-				"max_value": 1
-			}
-		},
-		{
-			"run": "nettest:run@v1",
-			"with": {
-				"nettest_name": "vanilla_tor",
-				"report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy"
-			}
-		},
+        {
+            "run": "ui:draw_card@v1",
+            "with": {
+                "suite": "circumvention"
+            }
+        },
+        {
+            "run": "ui:set_progress_bar@v1",
+            "with": {
+                "initial_value": 0,
+                "max_value": 0.5
+            }
+        },
+        {
+            "run": "nettest:run@v1",
+            "with": {
+                "nettest_name": "torsf",
+                "report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5"
+            }
+        },
+        {
+            "run": "ui:set_progress_bar@v1",
+            "with": {
+                "initial_value": 0.5,
+                "max_value": 1
+            }
+        },
+        {
+            "run": "nettest:run@v1",
+            "with": {
+                "nettest_name": "vanilla_tor",
+                "report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy"
+            }
+        },
 // ...
 ```
 
@@ -249,57 +249,57 @@ follows (or change check-in v2 to serve it):
 
 ```JSONC
 // ...
-		{
-			"run": "ui:draw_card@v1",
-			"with": {
-				"suite": "circumvention"
-			}
-		},
-		{
-			"run": "ui:set_progress_bar@v1",
-			"with": {
-				"initial_value": 0,
-				"max_value": 0.33 // <- changed
-			}
-		},
-		{
-			"run": "nettest:run@v1",
-			"with": {
-				"nettest_name": "torsf",
-				"report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5"
-			}
-		},
-		{
-			"run": "ui:set_progress_bar@v1",
-			"with": {
-				"initial_value": 0.33, // <- changed
-				"max_value": 0.66 // <- changed
-			}
-		},
-		{
-			"run": "nettest:run@v1",
-			"with": {
-				"nettest_name": "vanilla_tor",
-				"report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy"
-			}
-		},
-		// ~~~ begin added ~~~
-		{
-			"run": "ui:set_progress_bar@v1",
-			"with": {
-				"initial_value": 0.66,
-				"max_value": 0.99
-			}
-		},
-		{
-			"run": "nettest:run@v1",
-			"with": {
-				"nettest_name": "urlgetter",
-				"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_0md7viiR9jvTlXBy",
-				"targets": [ /* ... */ ]
-			}
-		},
-		// ~~~ end added ~~~
+        {
+            "run": "ui:draw_card@v1",
+            "with": {
+                "suite": "circumvention"
+            }
+        },
+        {
+            "run": "ui:set_progress_bar@v1",
+            "with": {
+                "initial_value": 0,
+                "max_value": 0.33 // <- changed
+            }
+        },
+        {
+            "run": "nettest:run@v1",
+            "with": {
+                "nettest_name": "torsf",
+                "report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5"
+            }
+        },
+        {
+            "run": "ui:set_progress_bar@v1",
+            "with": {
+                "initial_value": 0.33, // <- changed
+                "max_value": 0.66 // <- changed
+            }
+        },
+        {
+            "run": "nettest:run@v1",
+            "with": {
+                "nettest_name": "vanilla_tor",
+                "report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy"
+            }
+        },
+        // ~~~ begin added ~~~
+        {
+            "run": "ui:set_progress_bar@v1",
+            "with": {
+                "initial_value": 0.66,
+                "max_value": 0.99
+            }
+        },
+        {
+            "run": "nettest:run@v1",
+            "with": {
+                "nettest_name": "urlgetter",
+                "report_id": "20230406T142431Z_urlgetter_IT_30722_n1_0md7viiR9jvTlXBy",
+                "targets": [ /* ... */ ]
+            }
+        },
+        // ~~~ end added ~~~
 // ...
 ```
 
@@ -323,50 +323,50 @@ telegram nettest, for example, looks like this:
 
 ```JSON
 // ...
-		{
-			"run": "nettest:run@v1",
-			"with": {
-				"nettest_name": "telegram",
-				"report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
-				"targets": [
-					{
-						"run": "http-address@v1",
-						"with": {
-							"tags": [
-							    "mini_nettest:dc",
-							],
-							"ip_address": "149.154.175.50",
-							"http_method": "POST",
-							"port": 443
-						}
-					},
-					{
-						"run": "http-address@v1",
-						"with": {
-							"tags": [
-							    "mini_nettest:dc",
-							],
-							"ip_address": "149.154.175.50",
-							"http_method": "POST",
-							"port": 80
-						}
-					},
-					{
-						"run": "https-domain@v1",
-						"with": {
-							"tags": [
-							    "mini_nettest:web",
-							],
-							"domain": "web.telegram.org",
-							"http_header_host": "web.telegram.org",
-							"http_method": "GET",
-							"port": 443,
-							"tls_server_name": "web.telegram.org"
-						}
-					}
-				]
-			}
-		},
+        {
+            "run": "nettest:run@v1",
+            "with": {
+                "nettest_name": "telegram",
+                "report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
+                "targets": [
+                    {
+                        "run": "http-address@v1",
+                        "with": {
+                            "tags": [
+                                "mini_nettest:dc",
+                            ],
+                            "ip_address": "149.154.175.50",
+                            "http_method": "POST",
+                            "port": 443
+                        }
+                    },
+                    {
+                        "run": "http-address@v1",
+                        "with": {
+                            "tags": [
+                                "mini_nettest:dc",
+                            ],
+                            "ip_address": "149.154.175.50",
+                            "http_method": "POST",
+                            "port": 80
+                        }
+                    },
+                    {
+                        "run": "https-domain@v1",
+                        "with": {
+                            "tags": [
+                                "mini_nettest:web",
+                            ],
+                            "domain": "web.telegram.org",
+                            "http_header_host": "web.telegram.org",
+                            "http_method": "GET",
+                            "port": 443,
+                            "tls_server_name": "web.telegram.org"
+                        }
+                    }
+                ]
+            }
+        },
 // ...
 ```
 

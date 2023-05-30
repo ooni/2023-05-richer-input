@@ -16,3 +16,6 @@ indent_size = 2
 
 [*.java]
 indent_style = space
+
+[*.md]
+indent_style = space
