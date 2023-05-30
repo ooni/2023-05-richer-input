@@ -148,8 +148,8 @@ field contains the report ID for the measurement.
 
 If you are reading this design, you may wonder how I would, as the user,
 obtain the report ID. As mentioned, OONI Probe generates the script by
-manipulating the check-in API v2 response (where the most simple form
-of manipulation is the identity transformation).
+manipulating the check-in API v2 response (where the simplest
+manipulation is the identity transformation).
 
 We do not describe how to represent richer input for each nettest
 for brevity. However, the general idea is that we include information
