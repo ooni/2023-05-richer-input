@@ -38,8 +38,8 @@ follows the typical split between mechanism and policy often seen in
 UNIX tools. The interpreter is the mechanism, and the JSON document,
 called the "script," allows users to tell the OONI Probe core what to do.
 
-The interpreter assumes the following in line with the OONI Probe
-legacy tradition. First, the user has already resolved the IPv4 and IPv6
+The interpreter assumes the following. First, the user has already
+resolved the IPv4 and IPv6
 addresses of the OONI Probe, along with their geolocation information
 (country code, ASN, and network name). Second, there is a script telling
 the interpreter what to do. How to obtain the script is still up for
