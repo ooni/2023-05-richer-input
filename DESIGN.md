@@ -146,10 +146,9 @@ we use "annotations" to annotate measurements, "input" to identify the
 input for urlgetter, and "options" to provide options. The "report\_id"
 field contains the report ID for the measurement.
 
-If you are reading this design, you may wonder how I would, as the user,
-obtain the report ID. As mentioned, OONI Probe generates the script by
-manipulating the check-in API v2 response (where the simplest
-manipulation is the identity transformation).
+If you are reading this design, you may wonder how I would, as the user
+writing the JSON file, obtain the report ID. You would be right. This
+topic is covered near the end of this document.
 
 We do not describe how to represent richer input for each nettest
 for brevity. However, the general idea is that we include information
