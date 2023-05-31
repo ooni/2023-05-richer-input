@@ -289,7 +289,7 @@ follows (or change check-in v2 to serve something that leads to this):
             "run": "ui:set_progress_bar@v1",
             "with": {
                 "initial_value": 0.66,
-                "max_value": 0.99
+                "max_value": 1
             }
         },
         {
