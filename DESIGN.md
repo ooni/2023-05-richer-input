@@ -391,6 +391,10 @@ to generate the top-level keys during the submission.
 (The PoC does not use "tags" yet. It uses a scalar field called "id,"
 but adding multiple tags supports more algorithms.)
 
+Note that, if we move the top-level keys generation during the submission,
+using mini nettests means we can reimplement several nettests by calling
+a single, common function that executes a list of mini nettests.
+
 ## Minor idea: A/B testing
 
 We include a "feature\_flags" map from string to boolean to each
