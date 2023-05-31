@@ -499,15 +499,15 @@ nettests and only execute the ones it knows.
 
 All OONI experiments have a minor version number of zero. If we need to
 make breaking changes (e.g., telegram no longer uses mini nettests), we
-will bump the major number to one. Henceforth, we will explicitly append
-the major number to the nettest name in the script (e.g., "telegram@v1",
-"telegram@v2"). When the major number is missing, conversely, the
-interpreter will assume that we mean version zero (e.g., "telegram@v0").
+will bump the major number to one. When the major version number is one or more,
+we will explicitly append the major number to the nettest name in the
+script (e.g., "telegram@v1", "telegram@v2"). When the major number is missing,
+conversely, the interpreter will assume that we mean version zero (e.g., "telegram@v0").
 
 This strategy allows us to serve multiple nettests inside the same
 script, with the understanding that the interpreter will only execute
 the version number that it knows about. Therefore, older OONI Probes
-could use "telegram@v0," and newer ones would instead use "telegram@v1".
+could use "telegram," and newer ones would instead use "telegram@v1".
 
 ## Forward compatibility: OONI Run v2
 
