@@ -506,7 +506,8 @@ conversely, the interpreter will assume that we mean version zero (e.g., "telegr
 
 This strategy allows us to serve multiple nettests inside the same
 script, with the understanding that the interpreter will only execute
-the version number that it knows about. Therefore, older OONI Probes
+the *only* version number that it knows about (as discussed in the
+previous section). Therefore, older OONI Probes
 could use "telegram," and newer ones would instead use "telegram@v1".
 
 ## Forward compatibility: OONI Run v2
