@@ -376,14 +376,14 @@ An older version of OONI Probe would ignore the richer input
 telegram as a runner for mini nettests, and each target is a mini
 nettest with well-defined semantics. The inner "run" key identifies a
 mini nettest, and the internal "with" object provides richer input for
-the mini nettest. Each mini nettest will generate observations with
-distinct transaction IDs (as it happens now); thus, ooni/data would
-still parse observations. In the above-example, `http-address` performs
+the mini nettest. In the above-example, `http-address` performs
 an HTTP transaction with a given TCP endpoint (e.g., `149.154.175.50:80`);
 `https-address` combines DNS lookup and accessing the resolved IP
 addresses using HTTPS.
 
-The "tags" fields end up inside each base data format "tags" field,
+Each mini nettest will generate observations with
+distinct transaction IDs (as it happens now); thus, ooni/data would
+still parse observations.  The "tags" fields end up inside each base data format "tags" field,
 allowing the OONI Probe to generate the top-level keys. We could also
 use the tags to score the measurement in the fastpath and, in the future,
 to generate the top-level keys during the submission.
