@@ -174,6 +174,11 @@ func (tk *TestKeys) update(consistent, reachable *optional.Value[bool], observat
 	// if not consistent, update DNS blocking.
 	if !consistent.IsNone() && !consistent.Unwrap() {
 		tk.FacebookDNSBlocking = optional.Some(true)
+		// TODO(bassosimone): we should make sure we're following the spirit of the spec,
+		// which the code below is trying to follow more closely.
+		tk.FacebookTCPBlocking = optional.Some(false)
+		*reachable = optional.Some(false)
+		return
 	}
 
 	// determine whether the TCP endpoint was reachable.
