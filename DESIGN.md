@@ -8,6 +8,41 @@ This repository contains a proof-of-concept redesign of OONI probe,
 where we implement richer input and explore how it can simplify the
 implementation.
 
+## TL;DR
+
+This design introduces an interpreter for a "script" served through
+the check-in v2 API. The script contains precise instructions for the
+probe, telling it how to change the UI when measuring, what to
+measure, and how to save and submit the results.
+
+We define the concept of "mini nettest", which allow nettests such as
+the IM ones to measure dynamic targets provided as richer input.
+
+We support these use cases:
+
+1. users can write their own scripts for performing research;
+
+2. we can write our own scripts for testing (e.g., CI);
+
+3. because the backend sends a detailed list of what to do, we can
+iterate much faster (e.g., in changing IM tests);
+
+4. in the same vein, we can include custom measurements inside
+the experimental card that allow us to conduct research (e.g., we
+can measure QUIC blocking in China "right about now");
+
+5. the same data format solves the problem of running tests w/o
+a backend or TH, because we can have cached scripts that are
+specially tailored to this use case;
+
+6. if the backend computes the top-level keys on submission and
+we accept some changes in the data format, several experiments
+end up being implemented by the same function: all the IM tests,
+tor, and dnscheck would just call code to run mini nettests.
+
+The rest of this document is narrative and introduces the main
+concepts in a bottom-up, incremental fashion.
+
 ## Key idea: the interpreter
 
 Implementing richer input in OONI Probe is complex because the codebase
@@ -457,6 +492,11 @@ check-in v2 API. It also says that the idempotent transformation is the
 most straightforward (i.e., the check-in v2 API response is a script). We
 will define the check-in v2 response as part of our future work.
 
+**TODO(bassosimone)**: we discussed this topic with Federico and we
+concluded it would be better to avoid doing mangling in the probe. The
+check-in v2 API would therefore serve us a script directly (or maybe
+two script: an interactive one and a backend-less one).
+
 ## Handwaving: IPv6
 
 This PoC contains more robust IPv6 handling code that the stable
@@ -464,6 +504,11 @@ version of ooniprobe. In particular, we provide to the interpreter
 both the IPv4 and the IPv6 locations and we scrub both IP addresses from
 the measurement. However, how to represent both the IPv4 and the
 IPv6 geolocation into a measurement is still an open issue.
+
+**TODO(bassosimone)**: as discussed with Federico, the cases where the
+CC is different between IPv4 and IPv6 may be indicative of (a) Teredo
+like tunneling or (b) a v4-or-v6-only VPN. We concluded that it may be
+better in these cases to just avoid running the probe.
 
 ## Handwaving: report ID for research
 
@@ -475,6 +520,12 @@ generate a random report ID inside the probe. If we follow the latter
 path, though, we must include a "session ID" as an annotation, since this
 is useful to ooni/data analysis. Adding a "session ID" seems a useful
 idea anyway.
+
+**TODO(bassosimone)**: We discussed the session ID concept with Federico
+and we concluded that we need more inter-team discussion. A session
+could run for longer time than a single measurement session, but that
+may leak the users' behavior. Additionally, it may be that the probe ID
+already provides a useful signal there.
 
 ## Handwaving: running telegram with no backend support
 
@@ -488,6 +539,13 @@ address this issue as part of our future work. A possible solution
 to this issue consists of caching specific information, and refreshing
 the cache each time the check-in v2 completes successfully.
 
+**TODO(bassosimone)**: the check-in v2 API could serve us two
+scripts. A short term one, useful for the current run, and a long
+term one useful to allow users to perform measurements during a
+partial internet shutdown. The latter script should not depend on
+the backend (i.e., urlgetter instead of web connectivity). The probe
+should also ship with a fallback last-resort script.
+
 ## Forward compatibility: instructions and nettests
 
 The definition of unknown instructions encompasses both unknown
@@ -498,6 +556,8 @@ and the mini nettests. All other versions (future and past) are unknown.
 
 The interpreter will ignore unknown instructions, nettests, and mini
 nettests and only execute the ones it knows.
+
+**TODO(bassosimone)**: see below comment about versioning.
 
 ## Forward compatibility: breaking changes
 
@@ -514,6 +574,13 @@ the *only* major version number that it knows about (as discussed in the
 previous section). Therefore, older OONI Probes
 could use "telegram," and newer ones would instead use "telegram@v1".
 
+**TODO(bassosimone)**: serving a mixture of versions to probe means
+sending a much larger check-in v2 response, which is bad because
+it requires using more bandwidth. To reduce the overhead and because
+we control both the probes and the backend, it would be better to
+have a few more `if`s in the backend. We can get away with the probe
+version and a version for the whole JSON script.
+
 ## Forward compatibility: OONI Run v2
 
 The check-in v2 API will serve additional nettests to run that measure
@@ -522,3 +589,13 @@ whether the check-in v2 API will serve a script structure directly. In
 any case, eventually, OONI Run v2 information will translate into
 instructions related to (a) drawing the UI; (b) running nettests; and
 (c) saving measurements.
+
+## Future directions: richer-input streaming
+
+We can imagine specific richer input allowing us to instruct a nettest to
+communicate with an interactive backend, where the backend serves a mini
+nettest to the probe, reads the results and then serves follow-up actions
+for the probe that depend on (a) what the backend knows in general and
+(b) results returned by that specific probe. This design seems out of scope
+for an initial implementation of richer input, but could become a useful
+tool to address specific research questions at a later time.
