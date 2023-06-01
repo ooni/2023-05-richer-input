@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"sync"
 	"time"
@@ -12,6 +13,8 @@ import (
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
 	"github.com/ooni/probe-engine/pkg/logx"
 	"github.com/ooni/probe-engine/pkg/model"
+	"github.com/ooni/probe-engine/pkg/optional"
+	"github.com/schollz/progressbar/v3"
 )
 
 // ProgressOutput defines how the probe emits progress output while
@@ -117,6 +120,9 @@ type progressOutputWithLogfile struct {
 	// nettest is the current nettest.
 	nettest string
 
+	// pb is the progress bar.
+	pb optional.Value[*progressbar.ProgressBar]
+
 	// suite is the current suite.
 	suite string
 
@@ -143,9 +149,13 @@ func newProgressOutputWithLogfile(logfile string, verbose bool) (*progressOutput
 
 	// create the structure
 	powl := &progressOutputWithLogfile{
-		Logger: logger,
-		fp:     fp,
-		once:   sync.Once{},
+		Logger:  logger,
+		fp:      fp,
+		mu:      sync.Mutex{},
+		nettest: "",
+		pb:      optional.None[*progressbar.ProgressBar](),
+		suite:   "",
+		once:    sync.Once{},
 	}
 
 	// return to the caller
@@ -156,6 +166,7 @@ func newProgressOutputWithLogfile(logfile string, verbose bool) (*progressOutput
 func (powl *progressOutputWithLogfile) Close() (err error) {
 	powl.once.Do(func() {
 		err = powl.fp.Close()
+		fmt.Fprintf(os.Stdout, "\n")
 	})
 	return
 }
@@ -171,24 +182,27 @@ func (powl *progressOutputWithLogfile) SetNettest(nettest string) {
 func (powl *progressOutputWithLogfile) SetProgress(progress float64) {
 	defer powl.mu.Unlock()
 	powl.mu.Lock()
-	fmt.Fprintf(
-		os.Stdout,
-		"%10d%% %s\n",
-		int64(progress*100),
-		powl.nettest,
-	)
+	if powl.pb.IsNone() {
+		powl.pb = optional.Some(progressbar.NewOptions64(
+			1000,
+			progressbar.OptionSetRenderBlankState(true),
+			progressbar.OptionSetWriter(os.Stdout),
+			progressbar.OptionSetDescription(fmt.Sprintf("%20s", powl.suite)),
+		))
+	}
+	pb := powl.pb.Unwrap()
+	value := int64(math.RoundToEven(progress * 1000))
+	pb.Set64(value)
 }
 
 // SetSuite implements ProgressOutput.
 func (powl *progressOutputWithLogfile) SetSuite(suite string) {
 	defer powl.mu.Unlock()
 	powl.mu.Lock()
+	if powl.suite != "" {
+		powl.pb = optional.None[*progressbar.ProgressBar]()
+	}
 	powl.suite = suite
-	fmt.Fprintf(
-		os.Stdout,
-		"\n* %s:\n\n",
-		powl.suite,
-	)
 }
 
 // Write implements io.Writer
