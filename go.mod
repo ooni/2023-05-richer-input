@@ -2,11 +2,13 @@ module github.com/ooni/2023-05-richer-input
 
 go 1.19
 
-require github.com/ooni/probe-engine v0.24.1-0.20230529150556-083e9f0ea5d5
+require (
+	github.com/apex/log v1.9.0
+	github.com/ooni/probe-engine v0.24.1-0.20230529150556-083e9f0ea5d5
+)
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
-	github.com/apex/log v1.9.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/gaukas/godicttls v0.0.3 // indirect

@@ -127,8 +127,8 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 	}
 	defer mw.Close()
 
-	// create the output configuration
-	output, err := NewOutput(sc.logfile, verbose)
+	// create the progress output
+	output, err := NewProgressOutput(sc.logfile, verbose)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: newOutput: %s\n", err.Error())
 		os.Exit(1)
@@ -136,12 +136,12 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 	defer output.Close()
 
 	// make sure we intercept the standard library logger
-	log.SetOutput(output.Logger)
+	log.SetOutput(output)
 
 	// create the interpreter
 	ix := interpreter.New(
 		location,
-		output.Logger,
+		output,
 		mw,
 		&runxSettings{
 			enabledNettests: sc.enabledNettests,
@@ -149,7 +149,7 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 		},
 		"miniooni",
 		"0.1.0-dev",
-		output.View,
+		output,
 	)
 
 	// create context
