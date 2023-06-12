@@ -21,12 +21,13 @@ for more information.
 
 ## Reference Issues
 
-The reference issues for this work are
-[ooni.org#1291](https://github.com/ooni/ooni.org/issues/1291),
-[ooni.org#1292](https://github.com/ooni/ooni.org/issues/1292),
-[ooni.org#1295](https://github.com/ooni/ooni.org/issues/1295),
-[probe#2381](https://github.com/ooni/probe/issues/2381), and
-[probe#2445](https://github.com/ooni/probe/issues/2445).
+The reference issues for this work are:
+
+- [ooni.org#1291](https://github.com/ooni/ooni.org/issues/1291);
+- [ooni.org#1292](https://github.com/ooni/ooni.org/issues/1292);
+- [ooni.org#1295](https://github.com/ooni/ooni.org/issues/1295);
+- [probe#2381](https://github.com/ooni/probe/issues/2381); and
+- [probe#2445](https://github.com/ooni/probe/issues/2445).
 
 ## Building
 
