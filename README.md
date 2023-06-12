@@ -19,6 +19,14 @@ See below for examples of how you can invoke the `runx` command.
 See [DESIGN.md](DESIGN.md) and [ARCHITECTURE.md](ARCHITECTURE.md)
 for more information.
 
+## Reference Issues
+
+The reference issues for this work are
+[ooni.org#1291](https://github.com/ooni/ooni.org/issues/1291),
+[ooni.org#1292](https://github.com/ooni/ooni.org/issues/1292),
+[ooni.org#1295](https://github.com/ooni/ooni.org/issues/1295) and
+[probe#2445](https://github.com/ooni/probe/issues/2445).
+
 ## Building
 
 Obtain go1.20.4 using these commands:
