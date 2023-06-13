@@ -235,7 +235,7 @@ should increment. Consider this snippet:
         {
             "run": "ui:draw_card@v1",
             "with": {
-                "suite": "circumvention"
+                "suite_name": "circumvention"
             }
         },
         {
@@ -288,7 +288,7 @@ follows (or change check-in v2 to serve something that leads to this):
         {
             "run": "ui:draw_card@v1",
             "with": {
-                "suite": "circumvention"
+                "suite_name": "circumvention"
             }
         },
         {

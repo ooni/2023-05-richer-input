@@ -24,8 +24,8 @@ type InterpreterInstruction struct {
 // InterpreterUIDrawCardArguments contains arguments for the
 // ui:draw_card instruction.
 type InterpreterUIDrawCardArguments struct {
-	// Suite is the name of the suite that is running.
-	Suite string `json:"suite"`
+	// SuiteName is the name of the suite that is running.
+	SuiteName string `json:"suite_name"`
 }
 
 // InterpreterUISetProgressBarArguments contains arguments for the

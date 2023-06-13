@@ -12,7 +12,7 @@
 		{
 			"run": "ui:draw_card@v1",
 			"with": {
-				"suite": "websites"
+				"suite_name": "websites"
 			}
 		},
 
@@ -116,7 +116,7 @@
 		{
 			"run": "ui:draw_card@v1",
 			"with": {
-				"suite": "im"
+				"suite_name": "im"
 			}
 		},
 
@@ -379,7 +379,7 @@
 		{
 			"run": "ui:draw_card@v1",
 			"with": {
-				"suite": "performance"
+				"suite_name": "performance"
 			}
 		},
 
@@ -479,7 +479,7 @@
 		{
 			"run": "ui:draw_card@v1",
 			"with": {
-				"suite": "circumvention"
+				"suite_name": "circumvention"
 			}
 		},
 
@@ -521,7 +521,7 @@
 		{
 			"run": "ui:draw_card@v1",
 			"with": {
-				"suite": "experimental"
+				"suite_name": "experimental"
 			}
 		},
 

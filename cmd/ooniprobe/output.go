@@ -261,7 +261,7 @@ func (powl *progressOutputWithLogfile) SetProgressBarLimits(args *modelx.Interpr
 func (powl *progressOutputWithLogfile) SetSuite(args *modelx.InterpreterUIDrawCardArguments) {
 	defer powl.mu.Unlock()
 	powl.mu.Lock()
-	powl.suite = args.Suite
+	powl.suite = args.SuiteName
 }
 
 // Write implements io.Writer
