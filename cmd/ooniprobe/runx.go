@@ -128,21 +128,27 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 	}
 	defer mw.Close()
 
-	// create the progress output
-	output, err := NewProgressOutput(sc.logfile, verbose)
+	// create log collector
+	lc, err := newLogCollector(sc.logfile, verbose)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR: newOutput: %s\n", err.Error())
+		fmt.Fprintf(os.Stderr, "ERROR: newLogCollector: %s\n", err.Error())
 		os.Exit(1)
 	}
-	defer output.Close()
 
-	// make sure we intercept the standard library logger
-	log.SetOutput(output)
+	// create the progress view
+	view := newProgressView(verbose, lc /* MOVE */)
+	defer view.Close()
+
+	// set lc to nil because we MOVED OWNERSHIP to the view
+	lc = nil
+
+	// make sure we get logs from the stdlib logger
+	log.SetOutput(view.StdlibLoggerWriter())
 
 	// create the interpreter
 	ix := interpreter.New(
 		location,
-		output,
+		view,
 		mw,
 		&runxSettings{
 			enabledNettests: sc.enabledNettests,
@@ -150,7 +156,7 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 		},
 		"miniooni",
 		"0.1.0-dev",
-		output,
+		view,
 	)
 
 	// create context

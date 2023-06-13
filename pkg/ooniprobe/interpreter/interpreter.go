@@ -108,7 +108,7 @@ func (ix *Interpreter) onUISetSuite(ctx context.Context, rawMsg json.RawMessage)
 	}
 
 	// make sure the view knows about the current suite
-	ix.view.SetSuite(&value)
+	ix.view.UpdateSuiteName(value.SuiteName)
 	return nil
 }
 
@@ -125,8 +125,8 @@ func (ix *Interpreter) onUISetProgressBarRange(ctx context.Context, rawMsg json.
 		return nil
 	}
 
-	// make sure the view knows about the current progress bar limits
-	ix.view.SetProgressBarLimits(&value)
+	// make sure the view knows updates the progress bar range
+	ix.view.UpdateProgressBarRange(value.InitialValue, value.MaxValue)
 	return nil
 }
 
@@ -144,7 +144,7 @@ func (ix *Interpreter) onUISetProgressBarValue(ctx context.Context, rawMsg json.
 	}
 
 	// make sure the view knows about the current progress bar limits
-	ix.view.SetProgressBarValue(value.Value)
+	ix.view.UpdateProgressBarValueAbsolute(value.Value)
 	return nil
 }
 
@@ -180,12 +180,12 @@ func (ix *Interpreter) onNettestRun(ctx context.Context, rawMsg json.RawMessage)
 	}
 
 	// make sure the UI knows we're running a nettest
-	ix.view.SetNettestName(value.NettestName)
+	ix.view.UpdateNettestName(value.NettestName)
 
 	// make sure we emit the correct begin and end events
-	ix.view.PublishNettestProgress(0)
+	ix.view.UpdateProgressBarValueWithinRange(0)
 	defer func() {
-		ix.view.PublishNettestProgress(1.0)
+		ix.view.UpdateProgressBarValueWithinRange(1.0)
 	}()
 
 	// let the nettest runner finish the job

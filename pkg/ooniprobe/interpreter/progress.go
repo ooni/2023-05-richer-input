@@ -44,7 +44,7 @@ func (pe *progressEmitterList) Tick(idx int, message string) {
 	case pe.total > 0:
 		progress = float64(idx) / float64(pe.total)
 	}
-	pe.view.PublishNettestProgress(progress)
+	pe.view.UpdateProgressBarValueWithinRange(progress)
 }
 
 // newProgressEmitterNettest creates a new [progressEmitterNettest].
@@ -65,5 +65,5 @@ var _ model.ExperimentCallbacks = &progressEmitterNettest{}
 
 // OnProgress implements model.ExperimentCallbacks
 func (pe *progressEmitterNettest) OnProgress(progress float64, message string) {
-	pe.view.PublishNettestProgress(progress)
+	pe.view.UpdateProgressBarValueWithinRange(progress)
 }
