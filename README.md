@@ -31,17 +31,17 @@ The reference issues for this work are:
 
 ## Building
 
-Obtain go1.20.4 using these commands:
+Obtain go1.20.5 using these commands:
 
 ```console
-go get golang.org/dl/go1.20.4@latest
-~/go/bin/go1.20.4 download
+go get golang.org/dl/go1.20.5@latest
+~/go/bin/go1.20.5 download
 ```
 
 Then build using:
 
 ```console
-~/go/bin/go1.20.4 build -v ./cmd/ooniprobe
+~/go/bin/go1.20.5 build -v ./cmd/ooniprobe
 ```
 
 ## Running
