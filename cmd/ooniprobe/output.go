@@ -120,6 +120,13 @@ func (pos *progressOutputStdout) SetProgressBarLimits(args *modelx.InterpreterUI
 	pos.progressScale = args.MaxValue - args.InitialValue
 }
 
+// SetProgressBarValue implements ProgressOutput.
+func (pos *progressOutputStdout) SetProgressBarValue(value float64) {
+	defer pos.mu.Unlock()
+	pos.mu.Lock()
+	pos.Logger.Infof("PROGRESS: %.2f%%", value*100)
+}
+
 // SetSuite implements ProgressOutput.
 func (pos *progressOutputStdout) SetSuite(args *modelx.InterpreterUISetSuiteArguments) {
 	// nothing
@@ -255,6 +262,12 @@ func (powl *progressOutputWithLogfile) SetProgressBarLimits(args *modelx.Interpr
 	powl.mu.Lock()
 	powl.progressMin = args.InitialValue
 	powl.progressScale = args.MaxValue - args.InitialValue
+}
+
+// SetProgressBarValue implements ProgressOutput.
+func (powl *progressOutputWithLogfile) SetProgressBarValue(value float64) {
+	// TODO(bassosimone): the following code is wrong
+	powl.PublishNettestProgress(1)
 }
 
 // SetSuite implements ProgressOutput.

@@ -113,6 +113,15 @@
 			}
 		},
 
+		// Make sure the progress bar value is set to 100%
+		{
+			"run": "ui:set_progress_bar_value",
+			"with": {
+				"suite_name": "websites",
+				"value": 1
+			}
+		},
+
 		// Let us change suite.
 		{
 			"run": "ui:set_suite",
@@ -380,6 +389,15 @@
 			}
 		},
 
+		// Make sure the progress bar value is set to 100%
+		{
+			"run": "ui:set_progress_bar_value",
+			"with": {
+				"suite_name": "im",
+				"value": 1
+			}
+		},
+
 		// Now it's time to run the performance suite
 		{
 			"run": "ui:set_suite",
@@ -484,6 +502,15 @@
 			}
 		},
 
+		// Make sure the progress bar value is set to 100%
+		{
+			"run": "ui:set_progress_bar_value",
+			"with": {
+				"suite_name": "performance",
+				"value": 1
+			}
+		},
+
 		// Now it's time to run the circumvention suite
 		{
 			"run": "ui:set_suite",
@@ -525,6 +552,15 @@
 				"nettest_name": "tor",
 				"report_id": "20230406T142431Z_tor_IT_30722_n1_yC3sir64oGz2zS2o",
 				"suite_name": "circumvention"
+			}
+		},
+
+		// Make sure the progress bar value is set to 100%
+		{
+			"run": "ui:set_progress_bar_value",
+			"with": {
+				"suite_name": "circumvention",
+				"value": 1
 			}
 		},
 
@@ -684,6 +720,15 @@
 						}
 					}
 				]
+			}
+		},
+
+		// Make sure the progress bar value is set to 100%
+		{
+			"run": "ui:set_progress_bar_value",
+			"with": {
+				"suite_name": "experimental",
+				"value": 1
 			}
 		}
 	],

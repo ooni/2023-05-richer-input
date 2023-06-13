@@ -76,6 +76,11 @@ func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript
 				return err
 			}
 
+		case "ui:set_progress_bar_value":
+			if err := ix.onUISetProgressBarValue(ctx, instruction.With); err != nil {
+				return err
+			}
+
 		case "nettest:run":
 			if err := ix.onNettestRun(ctx, instruction.With); err != nil {
 				return err
@@ -122,6 +127,24 @@ func (ix *Interpreter) onUISetProgressBarRange(ctx context.Context, rawMsg json.
 
 	// make sure the view knows about the current progress bar limits
 	ix.view.SetProgressBarLimits(&value)
+	return nil
+}
+
+// onUISetProgressBarValue is the method called for ui:set_progress_bar_value instructions.
+func (ix *Interpreter) onUISetProgressBarValue(ctx context.Context, rawMsg json.RawMessage) error {
+	// parse the raw JSON message
+	var value modelx.InterpreterUISetProgressBarValueArguments
+	if err := json.Unmarshal(rawMsg, &value); err != nil {
+		return err
+	}
+
+	// ignore instruction if the corresponding suite is not enabled
+	if !ix.settings.IsSuiteEnabled(value.SuiteName) {
+		return nil
+	}
+
+	// make sure the view knows about the current progress bar limits
+	ix.view.SetProgressBarValue(value.Value)
 	return nil
 }
 

@@ -41,6 +41,16 @@ type InterpreterUISetProgressBarRangeArguments struct {
 	SuiteName string `json:"suite_name"`
 }
 
+// InterpreterUISetProgressBarValueArguments contains arguments for the
+// ui:set_progress_bar_value instruction.
+type InterpreterUISetProgressBarValueArguments struct {
+	// SuiteName is the name of the suite that is running.
+	SuiteName string `json:"suite_name"`
+
+	// Value is the absolute progress bar value.
+	Value float64 `json:"value"`
+}
+
 // InterpreterNettestRunArguments contains arguments for the
 // nettest:run instruction.
 type InterpreterNettestRunArguments struct {
