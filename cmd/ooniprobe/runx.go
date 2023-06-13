@@ -193,10 +193,19 @@ func (sc *runxSubcommand) loadScript() (*modelx.InterpreterScript, error) {
 
 // loadProbeLocation loads the probe location from file
 func (sc *runxSubcommand) loadProbeLocation() (*modelx.ProbeLocation, error) {
+	// read raw location
 	data, err := os.ReadFile(sc.location)
 	if err != nil {
 		return nil, err
 	}
+
+	// make sure we remove comments
+	data, err = hujson.Standardize(data)
+	if err != nil {
+		return nil, err
+	}
+
+	// parse location from JSON
 	var location modelx.ProbeLocation
 	if err := json.Unmarshal(data, &location); err != nil {
 		return nil, err

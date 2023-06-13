@@ -50,7 +50,7 @@ Try:
 
 ```console
 ./ooniprobe runx --log-file LOG.txt \
-	--location-file testdata/location.json \
+	--location-file testdata/location.jsonc \
 	--script-file testdata/full.jsonc
 ```
 

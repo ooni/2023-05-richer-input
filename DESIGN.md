@@ -98,7 +98,7 @@ only discussing the most fundamental functionality). This file would
 probably look like this:
 
 ```JSONC
-// file: location.json
+// file: location.jsonc
 {
     "ipv4": {
         "probe_ip": "88.99.81.188",
@@ -169,7 +169,7 @@ interpreter what to measure. For example:
 In the PoC, one could run this script as follows:
 
 ```console
-./ooniprobe runx --location-file location.json --script-file simple.jsonc
+./ooniprobe runx --location-file location.jsonc --script-file simple.jsonc
 ```
 
 The script consists of a sequence of instructions, and the interpreter
