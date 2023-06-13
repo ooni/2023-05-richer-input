@@ -54,6 +54,14 @@ func newRunxSubcommand() *cobra.Command {
 		"only run the given nettest (can be provided multiple times)",
 	)
 
+	// register the --only-suite flag
+	cmd.Flags().StringSliceVar(
+		&state.enabledSuites,
+		"only-suite",
+		[]string{},
+		"only run the given suite (can be provided multiple times)",
+	)
+
 	// register the -o,--results-file flag
 	cmd.Flags().StringVarP(
 		&state.output,
@@ -71,14 +79,6 @@ func newRunxSubcommand() *cobra.Command {
 		"path of the script file to interpret",
 	)
 	cmd.MarkFlagRequired("script-file")
-
-	// register the --only-suite flag
-	cmd.Flags().StringSliceVar(
-		&state.enabledSuites,
-		"only-suite",
-		[]string{},
-		"only run the given suite (can be provided multiple times)",
-	)
 
 	return cmd
 }
