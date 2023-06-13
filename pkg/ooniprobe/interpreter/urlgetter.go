@@ -27,18 +27,13 @@ type urlgetterTarget struct {
 type urlgetterNettest struct {
 	args    *modelx.InterpreterNettestRunArguments
 	ix      *Interpreter
-	state   *interpreterRunState
 	targets []urlgetterTarget
 }
 
 var _ nettest = &urlgetterNettest{}
 
 // urlgetterNew constructs a new urlgetter instance.
-func urlgetterNew(
-	args *modelx.InterpreterNettestRunArguments,
-	ix *Interpreter,
-	state *interpreterRunState,
-) (nettest, error) {
+func urlgetterNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
 	// parse targets
 	var targets []urlgetterTarget
 	if err := json.Unmarshal(args.Targets, &targets); err != nil {
@@ -49,7 +44,6 @@ func urlgetterNew(
 	nettest := &urlgetterNettest{
 		args:    args,
 		ix:      ix,
-		state:   state,
 		targets: targets,
 	}
 
@@ -71,7 +65,7 @@ func (nt *urlgetterNettest) Run(ctx context.Context) error {
 	}
 
 	// create progress emitter
-	pe := newProgressEmitterList(maxRuntime, nt.state, t0, len(nt.targets), nt.ix.view)
+	pe := newProgressEmitterList(maxRuntime, t0, len(nt.targets), nt.ix.view)
 
 	// measure each target
 	for idx, target := range nt.targets {

@@ -1,13 +1,18 @@
 package modelx
 
+// TODO(bassosimone): I don't like the names here
+
 // ProgressView is the view that shows progress while running nettests.
 type ProgressView interface {
-	// SetNettest sets the nettest name.
-	SetNettest(nettest string)
+	// PublishNettestProgress publishes the nettest progress.
+	PublishNettestProgress(progress float64)
 
-	// SetProgress sets the total progress.
-	SetProgress(progress float64)
+	// SetNettestName sets the nettest name.
+	SetNettestName(nettest string)
 
-	// SetSuite sets the suite name.
-	SetSuite(suite string)
+	// SetProgressLimits sets the progress bar limits.
+	SetProgressBarLimits(args *InterpreterUISetProgressBarArguments)
+
+	// SetSuiteName sets the suite.
+	SetSuite(args *InterpreterUIDrawCardArguments)
 }

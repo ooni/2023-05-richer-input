@@ -28,18 +28,13 @@ type webconnectivityTarget struct {
 type webconnectivityNettest struct {
 	args    *modelx.InterpreterNettestRunArguments
 	ix      *Interpreter
-	state   *interpreterRunState
 	targets []webconnectivityTarget
 }
 
 var _ nettest = &webconnectivityNettest{}
 
 // webconnectivityNew constructs a new webconnectivity instance.
-func webconnectivityNew(
-	args *modelx.InterpreterNettestRunArguments,
-	ix *Interpreter,
-	state *interpreterRunState,
-) (nettest, error) {
+func webconnectivityNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
 	// parse targets
 	var targets []webconnectivityTarget
 	if err := json.Unmarshal(args.Targets, &targets); err != nil {
@@ -50,7 +45,6 @@ func webconnectivityNew(
 	nettest := &webconnectivityNettest{
 		args:    args,
 		ix:      ix,
-		state:   state,
 		targets: targets,
 	}
 
@@ -72,7 +66,7 @@ func (nt *webconnectivityNettest) Run(ctx context.Context) error {
 	}
 
 	// create progress emitter
-	pe := newProgressEmitterList(maxRuntime, nt.state, t0, len(nt.targets), nt.ix.view)
+	pe := newProgressEmitterList(maxRuntime, t0, len(nt.targets), nt.ix.view)
 
 	// measure each target
 	for idx, target := range nt.targets {

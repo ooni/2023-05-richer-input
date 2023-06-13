@@ -53,7 +53,17 @@ func NewProgressOutput(logfile string, verbose bool) (ProgressOutput, error) {
 // progressOutputStdout is a [ProgressOutput] emitting both logs
 // and progress information on the standard output.
 type progressOutputStdout struct {
+	// The progressOutputStdout embeds a logger.
 	*log.Logger
+
+	// mu provides mutual exclusion.
+	mu sync.Mutex
+
+	// progressMin is the minimum progress value.
+	progressMin float64
+
+	// progressScale is the progress scale.
+	progressScale float64
 }
 
 // newProgressOutputStdout creates a new [progressOutputStdout].
@@ -73,7 +83,12 @@ func newProgressOutputStdout(verbose bool) (*progressOutputStdout, error) {
 	}
 
 	// return to the caller
-	pos := &progressOutputStdout{logger}
+	pos := &progressOutputStdout{
+		Logger:        logger,
+		mu:            sync.Mutex{},
+		progressMin:   0,
+		progressScale: 1,
+	}
 	return pos, nil
 }
 
@@ -84,18 +99,29 @@ func (pos *progressOutputStdout) Close() error {
 	return os.Stdout.Sync()
 }
 
-// SetNettest implements ProgressOutput.
-func (pos *progressOutputStdout) SetNettest(nettest string) {
-	// nothing
-}
-
-// SetProgress implements ProgressOutput.
-func (pos *progressOutputStdout) SetProgress(progress float64) {
+// PublishNettestProgress implements ProgressOutput.
+func (pos *progressOutputStdout) PublishNettestProgress(progress float64) {
+	defer pos.mu.Unlock()
+	pos.mu.Lock()
+	progress = (progress * pos.progressScale) + pos.progressMin
 	pos.Logger.Infof("PROGRESS: %.2f%%", progress*100)
 }
 
+// SetNettestName implements ProgressOutput.
+func (pos *progressOutputStdout) SetNettestName(nettest string) {
+	// nothing
+}
+
+// SetProgressBarLimits implements ProgressOutput.
+func (pos *progressOutputStdout) SetProgressBarLimits(args *modelx.InterpreterUISetProgressBarArguments) {
+	defer pos.mu.Unlock()
+	pos.mu.Lock()
+	pos.progressMin = args.InitialValue
+	pos.progressScale = args.MaxValue - args.InitialValue
+}
+
 // SetSuite implements ProgressOutput.
-func (pos *progressOutputStdout) SetSuite(suite string) {
+func (pos *progressOutputStdout) SetSuite(args *modelx.InterpreterUIDrawCardArguments) {
 	// nothing
 }
 
@@ -123,6 +149,12 @@ type progressOutputWithLogfile struct {
 	// pb is the progress bar.
 	pb optional.Value[*progressbar.ProgressBar]
 
+	// progressMin is the minimum progress value.
+	progressMin float64
+
+	// progressScale is the progress scale.
+	progressScale float64
+
 	// suite is the current suite.
 	suite string
 
@@ -149,13 +181,15 @@ func newProgressOutputWithLogfile(logfile string, verbose bool) (*progressOutput
 
 	// create the structure
 	powl := &progressOutputWithLogfile{
-		Logger:  logger,
-		fp:      fp,
-		mu:      sync.Mutex{},
-		nettest: "",
-		pb:      optional.None[*progressbar.ProgressBar](),
-		suite:   "",
-		once:    sync.Once{},
+		Logger:        logger,
+		fp:            fp,
+		mu:            sync.Mutex{},
+		nettest:       "",
+		pb:            optional.None[*progressbar.ProgressBar](),
+		progressMin:   0,
+		progressScale: 1,
+		suite:         "",
+		once:          sync.Once{},
 	}
 
 	// return to the caller
@@ -171,17 +205,29 @@ func (powl *progressOutputWithLogfile) Close() (err error) {
 	return
 }
 
-// SetNettest implements ProgressOutput.
-func (powl *progressOutputWithLogfile) SetNettest(nettest string) {
+// PublishNettestProgress implements ProgressOutput.
+func (powl *progressOutputWithLogfile) PublishNettestProgress(progress float64) {
 	defer powl.mu.Unlock()
 	powl.mu.Lock()
-	powl.nettest = nettest
-}
 
-// SetProgress implements ProgressOutput.
-func (powl *progressOutputWithLogfile) SetProgress(progress float64) {
-	defer powl.mu.Unlock()
-	powl.mu.Lock()
+	// scale the progress value
+	progress = (progress * powl.progressScale) + powl.progressMin
+
+	// compute the progress-bar value
+	value := int64(math.RoundToEven(progress * 1000))
+
+	// reset the state when we reach 100% of progress
+	if progress >= 1 {
+		if !powl.pb.IsNone() {
+			pb := powl.pb.Unwrap()
+			pb.Set64(value)
+			powl.pb = optional.None[*progressbar.ProgressBar]()
+			fmt.Fprintf(os.Stdout, "\n")
+		}
+		return
+	}
+
+	// if there is no progress bar, create one
 	if powl.pb.IsNone() {
 		powl.pb = optional.Some(progressbar.NewOptions64(
 			1000,
@@ -190,20 +236,32 @@ func (powl *progressOutputWithLogfile) SetProgress(progress float64) {
 			progressbar.OptionSetDescription(fmt.Sprintf("%20s", powl.suite)),
 		))
 	}
+
+	// assign the new value to the progress bar
 	pb := powl.pb.Unwrap()
-	value := int64(math.RoundToEven(progress * 1000))
 	pb.Set64(value)
 }
 
-// SetSuite implements ProgressOutput.
-func (powl *progressOutputWithLogfile) SetSuite(suite string) {
+// SetNettestName implements ProgressOutput.
+func (powl *progressOutputWithLogfile) SetNettestName(nettest string) {
 	defer powl.mu.Unlock()
 	powl.mu.Lock()
-	if powl.suite != "" {
-		powl.pb = optional.None[*progressbar.ProgressBar]()
-		fmt.Printf("\n")
-	}
-	powl.suite = suite
+	powl.nettest = nettest
+}
+
+// SetProgressBarLimits implements ProgressOutput.
+func (powl *progressOutputWithLogfile) SetProgressBarLimits(args *modelx.InterpreterUISetProgressBarArguments) {
+	defer powl.mu.Unlock()
+	powl.mu.Lock()
+	powl.progressMin = args.InitialValue
+	powl.progressScale = args.MaxValue - args.InitialValue
+}
+
+// SetSuite implements ProgressOutput.
+func (powl *progressOutputWithLogfile) SetSuite(args *modelx.InterpreterUIDrawCardArguments) {
+	defer powl.mu.Unlock()
+	powl.mu.Lock()
+	powl.suite = args.Suite
 }
 
 // Write implements io.Writer

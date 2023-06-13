@@ -10,7 +10,6 @@ import (
 // newProgressEmitterList creates a new [progressEmitterList].
 func newProgressEmitterList(
 	maxRuntime time.Duration,
-	state *interpreterRunState,
 	t0 time.Time,
 	total int,
 	view modelx.ProgressView,
@@ -22,7 +21,6 @@ func newProgressEmitterList(
 	}
 	return &progressEmitterList{
 		deadline: deadline,
-		state:    state,
 		total:    total,
 		view:     view,
 	}
@@ -33,7 +31,6 @@ func newProgressEmitterList(
 // [newProgressEmitterList] factory function.
 type progressEmitterList struct {
 	deadline *time.Time
-	state    *interpreterRunState
 	total    int
 	view     modelx.ProgressView
 }
@@ -47,16 +44,13 @@ func (pe *progressEmitterList) Tick(idx int, message string) {
 	case pe.total > 0:
 		progress = float64(idx) / float64(pe.total)
 	}
-	progress = (progress * pe.state.Scale) + pe.state.MinValue
-	pe.view.SetProgress(progress)
+	pe.view.PublishNettestProgress(progress)
 }
 
 // newProgressEmitterNettest creates a new [progressEmitterNettest].
-func newProgressEmitterNettest(
-	state *interpreterRunState, view modelx.ProgressView) *progressEmitterNettest {
+func newProgressEmitterNettest(view modelx.ProgressView) *progressEmitterNettest {
 	return &progressEmitterNettest{
-		state: state,
-		view:  view,
+		view: view,
 	}
 }
 
@@ -64,14 +58,12 @@ func newProgressEmitterNettest(
 // emits its own progress, which happens, e.g., for dash. The zero value
 // of this struct is invalid; use [newProgressEmitterNettest] to construct.
 type progressEmitterNettest struct {
-	state *interpreterRunState
-	view  modelx.ProgressView
+	view modelx.ProgressView
 }
 
 var _ model.ExperimentCallbacks = &progressEmitterNettest{}
 
 // OnProgress implements model.ExperimentCallbacks
 func (pe *progressEmitterNettest) OnProgress(progress float64, message string) {
-	progress = (progress * pe.state.Scale) + pe.state.MinValue
-	pe.view.SetProgress(progress)
+	pe.view.PublishNettestProgress(progress)
 }

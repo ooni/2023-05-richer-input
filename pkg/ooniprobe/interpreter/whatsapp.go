@@ -14,24 +14,18 @@ import (
 
 // fbmessengerNettest is the facebook_messenger nettest.
 type fbmessengerNettest struct {
-	args  *modelx.InterpreterNettestRunArguments
-	ix    *Interpreter
-	state *interpreterRunState
+	args *modelx.InterpreterNettestRunArguments
+	ix   *Interpreter
 }
 
 var _ nettest = &fbmessengerNettest{}
 
 // fbmessengerNew constructs a new fbmessenger instance.
-func fbmessengerNew(
-	args *modelx.InterpreterNettestRunArguments,
-	ix *Interpreter,
-	state *interpreterRunState,
-) (nettest, error) {
+func fbmessengerNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
 	// fill the nettest struct
 	nettest := &fbmessengerNettest{
-		args:  args,
-		ix:    ix,
-		state: state,
+		args: args,
+		ix:   ix,
 	}
 
 	// return to the caller
@@ -50,7 +44,7 @@ func (nt *fbmessengerNettest) Run(ctx context.Context) error {
 	err := runExperiment(
 		ctx,
 		nt.args.Annotations,
-		newProgressEmitterNettest(nt.state, nt.ix.view),
+		newProgressEmitterNettest(nt.ix.view),
 		exp,
 		"", // input
 		nt.ix,

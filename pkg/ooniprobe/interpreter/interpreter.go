@@ -59,52 +59,25 @@ func New(
 	}
 }
 
-// interpreterRunState is the state maintained during [Interpreter.Run]. Please,
-// use [newInterpreterRunState] to construct.
-type interpreterRunState struct {
-	// MinValue is the current progress bar value.
-	MinValue float64
-
-	// Scale is the value to scale progress bar
-	// increments to avoid overflowing the maximum
-	// configured progress bar value.
-	Scale float64
-
-	// Suite is the suite we're running.
-	Suite string
-}
-
-// newInterpreterRunState creates a new [interpreterRunState].
-func newInterpreterRunState() *interpreterRunState {
-	return &interpreterRunState{
-		MinValue: 0,
-		Scale:    1,
-		Suite:    "",
-	}
-}
-
 // Run runs the given script.
 func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript) error {
-	// create state for this run
-	state := newInterpreterRunState()
-
 	// execute each instruction
 	for _, instruction := range script.Instructions {
 		ix.logger.Debugf("interpreter: interpreting instruction: %s", instruction.Run)
 
 		switch instruction.Run {
 		case "ui:draw_card@v1":
-			if err := ix.onUIDrawCardV1(ctx, state, instruction.With); err != nil {
+			if err := ix.onUIDrawCardV1(ctx, instruction.With); err != nil {
 				return err
 			}
 
 		case "ui:set_progress_bar@v1":
-			if err := ix.onUISetProgressBarV1(ctx, state, instruction.With); err != nil {
+			if err := ix.onUISetProgressBarV1(ctx, instruction.With); err != nil {
 				return err
 			}
 
 		case "nettest:run@v1":
-			if err := ix.onNettestRunV1(ctx, state, instruction.With); err != nil {
+			if err := ix.onNettestRunV1(ctx, instruction.With); err != nil {
 				return err
 			}
 
@@ -117,53 +90,33 @@ func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript
 }
 
 // onUIDrawCardV1 is the method called for ui:draw_card@v1 instructions.
-func (ix *Interpreter) onUIDrawCardV1(
-	ctx context.Context,
-	state *interpreterRunState,
-	rawMsg json.RawMessage,
-) error {
+func (ix *Interpreter) onUIDrawCardV1(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the raw JSON message
 	var value modelx.InterpreterUIDrawCardArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {
 		return err
 	}
 
-	// make sure we know the current suite name
-	state.Suite = value.Suite
-
-	// only tell the UI about the running suite if the suite is enabled
-	if ix.settings.IsSuiteEnabled(state.Suite) {
-		ix.view.SetSuite(state.Suite)
-	}
-
+	// make sure the view knows about the current suite
+	ix.view.SetSuite(&value)
 	return nil
 }
 
 // onUISetProgressBarV1 is the method called for ui:set_progress_bar@v1 instructions.
-func (ix *Interpreter) onUISetProgressBarV1(
-	ctx context.Context,
-	state *interpreterRunState,
-	rawMsg json.RawMessage,
-) error {
+func (ix *Interpreter) onUISetProgressBarV1(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the raw JSON message
 	var value modelx.InterpreterUISetProgressBarArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {
 		return err
 	}
 
-	// set the progress bar boundaries without changing the UI for now
-	// given that the config may instruct us to skip some nettests
-	state.MinValue = value.InitialValue
-	state.Scale = value.MaxValue - value.InitialValue
+	// make sure the view knows about the current progress bar limits
+	ix.view.SetProgressBarLimits(&value)
 	return nil
 }
 
 // onNettestRunV1 is the method called for nettest:run@v1 instructions.
-func (ix *Interpreter) onNettestRunV1(
-	ctx context.Context,
-	state *interpreterRunState,
-	rawMsg json.RawMessage,
-) error {
+func (ix *Interpreter) onNettestRunV1(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the RAW JSON message
 	var value modelx.InterpreterNettestRunArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {
@@ -172,8 +125,8 @@ func (ix *Interpreter) onNettestRunV1(
 
 	// Return early if the suite or the nettest are not clear to run. Note
 	// that we should return nil here to continue running.
-	if !ix.settings.IsSuiteEnabled(state.Suite) {
-		ix.logger.Infof("interpreter: skip disabled suite: %s", state.Suite)
+	if !ix.settings.IsSuiteEnabled(value.SuiteName) {
+		ix.logger.Infof("interpreter: skip disabled suite: %s", value.SuiteName)
 		return nil
 	}
 	if !ix.settings.IsNettestEnabled(value.NettestName) {
@@ -182,24 +135,24 @@ func (ix *Interpreter) onNettestRunV1(
 	}
 
 	// record what we're trying to run inside the logs
-	ix.logger.Infof("~~~ running %s ~~~", value.NettestName)
+	ix.logger.Infof("~~~ running %s::%s ~~~", value.SuiteName, value.NettestName)
 
 	// Create a nettest instance or return early if we don't know the
 	// nettest name. Note that we should not return error here because
 	// newer OONI probe versions may know this nettest.
-	nettest, err := newNettest(&value, ix, state)
+	nettest, err := newNettest(&value, ix)
 	if err != nil {
 		ix.logger.Warnf("interpreter: cannot create %s nettest: %s", value.NettestName, err.Error())
 		return nil
 	}
 
 	// make sure the UI knows we're running a nettest
-	ix.view.SetNettest(value.NettestName)
+	ix.view.SetNettestName(value.NettestName)
 
 	// make sure we emit the correct begin and end events
-	ix.view.SetProgress(state.MinValue)
+	ix.view.PublishNettestProgress(0)
 	defer func() {
-		ix.view.SetProgress(state.MinValue + state.Scale)
+		ix.view.PublishNettestProgress(1.0)
 	}()
 
 	// let the nettest runner finish the job

@@ -6,6 +6,7 @@
 			"with": {
 				"nettest_name": "urlgetter",
 				"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
+				"suite_name": "",
 				"targets": [
 					{
 						"annotations": {

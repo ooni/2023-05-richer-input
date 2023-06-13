@@ -14,24 +14,18 @@ import (
 
 // signalNettest is the signal nettest.
 type signalNettest struct {
-	args  *modelx.InterpreterNettestRunArguments
-	ix    *Interpreter
-	state *interpreterRunState
+	args *modelx.InterpreterNettestRunArguments
+	ix   *Interpreter
 }
 
 var _ nettest = &signalNettest{}
 
 // signalNew constructs a new signal instance.
-func signalNew(
-	args *modelx.InterpreterNettestRunArguments,
-	ix *Interpreter,
-	state *interpreterRunState,
-) (nettest, error) {
+func signalNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
 	// fill the nettest struct
 	nettest := &signalNettest{
-		args:  args,
-		ix:    ix,
-		state: state,
+		args: args,
+		ix:   ix,
 	}
 
 	// return to the caller
@@ -50,7 +44,7 @@ func (nt *signalNettest) Run(ctx context.Context) error {
 	err := runExperiment(
 		ctx,
 		nt.args.Annotations,
-		newProgressEmitterNettest(nt.state, nt.ix.view),
+		newProgressEmitterNettest(nt.ix.view),
 		exp,
 		"", // input
 		nt.ix,

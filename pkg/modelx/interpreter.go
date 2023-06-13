@@ -53,6 +53,9 @@ type InterpreterNettestRunArguments struct {
 	// ReportID is the report ID.
 	ReportID string `json:"report_id"`
 
+	// SuiteName is the suite to which this nettest belongs.
+	SuiteName string `json:"suite_name"`
+
 	// Targets contains experiment specific targets.
 	Targets json.RawMessage `json:"targets"`
 

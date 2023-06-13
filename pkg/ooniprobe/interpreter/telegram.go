@@ -14,24 +14,18 @@ import (
 
 // telegramNettest is the telegram nettest.
 type telegramNettest struct {
-	args  *modelx.InterpreterNettestRunArguments
-	ix    *Interpreter
-	state *interpreterRunState
+	args *modelx.InterpreterNettestRunArguments
+	ix   *Interpreter
 }
 
 var _ nettest = &telegramNettest{}
 
 // telegramNew constructs a new telegram instance.
-func telegramNew(
-	args *modelx.InterpreterNettestRunArguments,
-	ix *Interpreter,
-	state *interpreterRunState,
-) (nettest, error) {
+func telegramNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
 	// fill the nettest struct
 	nettest := &telegramNettest{
-		args:  args,
-		ix:    ix,
-		state: state,
+		args: args,
+		ix:   ix,
 	}
 
 	// return to the caller
@@ -50,7 +44,7 @@ func (nt *telegramNettest) Run(ctx context.Context) error {
 	err := runExperiment(
 		ctx,
 		nt.args.Annotations,
-		newProgressEmitterNettest(nt.state, nt.ix.view),
+		newProgressEmitterNettest(nt.ix.view),
 		exp,
 		"", // input
 		nt.ix,

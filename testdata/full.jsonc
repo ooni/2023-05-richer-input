@@ -48,6 +48,9 @@
 				// The report_id field contains the report ID to use
 				"report_id": "20230406T142431Z_webconnectivity_IT_30722_n1_QY8E8jHBkSr7kUWu",
 
+				// The name of the suite we're running.
+				"suite_name": "websites",
+
 				// The targets field contains richer input specific of this
 				// experiment that the OONI engine needs to interpret.
 				"targets": [
@@ -130,6 +133,7 @@
 			"with": {
 				"nettest_name": "facebook_messenger",
 				"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
+				"suite_name": "im",
 
 				// Note how here the richer input contains mininettests that
 				// the experiment should run. This functionality allows us to
@@ -215,6 +219,7 @@
 			"with": {
 				"nettest_name": "signal",
 				"report_id": "20230406T142431Z_signal_IT_30722_n1_8vFVXzjCjfUFbOA5",
+				"suite_name": "im",
 				"targets": [
 					{
 						"run": "dns-lookup@v1",
@@ -270,6 +275,7 @@
 			"with": {
 				"nettest_name": "telegram",
 				"report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
+				"suite_name": "im",
 				"targets": [
 					{
 						"run": "http-address@v1",
@@ -314,6 +320,7 @@
 			"with": {
 				"nettest_name": "whatsapp",
 				"report_id": "20230406T142431Z_whatsapp_IT_30722_n1_lMVwxE4oAaZ00mIM",
+				"suite_name": "im",
 				"targets": [
 					{
 						"run": "tcp-connect-domain@v1",
@@ -388,7 +395,8 @@
 			"run": "nettest:run@v1",
 			"with": {
 				"nettest_name": "dash",
-				"report_id": "20230406T142431Z_dash_IT_30722_n1_ldAWcG94R1xigSo2"
+				"report_id": "20230406T142431Z_dash_IT_30722_n1_ldAWcG94R1xigSo2",
+				"suite_name": "performance"
 			}
 		},
 
@@ -404,7 +412,8 @@
 			"run": "nettest:run@v1",
 			"with": {
 				"nettest_name": "ndt",
-				"report_id": "20230406T142431Z_ndt_IT_30722_n1_yXHa0JH88iYyBdVh"
+				"report_id": "20230406T142431Z_ndt_IT_30722_n1_yXHa0JH88iYyBdVh",
+				"suite_name": "performance"
 			}
 		},
 
@@ -421,6 +430,7 @@
 			"with": {
 				"nettest_name": "http_header_field_manipulation",
 				"report_id": "20230406T142431Z_httpheaderfieldmanipulation_IT_30722_n1_LSFoxGt03W9TFQYv",
+				"suite_name": "performance",
 				"test_helpers": {
 					"http-return-json-headers": [
 						{
@@ -449,6 +459,7 @@
 			"with": {
 				"nettest_name": "http_invalid_request_line",
 				"report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
+				"suite_name": "performance",
 				"test_helpers": {
 					"tcp-echo": [
 						{
@@ -484,7 +495,8 @@
 			"run": "nettest:run@v1",
 			"with": {
 				"nettest_name": "psiphon",
-				"report_id": "20230406T142431Z_psiphon_IT_30722_n1_JndR2OBVs9h2UY4c"
+				"report_id": "20230406T142431Z_psiphon_IT_30722_n1_JndR2OBVs9h2UY4c",
+				"suite_name": "circumvention"
 			}
 		},
 
@@ -500,7 +512,8 @@
 			"run": "nettest:run@v1",
 			"with": {
 				"nettest_name": "tor",
-				"report_id": "20230406T142431Z_tor_IT_30722_n1_yC3sir64oGz2zS2o"
+				"report_id": "20230406T142431Z_tor_IT_30722_n1_yC3sir64oGz2zS2o",
+				"suite_name": "circumvention"
 			}
 		},
 
@@ -525,6 +538,7 @@
 			"with": {
 				"nettest_name": "dnscheck",
 				"report_id": "20230406T142431Z_dnscheck_IT_30722_n1_CtRwDkl5cJFLrsDn",
+				"suite_name": "experimental",
 
 				// Note how we're now able to control whether to run
 				// dnscheck and which targets to select.
@@ -566,6 +580,7 @@
 			"with": {
 				"nettest_name": "stun_reachability",
 				"report_id": "20230406T142431Z_stunreachability_IT_30722_n1_8vFVXzjCjfUFbOA5",
+				"suite_name": "experimental",
 				"targets": [
 					{
 						"attributes": {},
@@ -593,7 +608,8 @@
 			"run": "nettest:run@v1",
 			"with": {
 				"nettest_name": "torsf",
-				"report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5"
+				"report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5",
+				"suite_name": "experimental"
 			}
 		},
 
@@ -609,7 +625,8 @@
 			"run": "nettest:run@v1",
 			"with": {
 				"nettest_name": "vanilla_tor",
-				"report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy"
+				"report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy",
+				"suite_name": "experimental"
 			}
 		},
 
@@ -627,6 +644,7 @@
 			"with": {
 				"nettest_name": "urlgetter",
 				"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
+				"suite_name": "experimental",
 				"targets": [
 					{
 						"annotations": {
