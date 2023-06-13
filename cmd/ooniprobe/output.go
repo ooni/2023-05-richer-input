@@ -201,6 +201,7 @@ func (powl *progressOutputWithLogfile) SetSuite(suite string) {
 	powl.mu.Lock()
 	if powl.suite != "" {
 		powl.pb = optional.None[*progressbar.ProgressBar]()
+		fmt.Printf("\n")
 	}
 	powl.suite = suite
 }

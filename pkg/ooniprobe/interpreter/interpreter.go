@@ -128,9 +128,14 @@ func (ix *Interpreter) onUIDrawCardV1(
 		return err
 	}
 
-	// set the card name without changing the UI for now given that the
-	// config may instruct us to skip some suites
+	// make sure we know the current suite name
 	state.Suite = value.Suite
+
+	// only tell the UI about the running suite if the suite is enabled
+	if ix.settings.IsSuiteEnabled(state.Suite) {
+		ix.view.SetSuite(state.Suite)
+	}
+
 	return nil
 }
 
@@ -188,10 +193,7 @@ func (ix *Interpreter) onNettestRunV1(
 		return nil
 	}
 
-	// update the view
-	if state.Suite != "" {
-		ix.view.SetSuite(state.Suite)
-	}
+	// make sure the UI knows we're running a nettest
 	ix.view.SetNettest(value.NettestName)
 
 	// make sure we emit the correct begin and end events
