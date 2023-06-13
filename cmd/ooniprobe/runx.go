@@ -23,58 +23,59 @@ func newRunxSubcommand() *cobra.Command {
 
 	// initialize the cobra subcommand
 	cmd := &cobra.Command{
-		Use:   "runx",
-		Short: "Run a properly-initialized report descriptor",
+		Use:   "runx --location-file FILE --script-file FILE",
+		Short: "Internal command that runs network tests.",
 		Run:   state.Main,
+		Args:  cobra.NoArgs,
 	}
 
-	// register the required --location flag
+	// register the required --location-file flag
 	cmd.Flags().StringVar(
 		&state.location,
-		"location",
+		"location-file",
 		"",
-		"path of the input probe location file",
+		"path of the probe location file",
 	)
-	cmd.MarkFlagRequired("location")
+	cmd.MarkFlagRequired("location-file")
 
-	// register the --logfile flag
+	// register the --log-file flag
 	cmd.Flags().StringVar(
 		&state.logfile,
-		"logfile",
+		"log-file",
 		"",
 		"path of the output log file",
 	)
 
-	// register the --nettest flag
+	// register the --only-nettest flag
 	cmd.Flags().StringSliceVar(
 		&state.enabledNettests,
-		"nettest",
+		"only-nettest",
 		[]string{},
 		"only run the given nettest (can be provided multiple times)",
 	)
 
-	// register the -o,--output flag
+	// register the -o,--results-file flag
 	cmd.Flags().StringVarP(
 		&state.output,
-		"output",
+		"results-file",
 		"o",
-		"report.jsonl",
-		"path of the output report file",
+		"results.jsonl",
+		"path of the output results file",
 	)
 
-	// register the required --script flag
+	// register the required --script-file flag
 	cmd.Flags().StringVar(
 		&state.script,
-		"script",
+		"script-file",
 		"",
-		"path of the input script file",
+		"path of the script file to interpret",
 	)
-	cmd.MarkFlagRequired("script")
+	cmd.MarkFlagRequired("script-file")
 
-	// register the --suite flag
+	// register the --only-suite flag
 	cmd.Flags().StringSliceVar(
 		&state.enabledSuites,
-		"suite",
+		"only-suite",
 		[]string{},
 		"only run the given suite (can be provided multiple times)",
 	)

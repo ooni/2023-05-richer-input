@@ -169,7 +169,7 @@ interpreter what to measure. For example:
 In the PoC, one could run this script as follows:
 
 ```console
-./ooniprobe runx --location location.json --script simple.jsonc
+./ooniprobe runx --location-file location.json --script-file simple.jsonc
 ```
 
 The script consists of a sequence of instructions, and the interpreter

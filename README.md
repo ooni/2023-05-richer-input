@@ -49,9 +49,9 @@ Then build using:
 Try:
 
 ```console
-./ooniprobe runx --logfile LOG.txt \
-	--location testdata/location.json \
-	--script testdata/full.jsonc
+./ooniprobe runx --log-file LOG.txt \
+	--location-file testdata/location.json \
+	--script-file testdata/full.jsonc
 ```
 
 To run a reasonably complete OONI measurements.
