@@ -36,6 +36,9 @@ type InterpreterUISetProgressBarArguments struct {
 
 	// MaxValue is the progress bar maximum value.
 	MaxValue float64 `json:"max_value"`
+
+	// SuiteName is the name of the suite that is running.
+	SuiteName string `json:"suite_name"`
 }
 
 // InterpreterNettestRunArguments contains arguments for the

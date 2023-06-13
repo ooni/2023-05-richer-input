@@ -97,6 +97,11 @@ func (ix *Interpreter) onUIDrawCardV1(ctx context.Context, rawMsg json.RawMessag
 		return err
 	}
 
+	// ignore instruction if the corresponding suite is not enabled
+	if !ix.settings.IsSuiteEnabled(value.SuiteName) {
+		return nil
+	}
+
 	// make sure the view knows about the current suite
 	ix.view.SetSuite(&value)
 	return nil
@@ -108,6 +113,11 @@ func (ix *Interpreter) onUISetProgressBarV1(ctx context.Context, rawMsg json.Raw
 	var value modelx.InterpreterUISetProgressBarArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {
 		return err
+	}
+
+	// ignore instruction if the corresponding suite is not enabled
+	if !ix.settings.IsSuiteEnabled(value.SuiteName) {
+		return nil
 	}
 
 	// make sure the view knows about the current progress bar limits

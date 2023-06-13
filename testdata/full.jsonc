@@ -24,7 +24,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0,
-				"max_value": 1
+				"max_value": 1,
+				"suite_name": "websites"
 			}
 		},
 
@@ -125,7 +126,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0,
-				"max_value": 0.25
+				"max_value": 0.25,
+				"suite_name": "im"
 			}
 		},
 		{
@@ -211,7 +213,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.25,
-				"max_value": 0.5
+				"max_value": 0.5,
+				"suite_name": "im"
 			}
 		},
 		{
@@ -267,7 +270,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.5,
-				"max_value": 0.75
+				"max_value": 0.75,
+				"suite_name": "im"
 			}
 		},
 		{
@@ -312,7 +316,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.75,
-				"max_value": 1
+				"max_value": 1,
+				"suite_name": "im"
 			}
 		},
 		{
@@ -388,7 +393,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0,
-				"max_value": 0.25
+				"max_value": 0.25,
+				"suite_name": "performance"
 			}
 		},
 		{
@@ -405,7 +411,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.25,
-				"max_value": 0.5
+				"max_value": 0.5,
+				"suite_name": "performance"
 			}
 		},
 		{
@@ -422,7 +429,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.5,
-				"max_value": 0.75
+				"max_value": 0.75,
+				"suite_name": "performance"
 			}
 		},
 		{
@@ -451,7 +459,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.75,
-				"max_value": 0.1
+				"max_value": 0.1,
+				"suite_name": "performance"
 			}
 		},
 		{
@@ -488,7 +497,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0,
-				"max_value": 0.5
+				"max_value": 0.5,
+				"suite_name": "circumvention"
 			}
 		},
 		{
@@ -505,7 +515,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.5,
-				"max_value": 1
+				"max_value": 1,
+				"suite_name": "circumvention"
 			}
 		},
 		{
@@ -530,7 +541,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0,
-				"max_value": 0.2
+				"max_value": 0.2,
+				"suite_name": "experimental"
 			}
 		},
 		{
@@ -572,7 +584,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.2,
-				"max_value": 0.4
+				"max_value": 0.4,
+				"suite_name": "experimental"
 			}
 		},
 		{
@@ -601,7 +614,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.4,
-				"max_value": 0.6
+				"max_value": 0.6,
+				"suite_name": "experimental"
 			}
 		},
 		{
@@ -618,7 +632,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.6,
-				"max_value": 0.8
+				"max_value": 0.8,
+				"suite_name": "experimental"
 			}
 		},
 		{
@@ -636,7 +651,8 @@
 			"run": "ui:set_progress_bar@v1",
 			"with": {
 				"initial_value": 0.8,
-				"max_value": 1
+				"max_value": 1,
+				"suite_name": "experimental"
 			}
 		},
 		{
