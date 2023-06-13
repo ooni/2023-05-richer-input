@@ -66,18 +66,18 @@ func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript
 		ix.logger.Debugf("interpreter: interpreting instruction: %s", instruction.Run)
 
 		switch instruction.Run {
-		case "ui:draw_card@v1":
-			if err := ix.onUIDrawCardV1(ctx, instruction.With); err != nil {
+		case "ui:set_suite":
+			if err := ix.onUISetSuite(ctx, instruction.With); err != nil {
 				return err
 			}
 
-		case "ui:set_progress_bar@v1":
-			if err := ix.onUISetProgressBarV1(ctx, instruction.With); err != nil {
+		case "ui:set_progress_bar_range":
+			if err := ix.onUISetProgressBarRange(ctx, instruction.With); err != nil {
 				return err
 			}
 
-		case "nettest:run@v1":
-			if err := ix.onNettestRunV1(ctx, instruction.With); err != nil {
+		case "nettest:run":
+			if err := ix.onNettestRun(ctx, instruction.With); err != nil {
 				return err
 			}
 
@@ -89,10 +89,10 @@ func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript
 	return nil
 }
 
-// onUIDrawCardV1 is the method called for ui:draw_card@v1 instructions.
-func (ix *Interpreter) onUIDrawCardV1(ctx context.Context, rawMsg json.RawMessage) error {
+// onUISetSuite is the method called for ui:set_suite instructions.
+func (ix *Interpreter) onUISetSuite(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the raw JSON message
-	var value modelx.InterpreterUIDrawCardArguments
+	var value modelx.InterpreterUISetSuiteArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {
 		return err
 	}
@@ -107,10 +107,10 @@ func (ix *Interpreter) onUIDrawCardV1(ctx context.Context, rawMsg json.RawMessag
 	return nil
 }
 
-// onUISetProgressBarV1 is the method called for ui:set_progress_bar@v1 instructions.
-func (ix *Interpreter) onUISetProgressBarV1(ctx context.Context, rawMsg json.RawMessage) error {
+// onUISetProgressBarRange is the method called for ui:set_progress_bar_range instructions.
+func (ix *Interpreter) onUISetProgressBarRange(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the raw JSON message
-	var value modelx.InterpreterUISetProgressBarArguments
+	var value modelx.InterpreterUISetProgressBarRangeArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {
 		return err
 	}
@@ -125,8 +125,8 @@ func (ix *Interpreter) onUISetProgressBarV1(ctx context.Context, rawMsg json.Raw
 	return nil
 }
 
-// onNettestRunV1 is the method called for nettest:run@v1 instructions.
-func (ix *Interpreter) onNettestRunV1(ctx context.Context, rawMsg json.RawMessage) error {
+// onNettestRun is the method called for nettest:run instructions.
+func (ix *Interpreter) onNettestRun(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the RAW JSON message
 	var value modelx.InterpreterNettestRunArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {

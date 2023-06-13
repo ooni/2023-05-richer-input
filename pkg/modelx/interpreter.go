@@ -21,16 +21,16 @@ type InterpreterInstruction struct {
 	With json.RawMessage `json:"with"`
 }
 
-// InterpreterUIDrawCardArguments contains arguments for the
-// ui:draw_card instruction.
-type InterpreterUIDrawCardArguments struct {
+// InterpreterUISetSuiteArguments contains arguments for the
+// ui:set_suite instruction.
+type InterpreterUISetSuiteArguments struct {
 	// SuiteName is the name of the suite that is running.
 	SuiteName string `json:"suite_name"`
 }
 
-// InterpreterUISetProgressBarArguments contains arguments for the
-// ui:set_progress_bar instruction.
-type InterpreterUISetProgressBarArguments struct {
+// InterpreterUISetProgressBarRangeArguments contains arguments for the
+// ui:set_progress_bar_range instruction.
+type InterpreterUISetProgressBarRangeArguments struct {
 	// InitialValue is the progress bar initial value.
 	InitialValue float64 `json:"initial_value"`
 

@@ -113,7 +113,7 @@ func (pos *progressOutputStdout) SetNettestName(nettest string) {
 }
 
 // SetProgressBarLimits implements ProgressOutput.
-func (pos *progressOutputStdout) SetProgressBarLimits(args *modelx.InterpreterUISetProgressBarArguments) {
+func (pos *progressOutputStdout) SetProgressBarLimits(args *modelx.InterpreterUISetProgressBarRangeArguments) {
 	defer pos.mu.Unlock()
 	pos.mu.Lock()
 	pos.progressMin = args.InitialValue
@@ -121,7 +121,7 @@ func (pos *progressOutputStdout) SetProgressBarLimits(args *modelx.InterpreterUI
 }
 
 // SetSuite implements ProgressOutput.
-func (pos *progressOutputStdout) SetSuite(args *modelx.InterpreterUIDrawCardArguments) {
+func (pos *progressOutputStdout) SetSuite(args *modelx.InterpreterUISetSuiteArguments) {
 	// nothing
 }
 
@@ -250,7 +250,7 @@ func (powl *progressOutputWithLogfile) SetNettestName(nettest string) {
 }
 
 // SetProgressBarLimits implements ProgressOutput.
-func (powl *progressOutputWithLogfile) SetProgressBarLimits(args *modelx.InterpreterUISetProgressBarArguments) {
+func (powl *progressOutputWithLogfile) SetProgressBarLimits(args *modelx.InterpreterUISetProgressBarRangeArguments) {
 	defer powl.mu.Unlock()
 	powl.mu.Lock()
 	powl.progressMin = args.InitialValue
@@ -258,7 +258,7 @@ func (powl *progressOutputWithLogfile) SetProgressBarLimits(args *modelx.Interpr
 }
 
 // SetSuite implements ProgressOutput.
-func (powl *progressOutputWithLogfile) SetSuite(args *modelx.InterpreterUIDrawCardArguments) {
+func (powl *progressOutputWithLogfile) SetSuite(args *modelx.InterpreterUISetSuiteArguments) {
 	defer powl.mu.Unlock()
 	powl.mu.Lock()
 	powl.suite = args.SuiteName

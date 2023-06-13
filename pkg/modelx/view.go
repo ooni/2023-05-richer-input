@@ -11,8 +11,8 @@ type ProgressView interface {
 	SetNettestName(nettest string)
 
 	// SetProgressLimits sets the progress bar limits.
-	SetProgressBarLimits(args *InterpreterUISetProgressBarArguments)
+	SetProgressBarLimits(args *InterpreterUISetProgressBarRangeArguments)
 
 	// SetSuiteName sets the suite.
-	SetSuite(args *InterpreterUIDrawCardArguments)
+	SetSuite(args *InterpreterUISetSuiteArguments)
 }
