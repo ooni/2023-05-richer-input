@@ -21,9 +21,6 @@ type CheckInResponse struct {
 	V int64 `json:"v"`
 }
 
-// TODO(bassosimone): it makes sense to provide the test-helpers
-// directly as richer input for each experiment.
-
 // CheckInResponseConf is the conf portion of [CheckInResponse].
 type CheckInResponseConf struct {
 	// Features contains feature flags.
