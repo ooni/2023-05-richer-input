@@ -26,7 +26,7 @@ type Interpreter struct {
 	saver modelx.MeasurementSaver
 
 	// settings contains the settings.
-	settings modelx.Settings
+	settings modelx.InterpreterSettings
 
 	// softwareName contains the software name.
 	softwareName string
@@ -43,7 +43,7 @@ func New(
 	location *modelx.ProbeLocation,
 	logger model.Logger,
 	saver modelx.MeasurementSaver,
-	settings modelx.Settings,
+	settings modelx.InterpreterSettings,
 	softwareName string,
 	softwareVersion string,
 	view modelx.ProgressView,

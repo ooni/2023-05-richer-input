@@ -266,7 +266,7 @@ type runxSettings struct {
 	enabledSuites []string
 }
 
-var _ modelx.Settings = &runxSettings{}
+var _ modelx.InterpreterSettings = &runxSettings{}
 
 // IsNettestEnabled implements model.Settings
 func (rs *runxSettings) IsNettestEnabled(name string) bool {
