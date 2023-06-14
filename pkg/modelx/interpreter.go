@@ -36,14 +36,14 @@ type InterpreterInstruction struct {
 }
 
 // InterpreterUISetSuiteArguments contains arguments for the
-// ui:set_suite instruction.
+// ui/set_suite instruction.
 type InterpreterUISetSuiteArguments struct {
 	// SuiteName is the name of the suite that is running.
 	SuiteName string `json:"suite_name"`
 }
 
 // InterpreterUISetProgressBarRangeArguments contains arguments for the
-// ui:set_progress_bar_range instruction.
+// ui/set_progress_bar_range instruction.
 type InterpreterUISetProgressBarRangeArguments struct {
 	// InitialValue is the progress bar initial value.
 	InitialValue float64 `json:"initial_value"`
@@ -56,7 +56,7 @@ type InterpreterUISetProgressBarRangeArguments struct {
 }
 
 // InterpreterUISetProgressBarValueArguments contains arguments for the
-// ui:set_progress_bar_value instruction.
+// ui/set_progress_bar_value instruction.
 type InterpreterUISetProgressBarValueArguments struct {
 	// SuiteName is the name of the suite that is running.
 	SuiteName string `json:"suite_name"`
@@ -66,7 +66,7 @@ type InterpreterUISetProgressBarValueArguments struct {
 }
 
 // InterpreterNettestRunArguments contains arguments for the
-// nettest:run instruction.
+// nettest/run instruction.
 type InterpreterNettestRunArguments struct {
 	// Annotations contains extra annotations.
 	Annotations map[string]string `json:"annotations"`

@@ -66,22 +66,22 @@ func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript
 		ix.logger.Debugf("interpreter: interpreting instruction: %s", instruction.Run)
 
 		switch instruction.Run {
-		case "ui:set_suite":
+		case "ui/set_suite":
 			if err := ix.onUISetSuite(ctx, instruction.With); err != nil {
 				return err
 			}
 
-		case "ui:set_progress_bar_range":
+		case "ui/set_progress_bar_range":
 			if err := ix.onUISetProgressBarRange(ctx, instruction.With); err != nil {
 				return err
 			}
 
-		case "ui:set_progress_bar_value":
+		case "ui/set_progress_bar_value":
 			if err := ix.onUISetProgressBarValue(ctx, instruction.With); err != nil {
 				return err
 			}
 
-		case "nettest:run":
+		case "nettest/run":
 			if err := ix.onNettestRun(ctx, instruction.With); err != nil {
 				return err
 			}
@@ -94,7 +94,7 @@ func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript
 	return nil
 }
 
-// onUISetSuite is the method called for ui:set_suite instructions.
+// onUISetSuite is the method called for ui/set_suite instructions.
 func (ix *Interpreter) onUISetSuite(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the raw JSON message
 	var value modelx.InterpreterUISetSuiteArguments
@@ -112,7 +112,7 @@ func (ix *Interpreter) onUISetSuite(ctx context.Context, rawMsg json.RawMessage)
 	return nil
 }
 
-// onUISetProgressBarRange is the method called for ui:set_progress_bar_range instructions.
+// onUISetProgressBarRange is the method called for ui/set_progress_bar_range instructions.
 func (ix *Interpreter) onUISetProgressBarRange(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the raw JSON message
 	var value modelx.InterpreterUISetProgressBarRangeArguments
@@ -130,7 +130,7 @@ func (ix *Interpreter) onUISetProgressBarRange(ctx context.Context, rawMsg json.
 	return nil
 }
 
-// onUISetProgressBarValue is the method called for ui:set_progress_bar_value instructions.
+// onUISetProgressBarValue is the method called for ui/set_progress_bar_value instructions.
 func (ix *Interpreter) onUISetProgressBarValue(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the raw JSON message
 	var value modelx.InterpreterUISetProgressBarValueArguments
@@ -148,7 +148,7 @@ func (ix *Interpreter) onUISetProgressBarValue(ctx context.Context, rawMsg json.
 	return nil
 }
 
-// onNettestRun is the method called for nettest:run instructions.
+// onNettestRun is the method called for nettest/run instructions.
 func (ix *Interpreter) onNettestRun(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the RAW JSON message
 	var value modelx.InterpreterNettestRunArguments

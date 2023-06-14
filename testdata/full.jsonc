@@ -7,21 +7,21 @@
 	// unknown instruction, it will ignore and skip it.
 	"instructions": [
 
-		// The ui:set_suite instruction tells the OONI engine to
+		// The ui/set_suite instruction tells the OONI engine to
 		// draw in output a card with the given name.
 		{
-			"run": "ui:set_suite",
+			"run": "ui/set_suite",
 			"with": {
 				"suite_name": "websites"
 			}
 		},
 
-		// The ui:set_progress_bar_range instruction tells the OONI engine
+		// The ui/set_progress_bar_range instruction tells the OONI engine
 		// to draw in output a progress bar with the given initial
 		// value and the given maximum value. Each nettest will have
 		// its own policy for emitting progress, as it is now.
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0,
 				"max_value": 1,
@@ -29,10 +29,10 @@
 			}
 		},
 
-		// The nettest:run instruction tells the OONI engine
+		// The nettest/run instruction tells the OONI engine
 		// to run the given nettest by name.
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 
 				// The experimental_flags field contains OPTIONAL feature flags. In this case
@@ -115,7 +115,7 @@
 
 		// Make sure the progress bar value is set to 100%
 		{
-			"run": "ui:set_progress_bar_value",
+			"run": "ui/set_progress_bar_value",
 			"with": {
 				"suite_name": "websites",
 				"value": 1
@@ -124,7 +124,7 @@
 
 		// Let us change suite.
 		{
-			"run": "ui:set_suite",
+			"run": "ui/set_suite",
 			"with": {
 				"suite_name": "im"
 			}
@@ -132,7 +132,7 @@
 
 		// Let us now run the facebook messenger experiment.
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0,
 				"max_value": 0.25,
@@ -140,7 +140,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "facebook_messenger",
 				"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
@@ -219,7 +219,7 @@
 
 		// Let us now run the signal experiment
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.25,
 				"max_value": 0.5,
@@ -227,7 +227,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "signal",
 				"report_id": "20230406T142431Z_signal_IT_30722_n1_8vFVXzjCjfUFbOA5",
@@ -276,7 +276,7 @@
 
 		// Let us now run the telegram experiment
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.5,
 				"max_value": 0.75,
@@ -284,7 +284,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "telegram",
 				"report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
@@ -322,7 +322,7 @@
 
 		// Let us now run the whatsapp experiment
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.75,
 				"max_value": 1,
@@ -330,7 +330,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "whatsapp",
 				"report_id": "20230406T142431Z_whatsapp_IT_30722_n1_lMVwxE4oAaZ00mIM",
@@ -391,7 +391,7 @@
 
 		// Make sure the progress bar value is set to 100%
 		{
-			"run": "ui:set_progress_bar_value",
+			"run": "ui/set_progress_bar_value",
 			"with": {
 				"suite_name": "im",
 				"value": 1
@@ -400,7 +400,7 @@
 
 		// Now it's time to run the performance suite
 		{
-			"run": "ui:set_suite",
+			"run": "ui/set_suite",
 			"with": {
 				"suite_name": "performance"
 			}
@@ -408,7 +408,7 @@
 
 		// First we run the dash experiment
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0,
 				"max_value": 0.25,
@@ -416,7 +416,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "dash",
 				"report_id": "20230406T142431Z_dash_IT_30722_n1_ldAWcG94R1xigSo2",
@@ -426,7 +426,7 @@
 
 		// Then we run the NDT experiment
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.25,
 				"max_value": 0.5,
@@ -434,7 +434,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "ndt",
 				"report_id": "20230406T142431Z_ndt_IT_30722_n1_yXHa0JH88iYyBdVh",
@@ -444,7 +444,7 @@
 
 		// Then run the HHFM experiment
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.5,
 				"max_value": 0.75,
@@ -452,7 +452,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "http_header_field_manipulation",
 				"report_id": "20230406T142431Z_httpheaderfieldmanipulation_IT_30722_n1_LSFoxGt03W9TFQYv",
@@ -474,7 +474,7 @@
 
 		// Then we run the HIRL experiment
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.75,
 				"max_value": 0.1,
@@ -482,7 +482,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "http_invalid_request_line",
 				"report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
@@ -504,7 +504,7 @@
 
 		// Make sure the progress bar value is set to 100%
 		{
-			"run": "ui:set_progress_bar_value",
+			"run": "ui/set_progress_bar_value",
 			"with": {
 				"suite_name": "performance",
 				"value": 1
@@ -513,7 +513,7 @@
 
 		// Now it's time to run the circumvention suite
 		{
-			"run": "ui:set_suite",
+			"run": "ui/set_suite",
 			"with": {
 				"suite_name": "circumvention"
 			}
@@ -521,7 +521,7 @@
 
 		// We run the psiphon experiment first
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0,
 				"max_value": 0.5,
@@ -529,7 +529,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "psiphon",
 				"report_id": "20230406T142431Z_psiphon_IT_30722_n1_JndR2OBVs9h2UY4c",
@@ -539,7 +539,7 @@
 
 		// Then we run the tor experiment
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.5,
 				"max_value": 1,
@@ -547,7 +547,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "tor",
 				"report_id": "20230406T142431Z_tor_IT_30722_n1_yC3sir64oGz2zS2o",
@@ -557,7 +557,7 @@
 
 		// Make sure the progress bar value is set to 100%
 		{
-			"run": "ui:set_progress_bar_value",
+			"run": "ui/set_progress_bar_value",
 			"with": {
 				"suite_name": "circumvention",
 				"value": 1
@@ -566,7 +566,7 @@
 
 		// Now it is time to run the experimental suite.
 		{
-			"run": "ui:set_suite",
+			"run": "ui/set_suite",
 			"with": {
 				"suite_name": "experimental"
 			}
@@ -574,7 +574,7 @@
 
 		// Let us run the dnscheck experiment
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0,
 				"max_value": 0.2,
@@ -582,7 +582,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "dnscheck",
 				"report_id": "20230406T142431Z_dnscheck_IT_30722_n1_CtRwDkl5cJFLrsDn",
@@ -617,7 +617,7 @@
 
 		// Let us now run the stun_reachability experiment
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.2,
 				"max_value": 0.4,
@@ -625,7 +625,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "stun_reachability",
 				"report_id": "20230406T142431Z_stunreachability_IT_30722_n1_8vFVXzjCjfUFbOA5",
@@ -647,7 +647,7 @@
 
 		// Let us now run torsf
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.4,
 				"max_value": 0.6,
@@ -655,7 +655,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "torsf",
 				"report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5",
@@ -665,7 +665,7 @@
 
 		// Let us now run vanilla_tor
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.6,
 				"max_value": 0.8,
@@ -673,7 +673,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "vanilla_tor",
 				"report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy",
@@ -684,7 +684,7 @@
 		// Now let's run urlgetter to collect some
 		// experimental measurements
 		{
-			"run": "ui:set_progress_bar_range",
+			"run": "ui/set_progress_bar_range",
 			"with": {
 				"initial_value": 0.8,
 				"max_value": 1,
@@ -692,7 +692,7 @@
 			}
 		},
 		{
-			"run": "nettest:run",
+			"run": "nettest/run",
 			"with": {
 				"nettest_name": "urlgetter",
 				"report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
@@ -725,7 +725,7 @@
 
 		// Make sure the progress bar value is set to 100%
 		{
-			"run": "ui:set_progress_bar_value",
+			"run": "ui/set_progress_bar_value",
 			"with": {
 				"suite_name": "experimental",
 				"value": 1

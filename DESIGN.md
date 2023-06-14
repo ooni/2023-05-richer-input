@@ -132,7 +132,7 @@ interpreter what to measure. For example:
 {
     "instructions": [
         {
-            "run": "nettest:run",
+            "run": "nettest/run",
             "with": {
                 "nettest_name": "urlgetter",
                 "report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
@@ -173,7 +173,7 @@ In the PoC, one could run this script as follows:
 ```
 
 The script consists of a sequence of instructions, and the interpreter
-uses the "run" key to decide what to run. The "nettest:run"
+uses the "run" key to decide what to run. The "nettest/run"
 instruction tells the interpreter to run a specific nettest, and the
 "with" key contains instruction arguments. In the above example, we ask
 the interpreter to run "urlgetter" for two targets. For each target,
@@ -193,7 +193,7 @@ snippet shows how to include test helpers' information:
 ```JSONC
 // ...
         {
-            "run": "nettest:run",
+            "run": "nettest/run",
             "with": {
                 "nettest_name": "http_invalid_request_line",
                 "report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
@@ -233,34 +233,34 @@ should increment. Consider this snippet:
 ```JSONC
 // ...
         {
-            "run": "ui:set_suite",
+            "run": "ui/set_suite",
             "with": {
                 "suite_name": "circumvention"
             }
         },
         {
-            "run": "ui:set_progress_bar_range",
+            "run": "ui/set_progress_bar_range",
             "with": {
                 "initial_value": 0,
                 "max_value": 0.5
             }
         },
         {
-            "run": "nettest:run",
+            "run": "nettest/run",
             "with": {
                 "nettest_name": "torsf",
                 "report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5"
             }
         },
         {
-            "run": "ui:set_progress_bar_range",
+            "run": "ui/set_progress_bar_range",
             "with": {
                 "initial_value": 0.5,
                 "max_value": 1
             }
         },
         {
-            "run": "nettest:run",
+            "run": "nettest/run",
             "with": {
                 "nettest_name": "vanilla_tor",
                 "report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy"
@@ -286,34 +286,34 @@ follows (or change check-in v2 to serve something that leads to this):
 ```JSONC
 // ...
         {
-            "run": "ui:set_suite",
+            "run": "ui/set_suite",
             "with": {
                 "suite_name": "circumvention"
             }
         },
         {
-            "run": "ui:set_progress_bar_range",
+            "run": "ui/set_progress_bar_range",
             "with": {
                 "initial_value": 0,
                 "max_value": 0.33 // <- changed
             }
         },
         {
-            "run": "nettest:run",
+            "run": "nettest/run",
             "with": {
                 "nettest_name": "torsf",
                 "report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5"
             }
         },
         {
-            "run": "ui:set_progress_bar_range",
+            "run": "ui/set_progress_bar_range",
             "with": {
                 "initial_value": 0.33, // <- changed
                 "max_value": 0.66 // <- changed
             }
         },
         {
-            "run": "nettest:run",
+            "run": "nettest/run",
             "with": {
                 "nettest_name": "vanilla_tor",
                 "report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy"
@@ -321,14 +321,14 @@ follows (or change check-in v2 to serve something that leads to this):
         },
         // ~~~ begin added ~~~
         {
-            "run": "ui:set_progress_bar_range",
+            "run": "ui/set_progress_bar_range",
             "with": {
                 "initial_value": 0.66,
                 "max_value": 1
             }
         },
         {
-            "run": "nettest:run",
+            "run": "nettest/run",
             "with": {
                 "nettest_name": "urlgetter",
                 "report_id": "20230406T142431Z_urlgetter_IT_30722_n1_0md7viiR9jvTlXBy",
@@ -360,7 +360,7 @@ telegram nettest, for example, looks like this:
 ```JSONC
 // ...
         {
-            "run": "nettest:run",
+            "run": "nettest/run",
             "with": {
                 "nettest_name": "telegram",
                 "report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
@@ -433,7 +433,7 @@ a single, common function that executes a list of mini nettests.
 ## Minor idea: A/B testing
 
 We include a "feature\_flags" map from string to boolean to each
-"nettest:run" instruction. We will use this map to select experimental
+"nettest/run" instruction. We will use this map to select experimental
 features like we already do. The main difference is that the feature
 flags will be nettest-specific, thus providing us with more flexibility
 and control over the feature flags.
