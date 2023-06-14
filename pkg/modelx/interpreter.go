@@ -1,6 +1,7 @@
 package modelx
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"time"
@@ -20,6 +21,14 @@ type InterpreterSettings interface {
 	// MaxRuntime returns the maximum runtime for nettests that take
 	// multiple targets such as Web Connectivity.
 	MaxRuntime() time.Duration
+}
+
+// InterpreterSaver is the interpreter view of the interface
+// allowing us to save/submit measurements.
+type InterpreterSaver interface {
+	// SaveMeasurement saves the given measurement, which typically
+	// implies uploading it to the backend and updating the DB.
+	SaveMeasurement(ctx context.Context, meas *model.Measurement) error
 }
 
 // ErrLocationChanged indicates that the location has changed.

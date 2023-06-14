@@ -22,7 +22,7 @@ type Interpreter struct {
 	logger model.Logger
 
 	// saver is used to save measurements results.
-	saver modelx.MeasurementSaver
+	saver modelx.InterpreterSaver
 
 	// settings contains the settings.
 	settings modelx.InterpreterSettings
@@ -41,7 +41,7 @@ type Interpreter struct {
 func NewInterpreter(
 	location modelx.InterpreterLocation,
 	logger model.Logger,
-	saver modelx.MeasurementSaver,
+	saver modelx.InterpreterSaver,
 	settings modelx.InterpreterSettings,
 	softwareName string,
 	softwareVersion string,

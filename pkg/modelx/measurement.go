@@ -1,16 +1,8 @@
 package modelx
 
 import (
-	"context"
 	"encoding/json"
-
-	"github.com/ooni/probe-engine/pkg/model"
 )
-
-// MeasurementSaver saves measurements.
-type MeasurementSaver interface {
-	SaveMeasurement(ctx context.Context, meas *model.Measurement) error
-}
 
 // MeasurementTarget is a target to measure.
 type MeasurementTarget struct {
