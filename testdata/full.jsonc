@@ -160,14 +160,14 @@
 				"targets": [
 					{
 						"id": "fbmessenger-stun",
-						"run": "dns-lookup@v1",
+						"run": "dns-lookup",
 						"with": {
 							"domain": "stun.fbsbx.com"
 						}
 					},
 					{
 						"id": "fbmessenger-b-api",
-						"run": "tcp-connect-domain@v1",
+						"run": "tcp-connect-domain",
 						"with": {
 							"domain": "b-api.facebook.com",
 							"port": 443
@@ -175,7 +175,7 @@
 					},
 					{
 						"id": "fbmessenger-b-graph",
-						"run": "tcp-connect-domain@v1",
+						"run": "tcp-connect-domain",
 						"with": {
 							"domain": "b-graph.facebook.com",
 							"port": 443
@@ -183,7 +183,7 @@
 					},
 					{
 						"id": "fbmessenger-b-edge-mqtt",
-						"run": "tcp-connect-domain@v1",
+						"run": "tcp-connect-domain",
 						"with": {
 							"domain": "edge-mqtt.facebook.com",
 							"port": 443
@@ -191,7 +191,7 @@
 					},
 					{
 						"id": "fbmessenger-external-cdn",
-						"run": "tcp-connect-domain@v1",
+						"run": "tcp-connect-domain",
 						"with": {
 							"domain": "external.xx.fbcdn.net",
 							"port": 443
@@ -199,7 +199,7 @@
 					},
 					{
 						"id": "fbmessenger-scontent-cdn",
-						"run": "tcp-connect-domain@v1",
+						"run": "tcp-connect-domain",
 						"with": {
 							"domain": "scontent.xx.fbcdn.net",
 							"port": 443
@@ -207,7 +207,7 @@
 					},
 					{
 						"id": "fbmessenger-star",
-						"run": "tcp-connect-domain@v1",
+						"run": "tcp-connect-domain",
 						"with": {
 							"domain": "star.c10r.facebook.com",
 							"port": 443
@@ -234,7 +234,7 @@
 				"suite_name": "im",
 				"targets": [
 					{
-						"run": "dns-lookup@v1",
+						"run": "dns-lookup",
 						"with": {
 							"domain": "uptime.signal.org"
 						}
@@ -243,7 +243,7 @@
 					// Here it is important to note that we're serving the
 					// correct X.509 certificates to the probe.
 					{
-						"run": "https-domain@v1",
+						"run": "https-domain",
 						"with": {
 							"domain": "textsecure-service.whispersystems.org",
 							"http_header_host": "textsecure-service.whispersystems.org",
@@ -257,7 +257,7 @@
 						}
 					},
 					{
-						"run": "https-domain@v1",
+						"run": "https-domain",
 						"with": {
 							"domain": "storage.signal.org",
 							"http_header_host": "storage.signal.org",
@@ -291,7 +291,7 @@
 				"suite_name": "im",
 				"targets": [
 					{
-						"run": "http-address@v1",
+						"run": "http-address",
 						"with": {
 							"ip_address": "149.154.175.50",
 							"http_method": "POST",
@@ -299,7 +299,7 @@
 						}
 					},
 					{
-						"run": "http-address@v1",
+						"run": "http-address",
 						"with": {
 							"ip_address": "149.154.175.50",
 							"http_method": "POST",
@@ -307,7 +307,7 @@
 						}
 					},
 					{
-						"run": "https-domain@v1",
+						"run": "https-domain",
 						"with": {
 							"domain": "web.telegram.org",
 							"http_header_host": "web.telegram.org",
@@ -337,35 +337,35 @@
 				"suite_name": "im",
 				"targets": [
 					{
-						"run": "tcp-connect-domain@v1",
+						"run": "tcp-connect-domain",
 						"with": {
 							"domain": "e1.whatsapp.net",
 							"port": 443
 						}
 					},
 					{
-						"run": "tcp-connect-domain@v1",
+						"run": "tcp-connect-domain",
 						"with": {
 							"domain": "e1.whatsapp.net",
 							"port": 5222
 						}
 					},
 					{
-						"run": "tcp-connect-domain@v1",
+						"run": "tcp-connect-domain",
 						"with": {
 							"domain": "e2.whatsapp.net",
 							"port": 443
 						}
 					},
 					{
-						"run": "tcp-connect-domain@v1",
+						"run": "tcp-connect-domain",
 						"with": {
 							"domain": "e2.whatsapp.net",
 							"port": 5222
 						}
 					},
 					{
-						"run": "https-domain@v1",
+						"run": "https-domain",
 						"with": {
 							"domain": "v.whatsapp.net",
 							"http_header_host": "v.whatsapp.net",
@@ -376,7 +376,7 @@
 						}
 					},
 					{
-						"run": "https-domain@v1",
+						"run": "https-domain",
 						"with": {
 							"domain": "web.whatsapp.com",
 							"http_header_host": "web.whatsapp.com",

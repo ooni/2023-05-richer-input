@@ -44,23 +44,23 @@ func (env *Environment) Run(
 	descr *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	switch descr.Run {
-	case "dns-lookup@v1":
-		return env.dnsLookupV1Main(ctx, descr)
+	case "dns-lookup":
+		return env.dnsLookupMain(ctx, descr)
 
-	case "http-address@v1":
-		return env.httpAddressV1Main(ctx, descr)
+	case "http-address":
+		return env.httpAddressMain(ctx, descr)
 
-	case "http-domain@v1":
-		return env.httpDomainV1Main(ctx, descr)
+	case "http-domain":
+		return env.httpDomainMain(ctx, descr)
 
-	case "https-domain@v1":
-		return env.httpsDomainV1Main(ctx, descr)
+	case "https-domain":
+		return env.httpsDomainMain(ctx, descr)
 
-	case "tcp-connect-address@v1":
-		return env.tcpConnectAddressV1Main(ctx, descr)
+	case "tcp-connect-address":
+		return env.tcpConnectAddressMain(ctx, descr)
 
-	case "tcp-connect-domain@v1":
-		return env.tcpConnectDomainV1Main(ctx, descr)
+	case "tcp-connect-domain":
+		return env.tcpConnectDomainMain(ctx, descr)
 
 	default:
 		return nil, ErrNoSuchNettestlet

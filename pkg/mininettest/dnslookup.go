@@ -12,19 +12,19 @@ import (
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
-// dnsLookupV1Config contains config for dns-lookup@v1.
-type dnsLookupV1Config struct {
+// dnsLookupConfig contains config for dns-lookup.
+type dnsLookupConfig struct {
 	// Domain is the domain to resolve.
 	Domain string `json:"domain"`
 }
 
-// dnsLookupV1Main is the main function of dns-lookup@v1.
-func (env *Environment) dnsLookupV1Main(
+// dnsLookupMain is the main function of dns-lookup.
+func (env *Environment) dnsLookupMain(
 	ctx context.Context,
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config dnsLookupV1Config
+	var config dnsLookupConfig
 	if err := json.Unmarshal(desc.With, &config); err != nil {
 		return nil, err
 	}

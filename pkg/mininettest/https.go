@@ -10,8 +10,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
-// httpsDomainV1Config contains config for https-domain@v1.
-type httpsDomainV1Config struct {
+// httpsDomainConfig contains config for https-domain.
+type httpsDomainConfig struct {
 	// Domain is the domain to resolve.
 	Domain string `json:"domain"`
 
@@ -47,7 +47,7 @@ type httpsDomainV1Config struct {
 var ErrCannotParseTLSCert = errors.New("mininettest: cannot parse TLS cert")
 
 // tlsHandshakeOptions returns the list of TLS handshake options to apply.
-func (c *httpsDomainV1Config) tlsHandshakeOptions() (out []dslx.TLSHandshakeOption, err error) {
+func (c *httpsDomainConfig) tlsHandshakeOptions() (out []dslx.TLSHandshakeOption, err error) {
 	out = append(out, dslx.TLSHandshakeOptionServerName(c.TLSServerName))
 	out = append(out, dslx.TLSHandshakeOptionNextProto([]string{"h2", "http/1.1"}))
 	if len(c.X509Certs) > 0 {
@@ -62,13 +62,13 @@ func (c *httpsDomainV1Config) tlsHandshakeOptions() (out []dslx.TLSHandshakeOpti
 	return
 }
 
-// httpsDomainV1Main is the main function of https-domain@v1.
-func (env *Environment) httpsDomainV1Main(
+// httpsDomainMain is the main function of https-domain.
+func (env *Environment) httpsDomainMain(
 	ctx context.Context,
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config httpsDomainV1Config
+	var config httpsDomainConfig
 	if err := json.Unmarshal(desc.With, &config); err != nil {
 		return nil, err
 	}

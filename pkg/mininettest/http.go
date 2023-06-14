@@ -10,8 +10,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
-// httpDomainV1Config contains config for http-domain@v1.
-type httpDomainV1Config struct {
+// httpDomainConfig contains config for http-domain.
+type httpDomainConfig struct {
 	// Domain is the domain to resolve.
 	Domain string `json:"domain"`
 
@@ -37,13 +37,13 @@ type httpDomainV1Config struct {
 	URLPath string `json:"url_path"`
 }
 
-// httpDomainV1Main is the main function of http-domain@v1.
-func (env *Environment) httpDomainV1Main(
+// httpDomainMain is the main function of http-domain.
+func (env *Environment) httpDomainMain(
 	ctx context.Context,
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config httpDomainV1Config
+	var config httpDomainConfig
 	if err := json.Unmarshal(desc.With, &config); err != nil {
 		return nil, err
 	}
@@ -115,8 +115,8 @@ func (env *Environment) httpDomainV1Main(
 	return mergedObservations, nil
 }
 
-// httpAddressV1Config contains config for http-address@v1.
-type httpAddressV1Config struct {
+// httpAddressConfig contains config for http-address.
+type httpAddressConfig struct {
 	// IPAddress is the IP address to use.
 	IPAddress string `json:"ip_address"`
 
@@ -142,13 +142,13 @@ type httpAddressV1Config struct {
 	URLPath string `json:"url_path"`
 }
 
-// httpAddressV1Main is the main function of http-address@v1.
-func (env *Environment) httpAddressV1Main(
+// httpAddressMain is the main function of http-address.
+func (env *Environment) httpAddressMain(
 	ctx context.Context,
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config httpAddressV1Config
+	var config httpAddressConfig
 	if err := json.Unmarshal(desc.With, &config); err != nil {
 		return nil, err
 	}

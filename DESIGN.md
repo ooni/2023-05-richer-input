@@ -366,7 +366,7 @@ telegram nettest, for example, looks like this:
                 "report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
                 "targets": [
                     {
-                        "run": "http-address@v1",
+                        "run": "http-address",
                         "with": {
                             "tags": [
                                 "mini_nettest:dc",
@@ -377,7 +377,7 @@ telegram nettest, for example, looks like this:
                         }
                     },
                     {
-                        "run": "http-address@v1",
+                        "run": "http-address",
                         "with": {
                             "tags": [
                                 "mini_nettest:dc",
@@ -388,7 +388,7 @@ telegram nettest, for example, looks like this:
                         }
                     },
                     {
-                        "run": "https-domain@v1",
+                        "run": "https-domain",
                         "with": {
                             "tags": [
                                 "mini_nettest:web",
@@ -550,38 +550,13 @@ should also ship with a fallback last-resort script.
 
 ## Forward compatibility: instructions and nettests
 
-The definition of unknown instructions encompasses both unknown
-instructions names and unknown versions. The same applies to nettests and
-mini nettests. At any given time, an interpreter must only implement a
-single version of the instructions and a single version of the nettests
-and the mini nettests. All other versions (future and past) are unknown.
-
-The interpreter will ignore unknown instructions, nettests, and mini
-nettests and only execute the ones it knows.
-
-**TODO(bassosimone)**: see below comment about versioning.
+As discussed with [@FedericoCeratto](https://github.com/FedericoCeratto), we
+will use the `v` field inside the script for versioning.
 
 ## Forward compatibility: breaking changes
 
-All OONI experiments have a minor version number of zero. If we need to
-make breaking changes (e.g., telegram no longer uses mini nettests), we
-will bump the major number to one. When the major version number is one or more,
-we will explicitly append the major number to the nettest name in the
-script (e.g., "telegram@v1", "telegram@v2"). When the major number is missing,
-conversely, the interpreter will assume that we mean version zero (e.g., "telegram@v0").
-
-This strategy allows us to serve multiple nettests inside the same
-script, with the understanding that the interpreter will only execute
-the *only* major version number that it knows about (as discussed in the
-previous section). Therefore, older OONI Probes
-could use "telegram," and newer ones would instead use "telegram@v1".
-
-**TODO(bassosimone)**: serving a mixture of versions to probe means
-sending a much larger check-in v2 response, which is bad because
-it requires using more bandwidth. To reduce the overhead and because
-we control both the probes and the backend, it would be better to
-have a few more `if`s in the backend. We can get away with the probe
-version and a version for the whole JSON script.
+As discussed with [@FedericoCeratto](https://github.com/FedericoCeratto), we
+will use the `v` field inside the script for versioning.
 
 ## Forward compatibility: OONI Run v2
 

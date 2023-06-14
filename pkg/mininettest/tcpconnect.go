@@ -10,8 +10,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
-// tcpConnectAddressV1Config contains config for tcp-connect-address@v1.
-type tcpConnectAddressV1Config struct {
+// tcpConnectAddressConfig contains config for tcp-connect-address.
+type tcpConnectAddressConfig struct {
 	// IPAddress is the IP address to connect to.
 	IPAddress string `json:"ip_address"`
 
@@ -19,13 +19,13 @@ type tcpConnectAddressV1Config struct {
 	Port uint16 `json:"port"`
 }
 
-// tcpConnectAddressV1Main is the main function of tcp-connect-address@v1.
-func (env *Environment) tcpConnectAddressV1Main(
+// tcpConnectAddressMain is the main function of tcp-connect-address.
+func (env *Environment) tcpConnectAddressMain(
 	ctx context.Context,
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config tcpConnectAddressV1Config
+	var config tcpConnectAddressConfig
 	if err := json.Unmarshal(desc.With, &config); err != nil {
 		return nil, err
 	}
@@ -60,8 +60,8 @@ func (env *Environment) tcpConnectAddressV1Main(
 	return mergedObservations, nil
 }
 
-// tcpConnectDomainV1Config contains config for tcp-connect-domain@v1.
-type tcpConnectDomainV1Config struct {
+// tcpConnectDomainConfig contains config for tcp-connect-domain.
+type tcpConnectDomainConfig struct {
 	// Domain is the domain to resolve
 	Domain string `json:"domain"`
 
@@ -69,13 +69,13 @@ type tcpConnectDomainV1Config struct {
 	Port uint16 `json:"port"`
 }
 
-// tcpConnectDomainV1Main is the main function of tcp-connect-domain@v1.
-func (env *Environment) tcpConnectDomainV1Main(
+// tcpConnectDomainMain is the main function of tcp-connect-domain.
+func (env *Environment) tcpConnectDomainMain(
 	ctx context.Context,
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config tcpConnectDomainV1Config
+	var config tcpConnectDomainConfig
 	if err := json.Unmarshal(desc.With, &config); err != nil {
 		return nil, err
 	}
