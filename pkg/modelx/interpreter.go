@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/ooni/probe-engine/pkg/model"
+	"github.com/ooni/probe-engine/pkg/optional"
 )
 
 // InterpreterSettings abstracts OONI Probe settings for the interpreter.
@@ -18,6 +19,15 @@ type InterpreterSettings interface {
 	// MaxRuntime returns the maximum runtime for nettests that take
 	// multiple targets such as Web Connectivity.
 	MaxRuntime() time.Duration
+}
+
+// InterpreterLocation is the interpreter notion of location.
+type InterpreterLocation interface {
+	// IPv4 returns the IPv4 location.
+	IPv4() optional.Value[*Location]
+
+	// IPv6 returns the IPv6 location.
+	IPv6() optional.Value[*Location]
 }
 
 // InterpreterScript is the script for the interpreter.

@@ -16,22 +16,29 @@ import (
 
 // newSession creates a new [model.ExperimentSession] instance.
 func newSession(
-	location *modelx.ProbeLocation,
+	location modelx.InterpreterLocation,
 	logger model.Logger,
 	testHelpers map[string][]model.OOAPIService,
-) model.ExperimentSession {
-	return &session{
-		location:    location,
+) (model.ExperimentSession, error) {
+	v4Location := location.IPv4()
+	if v4Location.IsNone() {
+		return nil, ErrMissingIPv4Location
+	}
+
+	sess := &session{
 		logger:      logger,
 		testHelpers: testHelpers,
+		v4Location:  v4Location.Unwrap(),
 	}
+
+	return sess, nil
 }
 
 // session is the [model.ExperimentSession] returned by [State.newSession]
 type session struct {
-	location    *modelx.ProbeLocation
 	logger      model.Logger
 	testHelpers map[string][]model.OOAPIService
+	v4Location  *modelx.Location
 }
 
 var _ model.ExperimentSession = &session{}
@@ -67,14 +74,12 @@ func (s *session) Logger() model.Logger {
 
 // ProbeCC implements model.ExperimentSession
 func (s *session) ProbeCC() string {
-	// TODO(bassosimone): stub
-	return s.location.IPv4.ProbeCC
+	return s.v4Location.ProbeCC
 }
 
 // ResolverIP implements model.ExperimentSession
 func (s *session) ResolverIP() string {
-	// TODO(bassosimone): stub
-	return s.location.IPv4.ResolverIP
+	return s.v4Location.ResolverIP
 }
 
 // TempDir implements model.ExperimentSession

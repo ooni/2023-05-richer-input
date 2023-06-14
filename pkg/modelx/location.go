@@ -1,21 +1,22 @@
 package modelx
 
-// ProbeLocation is the location of a probe.
-type ProbeLocation struct {
-	// IPv4 contains the IPv4 location.
-	IPv4 *ProbeLocationIPAddr `json:"ipv4"`
+import "fmt"
 
-	// IPv6 contains the IPv6 location.
-	IPv6 *ProbeLocationIPAddr `json:"ipv6"`
+// LocationASNumber is an autonomous system number.
+type LocationASNumber int64
+
+// String converts the AS number to the "AS%d" string.
+func (asn LocationASNumber) String() string {
+	return fmt.Sprintf("AS%d", asn)
 }
 
-// ProbeLocationIPAddr is the location relative to a given IP address.
-type ProbeLocationIPAddr struct {
+// Location is the location relative to a given IP address.
+type Location struct {
 	// ProbeIP is the probe IP address.
 	ProbeIP string `json:"probe_ip"`
 
 	// ProbeASN is the probe IP address AS number.
-	ProbeASN ASNumber `json:"probe_asn"`
+	ProbeASN LocationASNumber `json:"probe_asn"`
 
 	// ProbeCC is the probe IP country code.
 	ProbeCC string `json:"probe_cc"`
@@ -27,11 +28,16 @@ type ProbeLocationIPAddr struct {
 	ResolverIP string `json:"resolver_ip"`
 
 	// ResolverASN is the resolver IP AS number.
-	ResolverASN ASNumber `json:"resolver_asn"`
+	ResolverASN LocationASNumber `json:"resolver_asn"`
 
 	// ResolverCC is the resolver IP country code.
 	ResolverCC string `json:"resolver_cc"`
 
 	// ResolverNetworkName is the resolver IP network name.
 	ResolverNetworkName string `json:"resolver_network_name"`
+}
+
+// SameASNAndCC returns whether two locations have the same ASN and CC.
+func (a *Location) SameASNAndCC(b *Location) bool {
+	return a.ProbeASN == b.ProbeASN && a.ProbeCC == b.ProbeCC
 }

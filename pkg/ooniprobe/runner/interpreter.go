@@ -16,10 +16,10 @@ import (
 // we can refresh it while we're running.
 
 // Interpreter contains the interpreter. The zero value is
-// invalid; construct using [New].
+// invalid; construct using [NewInterpreter].
 type Interpreter struct {
 	// location contains the probe location.
-	location *modelx.ProbeLocation
+	location modelx.InterpreterLocation
 
 	// logger is the [model.Logger] to use.
 	logger model.Logger
@@ -42,7 +42,7 @@ type Interpreter struct {
 
 // NewInterpreter creates a new [Interpreter] instance.
 func NewInterpreter(
-	location *modelx.ProbeLocation,
+	location modelx.InterpreterLocation,
 	logger model.Logger,
 	saver modelx.MeasurementSaver,
 	settings modelx.InterpreterSettings,

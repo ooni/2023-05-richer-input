@@ -13,6 +13,7 @@ import (
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
 	"github.com/ooni/2023-05-richer-input/pkg/ooniprobe/runner"
 	"github.com/ooni/probe-engine/pkg/model"
+	"github.com/ooni/probe-engine/pkg/optional"
 	"github.com/spf13/cobra"
 	"github.com/tailscale/hujson"
 )
@@ -197,8 +198,26 @@ func (sc *runxSubcommand) loadScript() (*modelx.InterpreterScript, error) {
 	return &script, nil
 }
 
+// runxLocation is the location definition used by this subcommand.
+type runxLocation struct {
+	IPv4value optional.Value[*modelx.Location] `json:"ipv4"`
+	IPv6value optional.Value[*modelx.Location] `json:"ipv6"`
+}
+
+var _ modelx.InterpreterLocation = &runxLocation{}
+
+// IPv4 implements modelx.InterpreterLocation.
+func (rl *runxLocation) IPv4() optional.Value[*modelx.Location] {
+	return rl.IPv4value
+}
+
+// IPv6 implements modelx.InterpreterLocation.
+func (rl *runxLocation) IPv6() optional.Value[*modelx.Location] {
+	return rl.IPv6value
+}
+
 // loadProbeLocation loads the probe location from file
-func (sc *runxSubcommand) loadProbeLocation() (*modelx.ProbeLocation, error) {
+func (sc *runxSubcommand) loadProbeLocation() (*runxLocation, error) {
 	// read raw location
 	data, err := os.ReadFile(sc.location)
 	if err != nil {
@@ -212,7 +231,7 @@ func (sc *runxSubcommand) loadProbeLocation() (*modelx.ProbeLocation, error) {
 	}
 
 	// parse location from JSON
-	var location modelx.ProbeLocation
+	var location runxLocation
 	if err := json.Unmarshal(data, &location); err != nil {
 		return nil, err
 	}

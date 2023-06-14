@@ -32,7 +32,7 @@ func runExperiment(
 	// in github.com/ooni/probe-cli/internal/model.
 
 	// create a new measurement instance
-	meas := newMeasurement(
+	meas, err := newMeasurement(
 		exp,
 		model.MeasurementTarget(input),
 		ix,
@@ -40,11 +40,21 @@ func runExperiment(
 		t0,
 	)
 
+	// it is an hard error if we cannot create a measurement
+	if err != nil {
+		return err
+	}
+
 	// add extra annotations
 	meas.AddAnnotations(annotations)
 
 	// create an experiment session
-	sess := newSession(ix.location, ix.logger, ths)
+	sess, err := newSession(ix.location, ix.logger, ths)
+
+	// it is an hard error if we cannot create a new session
+	if err != nil {
+		return err
+	}
 
 	// fill the experiment args
 	args := &model.ExperimentArgs{
@@ -76,8 +86,8 @@ func runExperiment(
 		return err
 	}
 
-	// scrub the IP addresses from the measurement
-	meas, err := scrubMeasurement(meas, ix.location)
+	// scrub the IP addresses
+	meas, err = scrubMeasurement(meas, ix.location)
 	if err != nil {
 		ix.logger.Warnf(
 			"experiment: run %s with %s: %s",

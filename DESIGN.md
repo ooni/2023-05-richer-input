@@ -461,6 +461,15 @@ Wi-Fi to 3G/4G/5G).
 This repository includes a package containing common functions to
 simplify data analysis for nettests.
 
+## Minor idea: IPv6 policy
+
+The interpreter will refuse to run a measurement where we have both the
+IPv4 and the IPv6 location and they do not match. As dissussed with
+[@FedericoCeratto](https://github.com/FedericoCeratto), the cases where
+there is a mismatch may indicate (a) Teredo like tunneling or
+(b) v4-or-v6-only VPN. We concluded that in these cases it's just
+better to avoid runnning measurements.
+
 ## Handwaving: the test helper client
 
 Most nettests connect directly to a test helper (TH). Web Connectivity is
@@ -496,19 +505,6 @@ will define the check-in v2 response as part of our future work.
 concluded it would be better to avoid doing mangling in the probe. The
 check-in v2 API would therefore serve us a script directly (or maybe
 two script: an interactive one and a backend-less one).
-
-## Handwaving: IPv6
-
-This PoC contains more robust IPv6 handling code that the stable
-version of ooniprobe. In particular, we provide to the interpreter
-both the IPv4 and the IPv6 locations and we scrub both IP addresses from
-the measurement. However, how to represent both the IPv4 and the
-IPv6 geolocation into a measurement is still an open issue.
-
-**TODO(bassosimone)**: as discussed with Federico, the cases where the
-CC is different between IPv4 and IPv6 may be indicative of (a) Teredo
-like tunneling or (b) a v4-or-v6-only VPN. We concluded that it may be
-better in these cases to just avoid running the probe.
 
 ## Handwaving: report ID for research
 
