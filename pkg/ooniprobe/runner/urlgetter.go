@@ -33,7 +33,8 @@ type urlgetterNettest struct {
 var _ nettest = &urlgetterNettest{}
 
 // urlgetterNew constructs a new urlgetter instance.
-func urlgetterNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
+func urlgetterNew(args *modelx.InterpreterNettestRunArguments,
+	config *modelx.InterpreterConfig, ix *Interpreter) (nettest, error) {
 	// parse targets
 	var targets []urlgetterTarget
 	if err := json.Unmarshal(args.Targets, &targets); err != nil {

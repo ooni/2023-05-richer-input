@@ -83,7 +83,7 @@ func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript
 			}
 
 		case "nettest/run":
-			if err := ix.onNettestRun(ctx, instruction.With); err != nil {
+			if err := ix.onNettestRun(ctx, &script.Config, instruction.With); err != nil {
 				return err
 			}
 
@@ -150,7 +150,8 @@ func (ix *Interpreter) onUISetProgressBarValue(ctx context.Context, rawMsg json.
 }
 
 // onNettestRun is the method called for nettest/run instructions.
-func (ix *Interpreter) onNettestRun(ctx context.Context, rawMsg json.RawMessage) error {
+func (ix *Interpreter) onNettestRun(ctx context.Context,
+	config *modelx.InterpreterConfig, rawMsg json.RawMessage) error {
 	// parse the RAW JSON message
 	var value modelx.InterpreterNettestRunArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {
@@ -174,7 +175,7 @@ func (ix *Interpreter) onNettestRun(ctx context.Context, rawMsg json.RawMessage)
 	// Create a nettest instance or return early if we don't know the
 	// nettest name. Note that we should not return error here because
 	// newer OONI probe versions may know this nettest.
-	nettest, err := newNettest(&value, ix)
+	nettest, err := newNettest(&value, config, ix)
 	if err != nil {
 		ix.logger.Warnf("interpreter: cannot create %s nettest: %s", value.NettestName, err.Error())
 		return nil

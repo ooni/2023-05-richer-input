@@ -14,18 +14,21 @@ import (
 
 // signalNettest is the signal nettest.
 type signalNettest struct {
-	args *modelx.InterpreterNettestRunArguments
-	ix   *Interpreter
+	args   *modelx.InterpreterNettestRunArguments
+	config *modelx.InterpreterConfig
+	ix     *Interpreter
 }
 
 var _ nettest = &signalNettest{}
 
 // signalNew constructs a new signal instance.
-func signalNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
+func signalNew(args *modelx.InterpreterNettestRunArguments,
+	config *modelx.InterpreterConfig, ix *Interpreter) (nettest, error) {
 	// fill the nettest struct
 	nettest := &signalNettest{
-		args: args,
-		ix:   ix,
+		args:   args,
+		config: config,
+		ix:     ix,
 	}
 
 	// return to the caller
@@ -55,7 +58,7 @@ func (nt *signalNettest) Run(ctx context.Context) error {
 		nt.ix,
 		nt.args.ReportID,
 		t0,
-		nt.args.TestHelpers,
+		nt.config.TestHelpers,
 	)
 
 	// handle an immediate error such as a context error

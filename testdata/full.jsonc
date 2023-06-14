@@ -76,40 +76,7 @@
 						},
 						"input": "https://en.wiktionary.org/"
 					}
-				],
-
-				// TODO(bassosimone): as discussed with Federico, specifying the Web Connectivity
-				// TH here would create an interesting issue where the test helpers cannot be
-				// used as proxies to bootstrap the probe. Therefore, it may make sense to have
-				// test helpers specified in a separate JSON document instead.
-				//
-				// TODO(bassosimone): as discussed with Federico, we should soon get into
-				// specifying and implementing the probe bootstrap without handwaving.
-				"test_helpers": {
-					"web-connectivity": [
-						{
-							"address": "https://1.th.ooni.org",
-							"type": "https"
-						},
-						{
-							"address": "https://2.th.ooni.org",
-							"type": "https"
-						},
-						{
-							"address": "https://3.th.ooni.org",
-							"type": "https"
-						},
-						{
-							"address": "https://0.th.ooni.org",
-							"type": "https"
-						},
-						{
-							"address": "https://d33d1gs9kpq1c5.cloudfront.net",
-							"front": "d33d1gs9kpq1c5.cloudfront.net",
-							"type": "cloudfront"
-						}
-					]
-				}
+				]
 			}
 		},
 
@@ -456,19 +423,7 @@
 			"with": {
 				"nettest_name": "http_header_field_manipulation",
 				"report_id": "20230406T142431Z_httpheaderfieldmanipulation_IT_30722_n1_LSFoxGt03W9TFQYv",
-				"suite_name": "performance",
-				"test_helpers": {
-					"http-return-json-headers": [
-						{
-							"address": "http://37.218.241.94:80",
-							"type": "legacy"
-						},
-						{
-							"address": "http://37.218.241.94:80",
-							"type": "legacy"
-						}
-					]
-				}
+				"suite_name": "performance"
 			}
 		},
 
@@ -486,19 +441,7 @@
 			"with": {
 				"nettest_name": "http_invalid_request_line",
 				"report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
-				"suite_name": "performance",
-				"test_helpers": {
-					"tcp-echo": [
-						{
-							"address": "37.218.241.93",
-							"type": "legacy"
-						},
-						{
-							"address": "37.218.241.93",
-							"type": "legacy"
-						}
-					]
-				}
+				"suite_name": "performance"
 			}
 		},
 
@@ -732,5 +675,56 @@
 			}
 		}
 	],
+
+	"config": {
+		"test_helpers": {
+			"http-return-json-headers": [
+				{
+					"address": "http://37.218.241.94:80",
+					"type": "legacy"
+				},
+				{
+					"address": "http://37.218.241.94:80",
+					"type": "legacy"
+				}
+			],
+
+			"tcp-echo": [
+				{
+					"address": "37.218.241.93",
+					"type": "legacy"
+				},
+				{
+					"address": "37.218.241.93",
+					"type": "legacy"
+				}
+			],
+
+			"web-connectivity": [
+				{
+					"address": "https://1.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://2.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://3.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://0.th.ooni.org",
+					"type": "https"
+				},
+				{
+					"address": "https://d33d1gs9kpq1c5.cloudfront.net",
+					"front": "d33d1gs9kpq1c5.cloudfront.net",
+					"type": "cloudfront"
+				}
+			]
+        }
+	},
+
 	"v": 2
 }

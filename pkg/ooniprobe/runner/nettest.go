@@ -20,7 +20,8 @@ import (
 var errNoSuchNettest = errors.New("no such nettest")
 
 // nettestFactory constructs a nettest.
-type nettestFactory = func(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error)
+type nettestFactory = func(args *modelx.InterpreterNettestRunArguments,
+	config *modelx.InterpreterConfig, ix *Interpreter) (nt nettest, err error)
 
 // nettestRegistry maps nettests to their constructors.
 var nettestRegistry = map[string]nettestFactory{
@@ -33,12 +34,13 @@ var nettestRegistry = map[string]nettestFactory{
 }
 
 // newNettest creates a new [nettest] instance.
-func newNettest(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
+func newNettest(args *modelx.InterpreterNettestRunArguments,
+	config *modelx.InterpreterConfig, ix *Interpreter) (nettest, error) {
 	factory := nettestRegistry[args.NettestName]
 	if factory == nil {
 		return nil, errNoSuchNettest
 	}
-	return factory(args, ix)
+	return factory(args, config, ix)
 }
 
 // nettest is a nettest instance.

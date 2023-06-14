@@ -27,6 +27,7 @@ type webconnectivityTarget struct {
 // webconnectivityNettest is the webconnectivity nettest.
 type webconnectivityNettest struct {
 	args    *modelx.InterpreterNettestRunArguments
+	config  *modelx.InterpreterConfig
 	ix      *Interpreter
 	targets []webconnectivityTarget
 }
@@ -34,7 +35,8 @@ type webconnectivityNettest struct {
 var _ nettest = &webconnectivityNettest{}
 
 // webconnectivityNew constructs a new webconnectivity instance.
-func webconnectivityNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
+func webconnectivityNew(args *modelx.InterpreterNettestRunArguments,
+	config *modelx.InterpreterConfig, ix *Interpreter) (nettest, error) {
 	// parse targets
 	var targets []webconnectivityTarget
 	if err := json.Unmarshal(args.Targets, &targets); err != nil {
@@ -44,6 +46,7 @@ func webconnectivityNew(args *modelx.InterpreterNettestRunArguments, ix *Interpr
 	// fill the nettest struct
 	nettest := &webconnectivityNettest{
 		args:    args,
+		config:  config,
 		ix:      ix,
 		targets: targets,
 	}
@@ -96,7 +99,7 @@ func (nt *webconnectivityNettest) Run(ctx context.Context) error {
 			nt.ix,
 			nt.args.ReportID,
 			t0,
-			nt.args.TestHelpers,
+			nt.config.TestHelpers,
 		)
 
 		// handle an immediate error such as a context error

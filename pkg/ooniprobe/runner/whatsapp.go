@@ -14,18 +14,21 @@ import (
 
 // whatsappNettest is the whatsapp nettest.
 type whatsappNettest struct {
-	args *modelx.InterpreterNettestRunArguments
-	ix   *Interpreter
+	args   *modelx.InterpreterNettestRunArguments
+	config *modelx.InterpreterConfig
+	ix     *Interpreter
 }
 
 var _ nettest = &whatsappNettest{}
 
 // whatsappNew constructs a new whatsapp instance.
-func whatsappNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
+func whatsappNew(args *modelx.InterpreterNettestRunArguments,
+	config *modelx.InterpreterConfig, ix *Interpreter) (nettest, error) {
 	// fill the nettest struct
 	nettest := &whatsappNettest{
-		args: args,
-		ix:   ix,
+		args:   args,
+		config: config,
+		ix:     ix,
 	}
 
 	// return to the caller
@@ -55,7 +58,7 @@ func (nt *whatsappNettest) Run(ctx context.Context) error {
 		nt.ix,
 		nt.args.ReportID,
 		t0,
-		nt.args.TestHelpers,
+		nt.config.TestHelpers,
 	)
 
 	// handle an immediate error such as a context error

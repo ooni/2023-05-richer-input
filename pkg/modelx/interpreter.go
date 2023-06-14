@@ -79,8 +79,17 @@ type InterpreterView interface {
 
 // InterpreterScript is the script for the interpreter.
 type InterpreterScript struct {
+	// Config contains global configuration for the interpreter.
+	Config InterpreterConfig `json:"config"`
+
 	// Instructions contains the list of instructions to execute.
 	Instructions []InterpreterInstruction `json:"instructions"`
+}
+
+// InterpreterConfig contains configuration for running the interpreter.
+type InterpreterConfig struct {
+	// TestHelpers contains test helpers information.
+	TestHelpers map[string][]model.OOAPIService `json:"test_helpers"`
 }
 
 // InterpreterInstruction is an instruction for the interpreter.
@@ -142,7 +151,4 @@ type InterpreterNettestRunArguments struct {
 
 	// Targets contains experiment specific targets.
 	Targets json.RawMessage `json:"targets"`
-
-	// TestHelpers contains test helpers information.
-	TestHelpers map[string][]model.OOAPIService `json:"test_helpers"`
 }
