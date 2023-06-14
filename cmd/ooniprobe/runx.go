@@ -216,6 +216,11 @@ func (rl *runxLocation) IPv6() optional.Value[*modelx.Location] {
 	return rl.IPv6value
 }
 
+// Refresh implements modelx.InterpreterLocation.
+func (rl *runxLocation) Refresh() error {
+	return nil
+}
+
 // loadProbeLocation loads the probe location from file
 func (sc *runxSubcommand) loadProbeLocation() (*runxLocation, error) {
 	// read raw location

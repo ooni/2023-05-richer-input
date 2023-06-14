@@ -12,9 +12,6 @@ import (
 	"github.com/ooni/probe-engine/pkg/model"
 )
 
-// TODO(bassosimone): the location should actually be dynamic such that
-// we can refresh it while we're running.
-
 // Interpreter contains the interpreter. The zero value is
 // invalid; construct using [NewInterpreter].
 type Interpreter struct {

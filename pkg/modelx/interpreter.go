@@ -2,6 +2,7 @@ package modelx
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/ooni/probe-engine/pkg/model"
@@ -21,6 +22,9 @@ type InterpreterSettings interface {
 	MaxRuntime() time.Duration
 }
 
+// ErrLocationChanged indicates that the location has changed.
+var ErrLocationChanged = errors.New("location has changed")
+
 // InterpreterLocation is the interpreter notion of location.
 type InterpreterLocation interface {
 	// IPv4 returns the IPv4 location.
@@ -28,6 +32,10 @@ type InterpreterLocation interface {
 
 	// IPv6 returns the IPv6 location.
 	IPv6() optional.Value[*Location]
+
+	// Refresh attempts to refresh the location and returns an error
+	// on failure or when the location has changed.
+	Refresh() error
 }
 
 // InterpreterScript is the script for the interpreter.

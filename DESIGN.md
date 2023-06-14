@@ -442,17 +442,14 @@ and control over the feature flags.
 
 Typically, OONI Probe will invoke the interpreter as a
 subroutine and pass it data available on memory rather than JSON files. In
-such a case, the location should not be static; rather, it should be a
-"location provider" interface initialized with a known location and
-capable of invalidating the location while running nettests. Therefore,
-the interpreter should generally see the location as a "location provider"
-interface rather than a static data structure. (The PoC does not implement
-this functionality, but the refactoring seems trivial.)
+such a case, the location should not be static; rather, it should be an
+interface initialized with a known location and capable of invalidating the
+location while running nettests.
 
 We propose two algorithms for invalidating the location. The first
 algorithm resolves the probe's IPv4 and IPv6, performs geolocation and
 sets a boolean flag (checked by the interpreter) when the geolocation
-changes. The second algorithm relies on mobile phones to inform OONI
+changes. The second algorithm relies on mobile phones features to inform OONI
 Probe that we changed the access network (e.g., the phone moved from
 Wi-Fi to 3G/4G/5G).
 

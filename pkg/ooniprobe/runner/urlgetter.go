@@ -69,6 +69,11 @@ func (nt *urlgetterNettest) Run(ctx context.Context) error {
 
 	// measure each target
 	for idx, target := range nt.targets {
+		// make sure the location didn't change
+		if err := nt.ix.location.Refresh(); err != nil {
+			return err
+		}
+
 		// record the current target inside the logs
 		nt.ix.logger.Infof("--- input: idx=%d target=%+v ---", idx, target)
 

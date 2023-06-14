@@ -34,6 +34,11 @@ func whatsappNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (
 
 // Run implements nettest
 func (nt *whatsappNettest) Run(ctx context.Context) error {
+	// make sure the location didn't change
+	if err := nt.ix.location.Refresh(); err != nil {
+		return err
+	}
+
 	// save the start time
 	t0 := time.Now()
 
