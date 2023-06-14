@@ -63,6 +63,8 @@ func NewInterpreter(
 
 // Run runs the given script.
 func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript) error {
+	// TODO(bassosimone): reject scripts with an unknown version number
+
 	// execute each instruction
 	for _, instruction := range script.Instructions {
 		ix.logger.Debugf("interpreter: interpreting instruction: %s", instruction.Run)
