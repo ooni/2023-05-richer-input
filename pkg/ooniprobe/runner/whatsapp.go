@@ -59,7 +59,7 @@ func (nt *whatsappNettest) Run(ctx context.Context) error {
 	err := runExperiment(
 		ctx,
 		nt.args.Annotations,
-		newProgressEmitterNettest(nt.ix.view),
+		newProgressEmitterNettest(nt.ix.logger, nt.ix.view),
 		exp,
 		"", // input
 		nt.ix,

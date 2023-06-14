@@ -66,19 +66,18 @@ func runExperiment(
 	// measure
 	if err := exp.Run(ctx, args); err != nil {
 		ix.logger.Warnf(
-			"experiment: run %s with %s: %s",
+			"run %s with %s: %s",
 			exp.ExperimentName(),
 			input,
 			err.Error(),
 		)
-		return nil
+		return err
 	}
 
-	// Handle the case where the user interrupted us. We return a non-nil
-	// error to stop looping through the interpreter script.
+	// Make sure we stop looping in case there's a context error.
 	if err := ctx.Err(); err != nil {
-		ix.logger.Warnf(
-			"experiment: run %s with %s: %s",
+		ix.logger.Infof(
+			"run %s with %s: %s",
 			exp.ExperimentName(),
 			input,
 			err.Error(),
@@ -90,7 +89,7 @@ func runExperiment(
 	meas, err = scrubMeasurement(meas, ix.location)
 	if err != nil {
 		ix.logger.Warnf(
-			"experiment: run %s with %s: %s",
+			"run %s with %s: %s",
 			exp.ExperimentName(),
 			input,
 			err.Error(),
@@ -103,7 +102,7 @@ func runExperiment(
 	// save the measurement
 	if err := ix.saver.SaveMeasurement(ctx, meas); err != nil {
 		ix.logger.Warnf(
-			"experiment: run %s with %s: %s",
+			"run %s with %s: %s",
 			exp.ExperimentName(),
 			input,
 			err.Error(),

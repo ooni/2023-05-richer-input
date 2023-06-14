@@ -21,6 +21,7 @@ func newProgressEmitterList(
 	}
 	return &progressEmitterList{
 		deadline: deadline,
+		t0:       t0,
 		total:    total,
 		view:     view,
 	}
@@ -31,6 +32,7 @@ func newProgressEmitterList(
 // [newProgressEmitterList] factory function.
 type progressEmitterList struct {
 	deadline *time.Time
+	t0       time.Time
 	total    int
 	view     modelx.InterpreterView
 }
@@ -40,7 +42,12 @@ func (pe *progressEmitterList) Tick(idx int, message string) {
 	var progress float64
 	switch {
 	case pe.deadline != nil:
-		progress = float64(time.Now().UnixNano()) / float64(pe.deadline.UnixNano())
+		current := time.Since(pe.t0)
+		total := pe.deadline.Sub(pe.t0)
+		progress = float64(current) / float64(total)
+		if progress > 1 {
+			progress = 1
+		}
 	case pe.total > 0:
 		progress = float64(idx) / float64(pe.total)
 	}
@@ -48,9 +55,10 @@ func (pe *progressEmitterList) Tick(idx int, message string) {
 }
 
 // newProgressEmitterNettest creates a new [progressEmitterNettest].
-func newProgressEmitterNettest(view modelx.InterpreterView) *progressEmitterNettest {
+func newProgressEmitterNettest(logger model.Logger, view modelx.InterpreterView) *progressEmitterNettest {
 	return &progressEmitterNettest{
-		view: view,
+		logger: logger,
+		view:   view,
 	}
 }
 
@@ -58,12 +66,16 @@ func newProgressEmitterNettest(view modelx.InterpreterView) *progressEmitterNett
 // emits its own progress, which happens, e.g., for dash. The zero value
 // of this struct is invalid; use [newProgressEmitterNettest] to construct.
 type progressEmitterNettest struct {
-	view modelx.InterpreterView
+	logger model.Logger
+	view   modelx.InterpreterView
 }
 
 var _ model.ExperimentCallbacks = &progressEmitterNettest{}
 
 // OnProgress implements model.ExperimentCallbacks
 func (pe *progressEmitterNettest) OnProgress(progress float64, message string) {
+	// the view only supports setting the progress, so use the logger
+	// to make sure the message is not lost
+	pe.logger.Info(message)
 	pe.view.UpdateProgressBarValueWithinRange(progress)
 }

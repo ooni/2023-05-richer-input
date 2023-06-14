@@ -7,6 +7,7 @@ package runner
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
@@ -96,7 +97,14 @@ func (nt *webconnectivityNettest) Run(ctx context.Context) error {
 			nt.config.TestHelpers,
 		)
 
-		// handle an immediate error such as a context error
+		// treat the context-deadline-exceeded error specially: we need to
+		// stop iterating over the targets list but we need to continue measuring
+		// the subsequent nettests and suites; so let's return nil.
+		if errors.Is(err, context.DeadlineExceeded) {
+			return nil
+		}
+
+		// handle an immediate error
 		if err != nil {
 			return err
 		}

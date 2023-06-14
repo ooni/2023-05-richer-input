@@ -20,7 +20,15 @@ import (
 
 func newRunxSubcommand() *cobra.Command {
 	// create the subcommand state
-	state := &runxSubcommand{}
+	state := &runxSubcommand{
+		enabledNettests: []string{},
+		enabledSuites:   []string{},
+		location:        "",
+		logfile:         "",
+		maxRuntime:      0,
+		output:          "",
+		script:          "",
+	}
 
 	// initialize the cobra subcommand
 	cmd := &cobra.Command{
@@ -45,6 +53,14 @@ func newRunxSubcommand() *cobra.Command {
 		"log-file",
 		"",
 		"path of the output log file",
+	)
+
+	// register the --max-runtime flag
+	cmd.Flags().DurationVar(
+		&state.maxRuntime,
+		"max-runtime",
+		0,
+		"maximum runtime for nettests measuring a list of targets",
 	)
 
 	// register the --only-nettest flag
@@ -97,6 +113,9 @@ type runxSubcommand struct {
 
 	// logfile is the output logfile
 	logfile string
+
+	// maxRuntime is zero or the maximum runtime for nettests measuring lists of targets.
+	maxRuntime time.Duration
 
 	// output is the name of the output file
 	output string
@@ -154,6 +173,7 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 		&runxSettings{
 			enabledNettests: sc.enabledNettests,
 			enabledSuites:   sc.enabledSuites,
+			maxRuntime:      sc.maxRuntime,
 		},
 		"miniooni",
 		"0.1.0-dev",
@@ -288,6 +308,9 @@ type runxSettings struct {
 
 	// enabledSuites contains the list of enabled suites
 	enabledSuites []string
+
+	// maxRuntime is zero or the maximum runtime for nettests measuring lists of targets.
+	maxRuntime time.Duration
 }
 
 var _ modelx.InterpreterSettings = &runxSettings{}
@@ -320,5 +343,5 @@ func (rs *runxSettings) IsSuiteEnabled(name string) bool {
 
 // MaxRuntime implements model.Settings
 func (rs *runxSettings) MaxRuntime() time.Duration {
-	return 0
+	return rs.maxRuntime
 }
