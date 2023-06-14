@@ -82,8 +82,8 @@ type InterpreterScript struct {
 	// Config contains global configuration for the interpreter.
 	Config InterpreterConfig `json:"config"`
 
-	// Instructions contains the list of instructions to execute.
-	Instructions []InterpreterInstruction `json:"instructions"`
+	// Commands contains the list of commands to execute.
+	Commands []InterpreterCommand `json:"commands"`
 }
 
 // InterpreterConfig contains configuration for running the interpreter.
@@ -92,24 +92,23 @@ type InterpreterConfig struct {
 	TestHelpers map[string][]model.OOAPIService `json:"test_helpers"`
 }
 
-// InterpreterInstruction is an instruction for the interpreter.
-type InterpreterInstruction struct {
-	// Run is the name of the instruction to run.
+// InterpreterCommand is a command interpreted by the interpreter.
+type InterpreterCommand struct {
+	// Run is the name of the command to run.
 	Run string `json:"run"`
 
-	// With contains the instruction arguments.
+	// With contains the command arguments.
 	With json.RawMessage `json:"with"`
 }
 
-// InterpreterUISetSuiteArguments contains arguments for the
-// ui/set_suite instruction.
+// InterpreterUISetSuiteArguments contains arguments for the ui/set_suite command.
 type InterpreterUISetSuiteArguments struct {
 	// SuiteName is the name of the suite that is running.
 	SuiteName string `json:"suite_name"`
 }
 
 // InterpreterUISetProgressBarRangeArguments contains arguments for the
-// ui/set_progress_bar_range instruction.
+// ui/set_progress_bar_range command.
 type InterpreterUISetProgressBarRangeArguments struct {
 	// InitialValue is the progress bar initial value.
 	InitialValue float64 `json:"initial_value"`
@@ -122,7 +121,7 @@ type InterpreterUISetProgressBarRangeArguments struct {
 }
 
 // InterpreterUISetProgressBarValueArguments contains arguments for the
-// ui/set_progress_bar_value instruction.
+// ui/set_progress_bar_value command.
 type InterpreterUISetProgressBarValueArguments struct {
 	// SuiteName is the name of the suite that is running.
 	SuiteName string `json:"suite_name"`
@@ -131,8 +130,7 @@ type InterpreterUISetProgressBarValueArguments struct {
 	Value float64 `json:"value"`
 }
 
-// InterpreterNettestRunArguments contains arguments for the
-// nettest/run instruction.
+// InterpreterNettestRunArguments contains arguments for the nettest/run command.
 type InterpreterNettestRunArguments struct {
 	// Annotations contains extra annotations.
 	Annotations map[string]string `json:"annotations"`

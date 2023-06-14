@@ -62,48 +62,48 @@ func NewInterpreter(
 func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript) error {
 	// TODO(bassosimone): reject scripts with an unknown version number
 
-	// execute each instruction
-	for _, instruction := range script.Instructions {
-		ix.logger.Debugf("interpreter: interpreting instruction: %s", instruction.Run)
+	// execute each command
+	for _, command := range script.Commands {
+		ix.logger.Debugf("interpreter: interpreting: %s", command.Run)
 
-		switch instruction.Run {
+		switch command.Run {
 		case "ui/set_suite":
-			if err := ix.onUISetSuite(ctx, instruction.With); err != nil {
+			if err := ix.doUISetSuite(ctx, command.With); err != nil {
 				return err
 			}
 
 		case "ui/set_progress_bar_range":
-			if err := ix.onUISetProgressBarRange(ctx, instruction.With); err != nil {
+			if err := ix.doUISetProgressBarRange(ctx, command.With); err != nil {
 				return err
 			}
 
 		case "ui/set_progress_bar_value":
-			if err := ix.onUISetProgressBarValue(ctx, instruction.With); err != nil {
+			if err := ix.doUISetProgressBarValue(ctx, command.With); err != nil {
 				return err
 			}
 
 		case "nettest/run":
-			if err := ix.onNettestRun(ctx, &script.Config, instruction.With); err != nil {
+			if err := ix.doNettestRun(ctx, &script.Config, command.With); err != nil {
 				return err
 			}
 
 		default:
-			ix.logger.Infof("interpreter: ignoring unknown instruction: %+v", instruction)
+			ix.logger.Infof("interpreter: ignoring unknown command: %s", command.Run)
 		}
 	}
 
 	return nil
 }
 
-// onUISetSuite is the method called for ui/set_suite instructions.
-func (ix *Interpreter) onUISetSuite(ctx context.Context, rawMsg json.RawMessage) error {
+// doUISetSuite is the method implementing the the ui/set_suite command.
+func (ix *Interpreter) doUISetSuite(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the raw JSON message
 	var value modelx.InterpreterUISetSuiteArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {
 		return err
 	}
 
-	// ignore instruction if the corresponding suite is not enabled
+	// ignore command if the corresponding suite is not enabled
 	if !ix.settings.IsSuiteEnabled(value.SuiteName) {
 		return nil
 	}
@@ -113,15 +113,15 @@ func (ix *Interpreter) onUISetSuite(ctx context.Context, rawMsg json.RawMessage)
 	return nil
 }
 
-// onUISetProgressBarRange is the method called for ui/set_progress_bar_range instructions.
-func (ix *Interpreter) onUISetProgressBarRange(ctx context.Context, rawMsg json.RawMessage) error {
+// doUISetProgressBarRange is the method implementing the ui/set_progress_bar_range command.
+func (ix *Interpreter) doUISetProgressBarRange(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the raw JSON message
 	var value modelx.InterpreterUISetProgressBarRangeArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {
 		return err
 	}
 
-	// ignore instruction if the corresponding suite is not enabled
+	// ignore command if the corresponding suite is not enabled
 	if !ix.settings.IsSuiteEnabled(value.SuiteName) {
 		return nil
 	}
@@ -131,15 +131,15 @@ func (ix *Interpreter) onUISetProgressBarRange(ctx context.Context, rawMsg json.
 	return nil
 }
 
-// onUISetProgressBarValue is the method called for ui/set_progress_bar_value instructions.
-func (ix *Interpreter) onUISetProgressBarValue(ctx context.Context, rawMsg json.RawMessage) error {
+// doUISetProgressBarValue is the method implementing the ui/set_progress_bar_value command.
+func (ix *Interpreter) doUISetProgressBarValue(ctx context.Context, rawMsg json.RawMessage) error {
 	// parse the raw JSON message
 	var value modelx.InterpreterUISetProgressBarValueArguments
 	if err := json.Unmarshal(rawMsg, &value); err != nil {
 		return err
 	}
 
-	// ignore instruction if the corresponding suite is not enabled
+	// ignore command if the corresponding suite is not enabled
 	if !ix.settings.IsSuiteEnabled(value.SuiteName) {
 		return nil
 	}
@@ -149,8 +149,8 @@ func (ix *Interpreter) onUISetProgressBarValue(ctx context.Context, rawMsg json.
 	return nil
 }
 
-// onNettestRun is the method called for nettest/run instructions.
-func (ix *Interpreter) onNettestRun(ctx context.Context,
+// doNettestRun is the method implementing the nettest/run command.
+func (ix *Interpreter) doNettestRun(ctx context.Context,
 	config *modelx.InterpreterConfig, rawMsg json.RawMessage) error {
 	// parse the RAW JSON message
 	var value modelx.InterpreterNettestRunArguments

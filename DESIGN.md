@@ -11,7 +11,7 @@ implementation.
 ## TL;DR
 
 This design introduces an interpreter for a "script" served through
-the check-in v2 API. The script contains precise instructions for the
+the check-in v2 API. The script contains commands for the
 probe, telling it how to change the UI when measuring, what to
 measure, and how to save and submit the results.
 
@@ -123,14 +123,13 @@ probably look like this:
 }
 ```
 
-Then, I could manually write or generate instructions telling the
+Then, I could manually write or generate commands telling the
 interpreter what to measure. For example:
 
 ```JSONC
 // file: simple.jsonc
-// A simple set of instructions for research.
 {
-    "instructions": [
+    "commands": [
         {
             "run": "nettest/run",
             "with": {
@@ -172,10 +171,10 @@ In the PoC, one could run this script as follows:
 ./ooniprobe runx --location-file location.jsonc --script-file simple.jsonc
 ```
 
-The script consists of a sequence of instructions, and the interpreter
+The script consists of a sequence of commands, and the interpreter
 uses the "run" key to decide what to run. The "nettest/run"
-instruction tells the interpreter to run a specific nettest, and the
-"with" key contains instruction arguments. In the above example, we ask
+command tells the interpreter to run a specific nettest, and the
+"with" key contains command arguments. In the above example, we ask
 the interpreter to run "urlgetter" for two targets. For each target,
 we use "annotations" to annotate measurements, "input" to identify the
 input for urlgetter, and "options" to provide options. The "report\_id"
@@ -222,11 +221,11 @@ research by providing the researcher with extra flexibility.
 Suppose that I, as an OONI Probe developer, want all OONI Probe users
 that have given consent to run experimental tests to run some extra tests
 meant to understand specific emerging censorship conditions. I can do
-that by including nettest-running instructions similar to the above in
+that by including nettest-running commands similar to the above in
 the check-in v2 response (such that they somehow end up into the script).
 
 To illustrate how to do that, we must first take a detour and introduce
-specific instructions for driving the output. The script specifies
+specific commands for driving the output. The script specifies
 exactly when OONI Probe should change view and how the progress bar
 should increment. Consider this snippet:
 
@@ -433,7 +432,7 @@ a single, common function that executes a list of mini nettests.
 ## Minor idea: A/B testing
 
 We include a "feature\_flags" map from string to boolean to each
-"nettest/run" instruction. We will use this map to select experimental
+"nettest/run" command. We will use this map to select experimental
 features like we already do. The main difference is that the feature
 flags will be nettest-specific, thus providing us with more flexibility
 and control over the feature flags.
@@ -487,7 +486,7 @@ measurements into the local OONI-Probe database such that they end up
 inside the correct "Result" structure. To this end, we could
 probably deduce the correct "Result"
 from the current card; though, it seems more in line with the spirit of
-this design to define instructions to tell the probe when to create a new
+this design to define commands to tell the probe when to create a new
 "Result." We will investigate this topic as part of our future work.
 
 ## Handwaving: check-in v2 API
@@ -541,7 +540,7 @@ partial internet shutdown. The latter script should not depend on
 the backend (i.e., urlgetter instead of web connectivity). The probe
 should also ship with a fallback last-resort script.
 
-## Forward compatibility: instructions and nettests
+## Forward compatibility: commands and nettests
 
 As discussed with [@FedericoCeratto](https://github.com/FedericoCeratto), we
 will use the `v` field inside the script for versioning.
@@ -557,7 +556,7 @@ The check-in v2 API will serve additional nettests to run that measure
 targets defined using OONI Run v2. As mentioned, we are still determining
 whether the check-in v2 API will serve a script structure directly. In
 any case, eventually, OONI Run v2 information will translate into
-instructions related to (a) drawing the UI; (b) running nettests; and
+commands related to (a) drawing the UI; (b) running nettests; and
 (c) saving measurements.
 
 ## Future directions: richer-input streaming

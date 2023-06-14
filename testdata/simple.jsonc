@@ -1,6 +1,5 @@
-// A simple set of instructions for research.
 {
-	"instructions": [
+	"commands": [
 		{
 			"run": "nettest/run",
 			"with": {

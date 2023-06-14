@@ -1,13 +1,13 @@
 // This JSON object is either served by check-in directly or computed
 // by the OONI engine using the check-in response as the input.
 {
-	// The "instructions" section contains instructions interpreted
-	// by the probe engine. Each instruction has a given ID, which
+	// The "commands" section contains commands interpreted
+	// by the probe engine. Each commands has a given ID, which
 	// the engine interprets differently. When the engine parses an
-	// unknown instruction, it will ignore and skip it.
-	"instructions": [
+	// unknown command, it will ignore and skip it.
+	"commands": [
 
-		// The ui/set_suite instruction tells the OONI engine to
+		// The ui/set_suite command tells the OONI engine to
 		// draw in output a card with the given name.
 		{
 			"run": "ui/set_suite",
@@ -16,7 +16,7 @@
 			}
 		},
 
-		// The ui/set_progress_bar_range instruction tells the OONI engine
+		// The ui/set_progress_bar_range command tells the OONI engine
 		// to draw in output a progress bar with the given initial
 		// value and the given maximum value. Each nettest will have
 		// its own policy for emitting progress, as it is now.
@@ -29,7 +29,7 @@
 			}
 		},
 
-		// The nettest/run instruction tells the OONI engine
+		// The nettest/run command tells the OONI engine
 		// to run the given nettest by name.
 		{
 			"run": "nettest/run",
