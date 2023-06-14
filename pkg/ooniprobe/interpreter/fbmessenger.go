@@ -1,7 +1,7 @@
 package interpreter
 
 //
-// whatsapp.go implements the whatsapp nettest
+// fbmessenger.go implements the facebook_messenger nettest
 //
 
 import (
