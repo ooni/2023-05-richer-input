@@ -1,4 +1,4 @@
-package interpreter
+package runner
 
 //
 // session.go contains code to create a model.ExperimentSession. This is a data

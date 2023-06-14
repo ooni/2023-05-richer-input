@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
-	"github.com/ooni/2023-05-richer-input/pkg/ooniprobe/interpreter"
+	"github.com/ooni/2023-05-richer-input/pkg/ooniprobe/runner"
 	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/spf13/cobra"
 	"github.com/tailscale/hujson"
@@ -146,7 +146,7 @@ func (sc *runxSubcommand) Main(cmd *cobra.Command, args []string) {
 	log.SetOutput(view.StdlibLoggerWriter())
 
 	// create the interpreter
-	ix := interpreter.New(
+	ix := runner.NewInterpreter(
 		location,
 		view,
 		mw,

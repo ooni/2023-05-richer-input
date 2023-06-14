@@ -1,4 +1,4 @@
-package interpreter
+package runner
 
 //
 // measurement.go contains code to create and scrub measurements

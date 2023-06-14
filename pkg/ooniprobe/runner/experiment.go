@@ -1,4 +1,4 @@
-package interpreter
+package runner
 
 //
 // experiment.go contains code to create experiments.

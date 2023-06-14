@@ -1,4 +1,4 @@
-package interpreter
+package runner
 
 //
 // nettest.go contains code to create nettests.

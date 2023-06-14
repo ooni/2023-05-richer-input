@@ -1,7 +1,7 @@
-package interpreter
+package runner
 
 //
-// webconnectivity.go implements the webconnectivity nettest
+// urlgetter.go implements the urlgetter nettest
 //
 
 import (
@@ -10,39 +10,38 @@ import (
 	"time"
 
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
-	"github.com/ooni/probe-engine/pkg/experiment/webconnectivity"
-	"github.com/ooni/probe-engine/pkg/experiment/webconnectivitylte"
+	"github.com/ooni/probe-engine/pkg/experiment/urlgetter"
 	"github.com/ooni/probe-engine/pkg/model"
 )
 
-// webconnectivityTarget is a target measured using webconnectivity.
-type webconnectivityTarget struct {
-	// Attributes contains the attributes.
-	Attributes map[string]any `json:"attributes"`
-
+// urlgetterTarget is a target measured using urlgetter.
+type urlgetterTarget struct {
 	// Input is the input.
 	Input string `json:"input"`
+
+	// Options contains the options.
+	Options urlgetter.Config `json:"options"`
 }
 
-// webconnectivityNettest is the webconnectivity nettest.
-type webconnectivityNettest struct {
+// urlgetterNettest is the urlgetter nettest.
+type urlgetterNettest struct {
 	args    *modelx.InterpreterNettestRunArguments
 	ix      *Interpreter
-	targets []webconnectivityTarget
+	targets []urlgetterTarget
 }
 
-var _ nettest = &webconnectivityNettest{}
+var _ nettest = &urlgetterNettest{}
 
-// webconnectivityNew constructs a new webconnectivity instance.
-func webconnectivityNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
+// urlgetterNew constructs a new urlgetter instance.
+func urlgetterNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
 	// parse targets
-	var targets []webconnectivityTarget
+	var targets []urlgetterTarget
 	if err := json.Unmarshal(args.Targets, &targets); err != nil {
 		return nil, err
 	}
 
 	// fill the nettest struct
-	nettest := &webconnectivityNettest{
+	nettest := &urlgetterNettest{
 		args:    args,
 		ix:      ix,
 		targets: targets,
@@ -53,7 +52,7 @@ func webconnectivityNew(args *modelx.InterpreterNettestRunArguments, ix *Interpr
 }
 
 // Run implements nettest
-func (nt *webconnectivityNettest) Run(ctx context.Context) error {
+func (nt *urlgetterNettest) Run(ctx context.Context) error {
 	// save the start time
 	t0 := time.Now()
 
@@ -73,13 +72,8 @@ func (nt *webconnectivityNettest) Run(ctx context.Context) error {
 		// record the current target inside the logs
 		nt.ix.logger.Infof("--- input: idx=%d target=%+v ---", idx, target)
 
-		// create a new experiment instance honoring experimental flags
-		var exp model.ExperimentMeasurer
-		if nt.args.ExperimentalFlags["webconnectivity_0.5"] {
-			exp = webconnectivitylte.NewExperimentMeasurer(&webconnectivitylte.Config{})
-		} else {
-			exp = webconnectivity.NewExperimentMeasurer(webconnectivity.Config{})
-		}
+		// create a new experiment instance
+		exp := urlgetter.NewExperimentMeasurer(target.Options)
 
 		// run with the given experiment and input
 		err := runExperiment(
@@ -91,7 +85,7 @@ func (nt *webconnectivityNettest) Run(ctx context.Context) error {
 			nt.ix,
 			nt.args.ReportID,
 			t0,
-			nt.args.TestHelpers,
+			make(map[string][]model.OOAPIService),
 		)
 
 		// handle an immediate error such as a context error

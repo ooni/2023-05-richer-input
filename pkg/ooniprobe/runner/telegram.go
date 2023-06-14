@@ -1,4 +1,4 @@
-package interpreter
+package runner
 
 //
 // telegram.go implements the telegram nettest

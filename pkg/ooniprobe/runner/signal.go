@@ -1,4 +1,4 @@
-package interpreter
+package runner
 
 //
 // signal.go implements the signal nettest

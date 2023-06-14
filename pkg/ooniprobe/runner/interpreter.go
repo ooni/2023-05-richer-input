@@ -1,6 +1,4 @@
-// Package intepreter contains an interpreter to implement OONI Probe
-// based on a list of [model.InterpreterInstruction].
-package interpreter
+package runner
 
 import (
 	"context"
@@ -38,8 +36,8 @@ type Interpreter struct {
 	view modelx.ProgressView
 }
 
-// New creates a new [Interpreter] instance.
-func New(
+// NewInterpreter creates a new [Interpreter] instance.
+func NewInterpreter(
 	location *modelx.ProbeLocation,
 	logger model.Logger,
 	saver modelx.MeasurementSaver,

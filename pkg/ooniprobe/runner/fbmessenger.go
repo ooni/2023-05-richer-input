@@ -1,4 +1,4 @@
-package interpreter
+package runner
 
 //
 // fbmessenger.go implements the facebook_messenger nettest
