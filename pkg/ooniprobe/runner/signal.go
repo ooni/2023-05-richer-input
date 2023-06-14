@@ -8,8 +8,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/ooni/2023-05-richer-input/pkg/experiment/signal"
+	signalmini "github.com/ooni/2023-05-richer-input/pkg/experiment/signal"
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
+	"github.com/ooni/probe-engine/pkg/experiment/signal"
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // signalNettest is the signal nettest.
@@ -46,7 +48,12 @@ func (nt *signalNettest) Run(ctx context.Context) error {
 	t0 := time.Now()
 
 	// create a new experiment instance
-	exp := signal.NewMeasurer(nt.args.Targets)
+	var exp model.ExperimentMeasurer
+	if nt.args.ExperimentalFlags["mini_nettests"] {
+		exp = signalmini.NewMeasurer(nt.args.Targets)
+	} else {
+		exp = signal.NewExperimentMeasurer(signal.Config{})
+	}
 
 	// run with the given experiment and input
 	err := runExperiment(

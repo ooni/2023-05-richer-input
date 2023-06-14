@@ -8,8 +8,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/ooni/2023-05-richer-input/pkg/experiment/fbmessenger"
+	fbmessengermini "github.com/ooni/2023-05-richer-input/pkg/experiment/fbmessenger"
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
+	"github.com/ooni/probe-engine/pkg/experiment/fbmessenger"
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // fbmessengerNettest is the facebook_messenger nettest.
@@ -46,7 +48,12 @@ func (nt *fbmessengerNettest) Run(ctx context.Context) error {
 	t0 := time.Now()
 
 	// create a new experiment instance
-	exp := fbmessenger.NewMeasurer(nt.args.Targets)
+	var exp model.ExperimentMeasurer
+	if nt.args.ExperimentalFlags["mini_nettests"] {
+		exp = fbmessengermini.NewMeasurer(nt.args.Targets)
+	} else {
+		exp = fbmessenger.NewExperimentMeasurer(fbmessenger.Config{})
+	}
 
 	// run with the given experiment and input
 	err := runExperiment(

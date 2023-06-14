@@ -8,8 +8,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/ooni/2023-05-richer-input/pkg/experiment/telegram"
+	telegrammini "github.com/ooni/2023-05-richer-input/pkg/experiment/telegram"
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
+	"github.com/ooni/probe-engine/pkg/experiment/telegram"
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // telegramNettest is the telegram nettest.
@@ -46,7 +48,12 @@ func (nt *telegramNettest) Run(ctx context.Context) error {
 	t0 := time.Now()
 
 	// create a new experiment instance
-	exp := telegram.NewMeasurer(nt.args.Targets)
+	var exp model.ExperimentMeasurer
+	if nt.args.ExperimentalFlags["mini_nettests"] {
+		exp = telegrammini.NewMeasurer(nt.args.Targets)
+	} else {
+		exp = telegram.NewExperimentMeasurer(telegram.Config{})
+	}
 
 	// run with the given experiment and input
 	err := runExperiment(

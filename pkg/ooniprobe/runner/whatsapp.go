@@ -8,8 +8,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/ooni/2023-05-richer-input/pkg/experiment/whatsapp"
+	whatsappmini "github.com/ooni/2023-05-richer-input/pkg/experiment/whatsapp"
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
+	"github.com/ooni/probe-engine/pkg/experiment/whatsapp"
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // whatsappNettest is the whatsapp nettest.
@@ -46,7 +48,12 @@ func (nt *whatsappNettest) Run(ctx context.Context) error {
 	t0 := time.Now()
 
 	// create a new experiment instance
-	exp := whatsapp.NewMeasurer(nt.args.Targets)
+	var exp model.ExperimentMeasurer
+	if nt.args.ExperimentalFlags["mini_nettests"] {
+		exp = whatsappmini.NewMeasurer(nt.args.Targets)
+	} else {
+		exp = whatsapp.NewExperimentMeasurer(whatsapp.Config{})
+	}
 
 	// run with the given experiment and input
 	err := runExperiment(
