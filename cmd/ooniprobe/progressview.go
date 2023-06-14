@@ -102,9 +102,9 @@ func newProgressView(verbose bool, childLogger *logCollector) *progressView {
 }
 
 var (
-	_ model.Logger        = &progressView{}
-	_ modelx.ProgressView = &progressView{}
-	_ io.Closer           = &progressView{}
+	_ model.Logger           = &progressView{}
+	_ modelx.InterpreterView = &progressView{}
+	_ io.Closer              = &progressView{}
 )
 
 // Close implements io.Closer.

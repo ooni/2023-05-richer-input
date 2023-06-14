@@ -34,7 +34,7 @@ type Interpreter struct {
 	softwareVersion string
 
 	// view is the view used to show progress.
-	view modelx.ProgressView
+	view modelx.InterpreterView
 }
 
 // NewInterpreter creates a new [Interpreter] instance.
@@ -45,7 +45,7 @@ func NewInterpreter(
 	settings modelx.InterpreterSettings,
 	softwareName string,
 	softwareVersion string,
-	view modelx.ProgressView,
+	view modelx.InterpreterView,
 ) *Interpreter {
 	return &Interpreter{
 		location:        location,
