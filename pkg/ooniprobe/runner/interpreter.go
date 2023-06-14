@@ -64,31 +64,31 @@ func (ix *Interpreter) Run(ctx context.Context, script *modelx.InterpreterScript
 
 	// execute each command
 	for _, command := range script.Commands {
-		ix.logger.Debugf("interpreter: interpreting: %s", command.Run)
+		ix.logger.Debugf("interpreter: interpreting: %s", command.RunCommand)
 
-		switch command.Run {
+		switch command.RunCommand {
 		case "ui/set_suite":
-			if err := ix.doUISetSuite(ctx, command.With); err != nil {
+			if err := ix.doUISetSuite(ctx, command.WithArguments); err != nil {
 				return err
 			}
 
 		case "ui/set_progress_bar_range":
-			if err := ix.doUISetProgressBarRange(ctx, command.With); err != nil {
+			if err := ix.doUISetProgressBarRange(ctx, command.WithArguments); err != nil {
 				return err
 			}
 
 		case "ui/set_progress_bar_value":
-			if err := ix.doUISetProgressBarValue(ctx, command.With); err != nil {
+			if err := ix.doUISetProgressBarValue(ctx, command.WithArguments); err != nil {
 				return err
 			}
 
 		case "nettest/run":
-			if err := ix.doNettestRun(ctx, &script.Config, command.With); err != nil {
+			if err := ix.doNettestRun(ctx, &script.Config, command.WithArguments); err != nil {
 				return err
 			}
 
 		default:
-			ix.logger.Infof("interpreter: ignoring unknown command: %s", command.Run)
+			ix.logger.Infof("interpreter: ignoring unknown command: %s", command.RunCommand)
 		}
 	}
 

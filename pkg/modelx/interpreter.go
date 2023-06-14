@@ -94,11 +94,11 @@ type InterpreterConfig struct {
 
 // InterpreterCommand is a command interpreted by the interpreter.
 type InterpreterCommand struct {
-	// Run is the name of the command to run.
-	Run string `json:"run"`
+	// RunCommand is the name of the command to run.
+	RunCommand string `json:"run_command"`
 
-	// With contains the command arguments.
-	With json.RawMessage `json:"with"`
+	// WithArguments contains the command arguments.
+	WithArguments json.RawMessage `json:"with_arguments"`
 }
 
 // InterpreterUISetSuiteArguments contains arguments for the ui/set_suite command.

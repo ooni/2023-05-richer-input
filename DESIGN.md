@@ -131,8 +131,8 @@ interpreter what to measure. For example:
 {
     "commands": [
         {
-            "run": "nettest/run",
-            "with": {
+            "run_command": "nettest/run",
+            "with_arguments": {
                 "nettest_name": "urlgetter",
                 "report_id": "20230406T142431Z_urlgetter_IT_30722_n1_8vFVXzjCjfUFbOA5",
                 "targets": [
@@ -172,9 +172,9 @@ In the PoC, one could run this script as follows:
 ```
 
 The script consists of a sequence of commands, and the interpreter
-uses the "run" key to decide what to run. The "nettest/run"
+uses the "run_command" key to decide which command to run. The "nettest/run"
 command tells the interpreter to run a specific nettest, and the
-"with" key contains command arguments. In the above example, we ask
+"with_arguments" key contains command arguments. In the above example, we ask
 the interpreter to run "urlgetter" for two targets. For each target,
 we use "annotations" to annotate measurements, "input" to identify the
 input for urlgetter, and "options" to provide options. The "report\_id"
@@ -192,8 +192,8 @@ snippet shows how to include test helpers' information:
 ```JSONC
 // ...
         {
-            "run": "nettest/run",
-            "with": {
+            "run_command": "nettest/run",
+            "with_arguments": {
                 "nettest_name": "http_invalid_request_line",
                 "report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
                 "test_helpers": {
@@ -232,35 +232,35 @@ should increment. Consider this snippet:
 ```JSONC
 // ...
         {
-            "run": "ui/set_suite",
-            "with": {
+            "run_command": "ui/set_suite",
+            "with_arguments": {
                 "suite_name": "circumvention"
             }
         },
         {
-            "run": "ui/set_progress_bar_range",
-            "with": {
+            "run_command": "ui/set_progress_bar_range",
+            "with_arguments": {
                 "initial_value": 0,
                 "max_value": 0.5
             }
         },
         {
-            "run": "nettest/run",
-            "with": {
+            "run_command": "nettest/run",
+            "with_arguments": {
                 "nettest_name": "torsf",
                 "report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5"
             }
         },
         {
-            "run": "ui/set_progress_bar_range",
-            "with": {
+            "run_command": "ui/set_progress_bar_range",
+            "with_arguments": {
                 "initial_value": 0.5,
                 "max_value": 1
             }
         },
         {
-            "run": "nettest/run",
-            "with": {
+            "run_command": "nettest/run",
+            "with_arguments": {
                 "nettest_name": "vanilla_tor",
                 "report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy"
             }
@@ -285,50 +285,50 @@ follows (or change check-in v2 to serve something that leads to this):
 ```JSONC
 // ...
         {
-            "run": "ui/set_suite",
-            "with": {
+            "run_command": "ui/set_suite",
+            "with_arguments": {
                 "suite_name": "circumvention"
             }
         },
         {
-            "run": "ui/set_progress_bar_range",
-            "with": {
+            "run_command": "ui/set_progress_bar_range",
+            "with_arguments": {
                 "initial_value": 0,
                 "max_value": 0.33 // <- changed
             }
         },
         {
-            "run": "nettest/run",
-            "with": {
+            "run_command": "nettest/run",
+            "with_arguments": {
                 "nettest_name": "torsf",
                 "report_id": "20230406T142431Z_torsf_IT_30722_n1_8vFVXzjCjfUFbOA5"
             }
         },
         {
-            "run": "ui/set_progress_bar_range",
-            "with": {
+            "run_command": "ui/set_progress_bar_range",
+            "with_arguments": {
                 "initial_value": 0.33, // <- changed
                 "max_value": 0.66 // <- changed
             }
         },
         {
-            "run": "nettest/run",
-            "with": {
+            "run_command": "nettest/run",
+            "with_arguments": {
                 "nettest_name": "vanilla_tor",
                 "report_id": "20230406T142431Z_vanillator_IT_30722_n1_0md7viiR9jvTlXBy"
             }
         },
         // ~~~ begin added ~~~
         {
-            "run": "ui/set_progress_bar_range",
-            "with": {
+            "run_command": "ui/set_progress_bar_range",
+            "with_arguments": {
                 "initial_value": 0.66,
                 "max_value": 1
             }
         },
         {
-            "run": "nettest/run",
-            "with": {
+            "run_command": "nettest/run",
+            "with_arguments": {
                 "nettest_name": "urlgetter",
                 "report_id": "20230406T142431Z_urlgetter_IT_30722_n1_0md7viiR9jvTlXBy",
                 "targets": [ /* ... */ ]
@@ -359,8 +359,8 @@ telegram nettest, for example, looks like this:
 ```JSONC
 // ...
         {
-            "run": "nettest/run",
-            "with": {
+            "run_command": "nettest/run",
+            "with_arguments": {
                 "nettest_name": "telegram",
                 "report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
                 "targets": [
