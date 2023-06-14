@@ -8,9 +8,9 @@ type MiniNettestDescriptor struct {
 	// ID is the unique ID of this mini nettest within the nettest.
 	ID string `json:"id"`
 
-	// Run indicates the mini nettest we should run.
-	Run string `json:"run"`
+	// RunMiniNettest is the mini nettest to run.
+	RunMiniNettest string `json:"run_mini_nettest"`
 
-	// With contains arguments specific of the mini nettest.
-	With json.RawMessage `json:"with"`
+	// WithTarget is the mini nettest target.
+	WithTarget json.RawMessage `json:"with_target"`
 }

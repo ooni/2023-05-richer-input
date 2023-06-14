@@ -10,8 +10,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
-// httpDomainConfig contains config for http-domain.
-type httpDomainConfig struct {
+// httpDomainTarget is the target for http-domain.
+type httpDomainTarget struct {
 	// Domain is the domain to resolve.
 	Domain string `json:"domain"`
 
@@ -43,8 +43,8 @@ func (env *Environment) httpDomainMain(
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config httpDomainConfig
-	if err := json.Unmarshal(desc.With, &config); err != nil {
+	var config httpDomainTarget
+	if err := json.Unmarshal(desc.WithTarget, &config); err != nil {
 		return nil, err
 	}
 
@@ -115,8 +115,8 @@ func (env *Environment) httpDomainMain(
 	return mergedObservations, nil
 }
 
-// httpAddressConfig contains config for http-address.
-type httpAddressConfig struct {
+// httpAddressTarget is the target for http-address.
+type httpAddressTarget struct {
 	// IPAddress is the IP address to use.
 	IPAddress string `json:"ip_address"`
 
@@ -148,8 +148,8 @@ func (env *Environment) httpAddressMain(
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config httpAddressConfig
-	if err := json.Unmarshal(desc.With, &config); err != nil {
+	var config httpAddressTarget
+	if err := json.Unmarshal(desc.WithTarget, &config); err != nil {
 		return nil, err
 	}
 

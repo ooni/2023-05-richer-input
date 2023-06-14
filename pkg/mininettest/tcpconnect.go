@@ -10,8 +10,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
-// tcpConnectAddressConfig contains config for tcp-connect-address.
-type tcpConnectAddressConfig struct {
+// tcpConnectAddressTarget is the target for tcp-connect-address.
+type tcpConnectAddressTarget struct {
 	// IPAddress is the IP address to connect to.
 	IPAddress string `json:"ip_address"`
 
@@ -25,8 +25,8 @@ func (env *Environment) tcpConnectAddressMain(
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config tcpConnectAddressConfig
-	if err := json.Unmarshal(desc.With, &config); err != nil {
+	var config tcpConnectAddressTarget
+	if err := json.Unmarshal(desc.WithTarget, &config); err != nil {
 		return nil, err
 	}
 
@@ -60,8 +60,8 @@ func (env *Environment) tcpConnectAddressMain(
 	return mergedObservations, nil
 }
 
-// tcpConnectDomainConfig contains config for tcp-connect-domain.
-type tcpConnectDomainConfig struct {
+// tcpConnectDomainTarget is the target for tcp-connect-domain.
+type tcpConnectDomainTarget struct {
 	// Domain is the domain to resolve
 	Domain string `json:"domain"`
 
@@ -75,8 +75,8 @@ func (env *Environment) tcpConnectDomainMain(
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config tcpConnectDomainConfig
-	if err := json.Unmarshal(desc.With, &config); err != nil {
+	var config tcpConnectDomainTarget
+	if err := json.Unmarshal(desc.WithTarget, &config); err != nil {
 		return nil, err
 	}
 

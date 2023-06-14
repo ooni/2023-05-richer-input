@@ -127,55 +127,55 @@
 				"targets": [
 					{
 						"id": "fbmessenger-stun",
-						"run": "dns-lookup",
-						"with": {
+						"run_mini_nettest": "dns-lookup",
+						"with_target": {
 							"domain": "stun.fbsbx.com"
 						}
 					},
 					{
 						"id": "fbmessenger-b-api",
-						"run": "tcp-connect-domain",
-						"with": {
+						"run_mini_nettest": "tcp-connect-domain",
+						"with_target": {
 							"domain": "b-api.facebook.com",
 							"port": 443
 						}
 					},
 					{
 						"id": "fbmessenger-b-graph",
-						"run": "tcp-connect-domain",
-						"with": {
+						"run_mini_nettest": "tcp-connect-domain",
+						"with_target": {
 							"domain": "b-graph.facebook.com",
 							"port": 443
 						}
 					},
 					{
 						"id": "fbmessenger-b-edge-mqtt",
-						"run": "tcp-connect-domain",
-						"with": {
+						"run_mini_nettest": "tcp-connect-domain",
+						"with_target": {
 							"domain": "edge-mqtt.facebook.com",
 							"port": 443
 						}
 					},
 					{
 						"id": "fbmessenger-external-cdn",
-						"run": "tcp-connect-domain",
-						"with": {
+						"run_mini_nettest": "tcp-connect-domain",
+						"with_target": {
 							"domain": "external.xx.fbcdn.net",
 							"port": 443
 						}
 					},
 					{
 						"id": "fbmessenger-scontent-cdn",
-						"run": "tcp-connect-domain",
-						"with": {
+						"run_mini_nettest": "tcp-connect-domain",
+						"with_target": {
 							"domain": "scontent.xx.fbcdn.net",
 							"port": 443
 						}
 					},
 					{
 						"id": "fbmessenger-star",
-						"run": "tcp-connect-domain",
-						"with": {
+						"run_mini_nettest": "tcp-connect-domain",
+						"with_target": {
 							"domain": "star.c10r.facebook.com",
 							"port": 443
 						}
@@ -201,8 +201,8 @@
 				"suite_name": "im",
 				"targets": [
 					{
-						"run": "dns-lookup",
-						"with": {
+						"run_mini_nettest": "dns-lookup",
+						"with_target": {
 							"domain": "uptime.signal.org"
 						}
 					},
@@ -210,8 +210,8 @@
 					// Here it is important to note that we're serving the
 					// correct X.509 certificates to the probe.
 					{
-						"run": "https-domain",
-						"with": {
+						"run_mini_nettest": "https-domain",
+						"with_target": {
 							"domain": "textsecure-service.whispersystems.org",
 							"http_header_host": "textsecure-service.whispersystems.org",
 							"http_method": "GET",
@@ -224,8 +224,8 @@
 						}
 					},
 					{
-						"run": "https-domain",
-						"with": {
+						"run_mini_nettest": "https-domain",
+						"with_target": {
 							"domain": "storage.signal.org",
 							"http_header_host": "storage.signal.org",
 							"http_method": "GET",
@@ -258,24 +258,24 @@
 				"suite_name": "im",
 				"targets": [
 					{
-						"run": "http-address",
-						"with": {
+						"run_mini_nettest": "http-address",
+						"with_target": {
 							"ip_address": "149.154.175.50",
 							"http_method": "POST",
 							"port": 443
 						}
 					},
 					{
-						"run": "http-address",
-						"with": {
+						"run_mini_nettest": "http-address",
+						"with_target": {
 							"ip_address": "149.154.175.50",
 							"http_method": "POST",
 							"port": 80
 						}
 					},
 					{
-						"run": "https-domain",
-						"with": {
+						"run_mini_nettest": "https-domain",
+						"with_target": {
 							"domain": "web.telegram.org",
 							"http_header_host": "web.telegram.org",
 							"http_method": "GET",
@@ -304,36 +304,36 @@
 				"suite_name": "im",
 				"targets": [
 					{
-						"run": "tcp-connect-domain",
-						"with": {
+						"run_mini_nettest": "tcp-connect-domain",
+						"with_target": {
 							"domain": "e1.whatsapp.net",
 							"port": 443
 						}
 					},
 					{
-						"run": "tcp-connect-domain",
-						"with": {
+						"run_mini_nettest": "tcp-connect-domain",
+						"with_target": {
 							"domain": "e1.whatsapp.net",
 							"port": 5222
 						}
 					},
 					{
-						"run": "tcp-connect-domain",
-						"with": {
+						"run_mini_nettest": "tcp-connect-domain",
+						"with_target": {
 							"domain": "e2.whatsapp.net",
 							"port": 443
 						}
 					},
 					{
-						"run": "tcp-connect-domain",
-						"with": {
+						"run_mini_nettest": "tcp-connect-domain",
+						"with_target": {
 							"domain": "e2.whatsapp.net",
 							"port": 5222
 						}
 					},
 					{
-						"run": "https-domain",
-						"with": {
+						"run_mini_nettest": "https-domain",
+						"with_target": {
 							"domain": "v.whatsapp.net",
 							"http_header_host": "v.whatsapp.net",
 							"http_method": "GET",

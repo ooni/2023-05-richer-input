@@ -184,38 +184,6 @@ If you are reading this design, you may wonder how I would, as the user
 writing the JSON file, obtain the report ID. You would be right. This
 topic is covered near the end of this document.
 
-We do not describe how to represent richer input for each nettest
-for brevity. However, the general idea is that we include information
-relevant to each nettest along with it. For example, the following JSON
-snippet shows how to include test helpers' information:
-
-```JSONC
-// ...
-        {
-            "run_command": "nettest/run",
-            "with_arguments": {
-                "nettest_name": "http_invalid_request_line",
-                "report_id": "20230406T142431Z_httpinvalidrequestline_IT_30722_n1_r4CGz0mEaRfB9T7R",
-                "test_helpers": {
-                    "tcp-echo": [
-                        {
-                            "address": "37.218.241.93",
-                            "type": "legacy"
-                        },
-                        {
-                            "address": "37.218.241.93",
-                            "type": "legacy"
-                        }
-                    ]
-                }
-            }
-        },
-// ...
-```
-
-Including test helpers' information inside the "with" object supports
-research by providing the researcher with extra flexibility.
-
 ## Key idea: check-in-driven research
 
 Suppose that I, as an OONI Probe developer, want all OONI Probe users
@@ -365,8 +333,8 @@ telegram nettest, for example, looks like this:
                 "report_id": "20230406T142431Z_telegram_IT_30722_n1_lMVwxE4oAaZ00mIM",
                 "targets": [
                     {
-                        "run": "http-address",
-                        "with": {
+                        "run_mini_nettest": "http-address",
+                        "with_target": {
                             "tags": [
                                 "mini_nettest:dc",
                             ],
@@ -376,8 +344,8 @@ telegram nettest, for example, looks like this:
                         }
                     },
                     {
-                        "run": "http-address",
-                        "with": {
+                        "run_mini_nettest": "http-address",
+                        "with_target": {
                             "tags": [
                                 "mini_nettest:dc",
                             ],
@@ -387,8 +355,8 @@ telegram nettest, for example, looks like this:
                         }
                     },
                     {
-                        "run": "https-domain",
-                        "with": {
+                        "run_mini_nettest": "https-domain",
+                        "with_target": {
                             "tags": [
                                 "mini_nettest:web",
                             ],
@@ -408,8 +376,8 @@ telegram nettest, for example, looks like this:
 An older version of OONI Probe would ignore the richer input
 "targets." Conversely, a richer-input-aware version would implement
 telegram as a runner for mini nettests, and each target is a mini
-nettest with well-defined semantics. The inner "run" key identifies a
-mini nettest, and the internal "with" object provides richer input for
+nettest with well-defined semantics. The inner "run_mini_nettest" key identifies a
+mini nettest, and the internal "with_target" object provides richer input for
 the mini nettest. In the above-example, `http-address` performs
 an HTTP transaction with a given TCP endpoint (e.g., `149.154.175.50:80`);
 `https-address` combines DNS lookup and accessing the resolved IP

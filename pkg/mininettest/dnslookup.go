@@ -12,8 +12,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/dslx"
 )
 
-// dnsLookupConfig contains config for dns-lookup.
-type dnsLookupConfig struct {
+// dnsLookupTarget is the target for dns-lookup.
+type dnsLookupTarget struct {
 	// Domain is the domain to resolve.
 	Domain string `json:"domain"`
 }
@@ -24,8 +24,8 @@ func (env *Environment) dnsLookupMain(
 	desc *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
 	// parse the raw config
-	var config dnsLookupConfig
-	if err := json.Unmarshal(desc.With, &config); err != nil {
+	var config dnsLookupTarget
+	if err := json.Unmarshal(desc.WithTarget, &config); err != nil {
 		return nil, err
 	}
 

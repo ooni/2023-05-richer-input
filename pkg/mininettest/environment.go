@@ -43,7 +43,7 @@ func (env *Environment) Run(
 	ctx context.Context,
 	descr *modelx.MiniNettestDescriptor,
 ) (*dslx.Observations, error) {
-	switch descr.Run {
+	switch descr.RunMiniNettest {
 	case "dns-lookup":
 		return env.dnsLookupMain(ctx, descr)
 
