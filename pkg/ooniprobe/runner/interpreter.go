@@ -1,5 +1,9 @@
 package runner
 
+//
+// Interpreter for scripts
+//
+
 import (
 	"context"
 	"encoding/json"

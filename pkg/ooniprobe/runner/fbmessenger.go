@@ -8,22 +8,22 @@ import (
 	"context"
 	"time"
 
-	"github.com/ooni/2023-05-richer-input/pkg/experiment/whatsapp"
+	"github.com/ooni/2023-05-richer-input/pkg/experiment/fbmessenger"
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
 )
 
-// whatsappNettest is the whatsapp nettest.
-type whatsappNettest struct {
+// fbmessengerNettest is the facebook_messenger nettest.
+type fbmessengerNettest struct {
 	args *modelx.InterpreterNettestRunArguments
 	ix   *Interpreter
 }
 
-var _ nettest = &whatsappNettest{}
+var _ nettest = &fbmessengerNettest{}
 
-// whatsappNew constructs a new whatsapp instance.
-func whatsappNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
+// fbmessengerNew constructs a new fbmessenger instance.
+func fbmessengerNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (nettest, error) {
 	// fill the nettest struct
-	nettest := &whatsappNettest{
+	nettest := &fbmessengerNettest{
 		args: args,
 		ix:   ix,
 	}
@@ -33,12 +33,12 @@ func whatsappNew(args *modelx.InterpreterNettestRunArguments, ix *Interpreter) (
 }
 
 // Run implements nettest
-func (nt *whatsappNettest) Run(ctx context.Context) error {
+func (nt *fbmessengerNettest) Run(ctx context.Context) error {
 	// save the start time
 	t0 := time.Now()
 
 	// create a new experiment instance
-	exp := whatsapp.NewMeasurer(nt.args.Targets)
+	exp := fbmessenger.NewMeasurer(nt.args.Targets)
 
 	// run with the given experiment and input
 	err := runExperiment(

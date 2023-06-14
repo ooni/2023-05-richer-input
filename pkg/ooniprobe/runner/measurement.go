@@ -78,8 +78,8 @@ const scrubbed = `[scrubbed]`
 // is empty after this function has returned.
 func scrubMeasurement(
 	incoming *model.Measurement, location *modelx.ProbeLocation) (*model.Measurement, error) {
-	// TODO(bassosimone): this code should replace the code that we
-	// currently use for scrubbing measurements
+	// TODO(bassosimone): this code should replace the code that we currently use
+	// for scrubbing measurements in github.com/ooni/probe-cli
 
 	// serialize incoming measurement
 	data, err := json.Marshal(incoming)

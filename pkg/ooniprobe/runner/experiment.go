@@ -29,6 +29,7 @@ func runExperiment(
 	ths map[string][]model.OOAPIService,
 ) error {
 	// TODO(bassosimone): MeasurementTarget -> MeasurementInput
+	// in github.com/ooni/probe-cli/internal/model.
 
 	// create a new measurement instance
 	meas := newMeasurement(
