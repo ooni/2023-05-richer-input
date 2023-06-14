@@ -56,25 +56,19 @@
 				// experiment that the OONI engine needs to interpret.
 				"targets": [
 					{
-						"attributes": {
-							"category_code": "MMED",
-							"country_code": "XX"
-						},
-						"input": "https://www.instagram.com/"
+						"category_code": "MMED",
+						"country_code": "XX",
+						"url": "https://www.instagram.com/"
 					},
 					{
-						"attributes": {
-							"category_code": "GRP",
-							"country_code": "XX"
-						},
-						"input": "https://www.facebook.com/"
+						"category_code": "GRP",
+						"country_code": "XX",
+						"url": "https://www.facebook.com/"
 					},
 					{
-						"attributes": {
-							"category_code": "CULTR",
-							"country_code": "IT"
-						},
-						"input": "https://en.wiktionary.org/"
+						"category_code": "CULTR",
+						"country_code": "IT",
+						"url": "https://en.wiktionary.org/"
 					}
 				]
 			}
@@ -535,22 +529,18 @@
 				// dnscheck and which targets to select.
 				"targets": [
 					{
-						"attributes": {},
 						"input": "https://dns.google/dns-query",
 						"options": {}
 					},
 					{
-						"attributes": {},
 						"input": "https://8.8.8.8/dns-query",
 						"options": {}
 					},
 					{
-						"attributes": {},
 						"input": "https://cloudflare-dns.com/dns-query",
 						"options": {}
 					},
 					{
-						"attributes": {},
 						"input": "https://1.1.1.1/dns-query",
 						"options": {}
 					}
@@ -575,13 +565,11 @@
 				"suite_name": "experimental",
 				"targets": [
 					{
-						"attributes": {},
-						"input": "stun://stun.voip.blackberry.com:3478",
+						"url": "stun://stun.voip.blackberry.com:3478",
 						"options": {}
 					},
 					{
-						"attributes": {},
-						"input": "stun://stun.antisip.com:3478",
+						"url": "stun://stun.antisip.com:3478",
 						"options": {}
 					}
 				]

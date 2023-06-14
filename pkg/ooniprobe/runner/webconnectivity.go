@@ -16,13 +16,7 @@ import (
 )
 
 // webconnectivityTarget is a target measured using webconnectivity.
-type webconnectivityTarget struct {
-	// Attributes contains the attributes.
-	Attributes map[string]any `json:"attributes"`
-
-	// Input is the input.
-	Input string `json:"input"`
-}
+type webconnectivityTarget = model.OOAPIURLInfo
 
 // webconnectivityNettest is the webconnectivity nettest.
 type webconnectivityNettest struct {
@@ -95,7 +89,7 @@ func (nt *webconnectivityNettest) Run(ctx context.Context) error {
 			nt.args.Annotations,
 			model.NewPrinterCallbacks(model.DiscardLogger),
 			exp,
-			target.Input,
+			target.URL,
 			nt.ix,
 			nt.args.ReportID,
 			t0,
@@ -108,7 +102,7 @@ func (nt *webconnectivityNettest) Run(ctx context.Context) error {
 		}
 
 		// emit progress
-		pe.Tick(idx, target.Input)
+		pe.Tick(idx, target.URL)
 	}
 
 	return nil

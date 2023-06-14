@@ -16,11 +16,11 @@ import (
 
 // urlgetterTarget is a target measured using urlgetter.
 type urlgetterTarget struct {
-	// Input is the input.
-	Input string `json:"input"`
-
 	// Options contains the options.
 	Options urlgetter.Config `json:"options"`
+
+	// URL is the URL to measure.
+	URL string `json:"url"`
 }
 
 // urlgetterNettest is the urlgetter nettest.
@@ -87,7 +87,7 @@ func (nt *urlgetterNettest) Run(ctx context.Context) error {
 			nt.args.Annotations,
 			model.NewPrinterCallbacks(model.DiscardLogger),
 			exp,
-			target.Input,
+			target.URL,
 			nt.ix,
 			nt.args.ReportID,
 			t0,
@@ -100,7 +100,7 @@ func (nt *urlgetterNettest) Run(ctx context.Context) error {
 		}
 
 		// emit progress
-		pe.Tick(idx, target.Input)
+		pe.Tick(idx, target.URL)
 	}
 
 	return nil
