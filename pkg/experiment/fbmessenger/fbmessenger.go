@@ -85,7 +85,7 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 		return err
 	}
 
-	// instantiate the nettestlet environment
+	// instantiate the mini nettest environment
 	env := mininettest.NewEnvironment(
 		args.Session.Logger(),
 		args.Measurement.MeasurementStartTimeSaved,
@@ -102,7 +102,7 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 		FacebookTCPBlocking:       optional.None[bool](),
 	}
 
-	// execute the nettestlets
+	// execute the mini nettests
 	var completed int
 	for _, descr := range miniNettests {
 		observations, err := env.Run(ctx, &descr)

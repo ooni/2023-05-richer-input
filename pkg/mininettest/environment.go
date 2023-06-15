@@ -8,7 +8,7 @@ import (
 
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
 	"github.com/ooni/probe-engine/pkg/dslx"
-	enginemodel "github.com/ooni/probe-engine/pkg/model"
+	"github.com/ooni/probe-engine/pkg/model"
 )
 
 // Environment is the environment in which we run mininettest. The zero value
@@ -18,14 +18,14 @@ type Environment struct {
 	idGenerator *atomic.Int64
 
 	// logger is the logger to use.
-	logger enginemodel.Logger
+	logger model.Logger
 
 	// zeroTime is the reference time of the measurement.
 	zeroTime time.Time
 }
 
 // NewEnvironment creates a new [Environment].
-func NewEnvironment(logger enginemodel.Logger, zeroTime time.Time) *Environment {
+func NewEnvironment(logger model.Logger, zeroTime time.Time) *Environment {
 	return &Environment{
 		idGenerator: &atomic.Int64{},
 		logger:      logger,
@@ -33,8 +33,8 @@ func NewEnvironment(logger enginemodel.Logger, zeroTime time.Time) *Environment 
 	}
 }
 
-// ErrNoSuchNettestlet indicates a given mininettest does not exist.
-var ErrNoSuchNettestlet = errors.New("mininettest: no such mininettest")
+// ErrNoSuchMiniNettest indicates a given mininettest does not exist.
+var ErrNoSuchMiniNettest = errors.New("mininettest: no such mininettest")
 
 // Run runs the given mininettest in the current goroutine. This function only
 // returns an error only in case a fundamental error has occurred (e.g., not
@@ -63,6 +63,6 @@ func (env *Environment) Run(
 		return env.tcpConnectDomainMain(ctx, descr)
 
 	default:
-		return nil, ErrNoSuchNettestlet
+		return nil, ErrNoSuchMiniNettest
 	}
 }
