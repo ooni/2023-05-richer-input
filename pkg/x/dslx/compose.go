@@ -19,7 +19,7 @@ import (
 // 2. f0.OutputType() equals f1.InputType().
 //
 // The former condition allows composing a function returning a type with another
-// function that discards its input (e.g., the one returned by [Discard]).
+// function that discards its input; e.g., the one returned by [Discard].
 func CanComposeFuncs(f0 Func, fxs ...Func) bool {
 	for _, fxi := range fxs {
 		switch {

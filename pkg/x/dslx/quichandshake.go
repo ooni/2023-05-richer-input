@@ -71,7 +71,7 @@ func (env *Environment) QUICHandshake(options ...QUICHandshakeOption) Func {
 	for _, option := range options {
 		option(f)
 	}
-	return NewFunc[*Endpoint, *QUICConnection](f)
+	return WrapTypedFunc[*Endpoint, *QUICConnection](f)
 }
 
 // quicHandshakeFunc performs QUIC handshakes.

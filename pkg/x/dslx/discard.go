@@ -34,7 +34,7 @@ func IsDiscardType[T any]() bool {
 //
 // See also [DiscardType].
 func (env *Environment) Discard() Func {
-	return NewFunc[*DiscardType, *Void](&discardFunc{})
+	return WrapTypedFunc[*DiscardType, *Void](&discardFunc{})
 }
 
 // discardFunc is the type returned by [Discard].

@@ -43,7 +43,7 @@ func (env *Environment) TCPConnect(options ...TCPConnectOption) Func {
 		option(f)
 	}
 
-	return NewFunc[*Endpoint, *TCPConnection](f)
+	return WrapTypedFunc[*Endpoint, *TCPConnection](f)
 }
 
 // tcpConnectFunc is a function that establishes TCP connections.

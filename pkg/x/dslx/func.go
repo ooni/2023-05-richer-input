@@ -41,8 +41,28 @@ type funcWrapper[A, B any] struct {
 	f TypedFunc[A, B]
 }
 
-// NewFunc constructs a [Func] wrapper around a [TypedFunc].
-func NewFunc[A, B any](f TypedFunc[A, B]) Func {
+// WrapTypedFunc wraps a [TypedFunc] to become a [Func]. The wrapping algorithm
+// creates a [Func] with the following type:
+//
+//	Monad A -> Monad B
+//
+// The Apply method of the returned [Func] behaves as follows:
+//
+// 1. if the input monad contains an error, use [MaybeMonad.WithValue] to create an
+// output monad wrapping a zero-value B, then return the monad to the caller;
+//
+// 2. if type A is the [Discard] type, PANIC unless B is [Void], otherwise create and return
+// a monad wrapping zero-initialized [Void] and the same observations;
+//
+// 3. attempt to convert the input monad value to A and PANIC if that is not possible;
+//
+// 4. call the wrapped [TypedFunc] with ctx and the converted A as its inputs;
+//
+// 5. use the [TypedFunc] return value to construct a new monad wrapping a B and return it.
+//
+// The special handling case for a [TypedFunc] with a [DiscardType] input and [Void]
+// output allows us to implementing discarding the result of a funcs pipeline.
+func WrapTypedFunc[A, B any](f TypedFunc[A, B]) Func {
 	return &funcWrapper[A, B]{
 		f: f,
 	}
@@ -58,6 +78,7 @@ func (fw *funcWrapper[A, B]) Apply(ctx context.Context, minput *MaybeMonad) *May
 	// specially handle the case where A is the discard type -- note that this means
 	// that we are never going to invoke the discardFunc.Apply method
 	if IsDiscardType[A]() {
+		runtimex.Assert(IsVoid[B](), "a function taking Discard in input MUST return a Void")
 		return NewMaybeMonad().WithObservations(minput.Observations...)
 	}
 

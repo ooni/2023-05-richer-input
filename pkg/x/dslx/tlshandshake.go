@@ -69,7 +69,7 @@ func (env *Environment) TLSHandshake(options ...TLSHandshakeOption) Func {
 	for _, option := range options {
 		option(f)
 	}
-	return NewFunc[*TCPConnection, *TLSConnection](f)
+	return WrapTypedFunc[*TCPConnection, *TLSConnection](f)
 }
 
 // tlsHandshakeFunc performs TLS handshakes.

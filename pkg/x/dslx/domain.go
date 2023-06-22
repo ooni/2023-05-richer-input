@@ -14,7 +14,7 @@ import "context"
 //
 // See also [DNSLookupGetaddrinfo], [DNSLookupUDP], [DNSLookupParallel].
 func (env *Environment) DomainToResolve(domain string) Func {
-	return NewFunc[*Void, *DNSLookupInput](&domainToResolveFunc{
+	return WrapTypedFunc[*Void, *DNSLookupInput](&domainToResolveFunc{
 		domain: domain,
 	})
 }

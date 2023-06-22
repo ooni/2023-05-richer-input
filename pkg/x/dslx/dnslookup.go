@@ -29,11 +29,11 @@ type DNSLookupOutput struct {
 	Addresses []string
 }
 
-// DNSLookupGetaddrinfoOption is an option you can pass to [DNSLookupGetaddrinfo].
+// DNSLookupGetaddrinfoOption is an option you can pass to [Environment.DNSLookupGetaddrinfo].
 type DNSLookupGetaddrinfoOption func(*dnsLookupGetaddrinfoFunc)
 
 // DNSLookupGetaddrinfoOptionTags adds tags to the [Observations] generated
-// by the [Func] returned by [DNSLookupGetaddrinfo].
+// by the [Func] returned by [Environment.DNSLookupGetaddrinfo].
 func DNSLookupGetaddrinfoOptionTags(tags ...string) DNSLookupGetaddrinfoOption {
 	return func(f *dnsLookupGetaddrinfoFunc) {
 		f.tags = append(f.tags, tags...)
@@ -69,10 +69,10 @@ func (env *Environment) DNSLookupGetaddrinfo(options ...DNSLookupGetaddrinfoOpti
 	}
 
 	// cast to [Func]
-	return NewFunc[*DNSLookupInput, *DNSLookupOutput](f)
+	return WrapTypedFunc[*DNSLookupInput, *DNSLookupOutput](f)
 }
 
-// dnsLookupGetaddrinfoFunc is the type returned by [DNSLookupGetaddrinfo].
+// dnsLookupGetaddrinfoFunc is the type returned by [Environment.DNSLookupGetaddrinfo].
 type dnsLookupGetaddrinfoFunc struct {
 	// env is the MANDATORY underlying [Environment]
 	env *Environment
@@ -143,7 +143,7 @@ func DNSLookupUDPOptionEndpoint(value string) DNSLookupUDPOption {
 }
 
 // DNSLookupUDPOptionTags adds tags to the [Observations] generated
-// by the [Func] returned by [DNSLookupUDP].
+// by the [Func] returned by [Environment.DNSLookupUDP].
 func DNSLookupUDPOptionTags(tags ...string) DNSLookupUDPOption {
 	return func(f *dnsLookupUDPFunc) {
 		f.tags = append(f.tags, tags...)
@@ -179,10 +179,10 @@ func (env *Environment) DNSLookupUDP(options ...DNSLookupUDPOption) Func {
 		option(f)
 	}
 
-	return NewFunc[*DNSLookupInput, *DNSLookupOutput](f)
+	return WrapTypedFunc[*DNSLookupInput, *DNSLookupOutput](f)
 }
 
-// dnsLookupUDPFunc is the function returned by [DNSLookupUDP].
+// dnsLookupUDPFunc is the function returned by [Environment.DNSLookupUDP].
 type dnsLookupUDPFunc struct {
 	// env is the MANDATORY underlying [Environment]
 	env *Environment
@@ -252,7 +252,7 @@ func (f *dnsLookupUDPFunc) Apply(
 //	Maybe *DNSLookupInput -> Maybe *DNSLookupOutput
 //
 // All the inputs functions MUST have the same type signature. If that is not
-// the case, then [DNSLookupParallel] will PANIC.
+// the case, then [Environment.DNSLookupParallel] will PANIC.
 func (env *Environment) DNSLookupParallel(fxs ...Func) Func {
 	// make sure that the input type of each function is correct
 	AssertInputTypeEquals[*DNSLookupInput](fxs...)
