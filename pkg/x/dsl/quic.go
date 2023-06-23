@@ -249,10 +249,11 @@ func (fx *quicHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *End
 	// start the operation logger
 	ol := measurexlite.NewOperationLogger(
 		rtx.logger,
-		"[#%d] QUICHandshake with %s SNI=%s",
+		"[#%d] QUICHandshake with %s SNI=%s ALPN=%v",
 		trace.Index,
 		input.Address,
 		config.tls.ServerName,
+		config.tls.NextProtos,
 	)
 
 	// setup

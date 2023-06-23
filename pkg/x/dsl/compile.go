@@ -52,6 +52,11 @@ func NewFunctionRegistry() *FunctionRegistry {
 	r.AddFunctionTemplate(&makeEndpointPipelineTemplate{})
 	r.AddFunctionTemplate(&stringTemplate{})
 	r.AddFunctionTemplate(&tcpConnectTemplate{})
+	r.AddFunctionTemplate(&tlsHandshakeTemplate{})
+	r.AddFunctionTemplate(&tlsHandshakeOptionALPNTemplate{})
+	r.AddFunctionTemplate(&tlsHandshakeOptionRootCATemplate{})
+	r.AddFunctionTemplate(&tlsHandshakeOptionSkipVerifyTemplate{})
+	r.AddFunctionTemplate(&tlsHandshakeOptionSNITemplate{})
 
 	return r
 }

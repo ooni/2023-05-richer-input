@@ -75,3 +75,28 @@ func String(value string) []any {
 func TCPConnect() []any {
 	return []any{(&tcpConnectTemplate{}).Name()}
 }
+
+// TLSHandshakeOptionALPN configures application-level protocol negotiation.
+func TLSHandshakeOptionALPN(value ...string) []any {
+	return EncodeFunctionList(&tlsHandshakeOptionALPNTemplate{}, value)
+}
+
+// TLSHandshakeOptionRootCA uses a custom root CA for measuring.
+func TLSHandshakeOptionRootCA(value ...string) []any {
+	return EncodeFunctionList(&tlsHandshakeOptionRootCATemplate{}, value)
+}
+
+// TLSHandshakeOptionSNI configures the server name used during the TLS handshake.
+func TLSHandshakeOptionSNI(value string) []any {
+	return EncodeFunctionScalar(&tlsHandshakeOptionSNITemplate{}, value)
+}
+
+// TLSHandshakeOptionSkipVerify disables verifying the certificate chain and the server name.
+func TLSHandshakeOptionSkipVerify(value bool) []any {
+	return EncodeFunctionScalar(&tlsHandshakeOptionSkipVerifyTemplate{}, value)
+}
+
+// TLSHandshake performs a TLS handshake.
+func TLSHandshake(options ...any) []any {
+	return EncodeFunctionList(&tlsHandshakeTemplate{}, options)
+}
