@@ -47,6 +47,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 	r.AddFunctionTemplate(&makeEndpointListTemplate{})
 	r.AddFunctionTemplate(&makeEndpointPipelineTemplate{})
 	r.AddFunctionTemplate(&stringTemplate{})
+	r.AddFunctionTemplate(&udpResolverTemplate{})
 
 	return r
 }

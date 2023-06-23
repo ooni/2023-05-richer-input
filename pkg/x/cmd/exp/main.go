@@ -14,7 +14,8 @@ import (
 func main() {
 	template := dsl.Compose(
 		dsl.String("www.example.com"),
-		dsl.Getaddrinfo(),
+		//dsl.Getaddrinfo(),
+		dsl.UDPResolver("8.8.8.8:53"),
 		dsl.MakeEndpointList(443),
 		dsl.MakeEndpointPipeline(
 			dsl.QUICHandshake(

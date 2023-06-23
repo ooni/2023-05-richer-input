@@ -48,3 +48,10 @@ func QUICHandshake(options ...any) []any {
 func String(value string) []any {
 	return EncodeFunctionScalar(&stringTemplate{}, value)
 }
+
+// UDPResolver constructs an UDP resolver using the given endpoint address. For IPv4
+// endpoints use the "<address>:<port>" pattern (e.g., "8.8.8.8.8:53"). Make sure you
+// quote the address (e.g., "[2001:4860:4860::8844]:53") for IPv6 endpoints.
+func UDPResolver(value string) []any {
+	return EncodeFunctionScalar(&udpResolverTemplate{}, value)
+}
