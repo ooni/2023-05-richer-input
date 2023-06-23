@@ -18,7 +18,7 @@ func main() {
 			dsl.DNSLookupUDP("8.8.8.8:53"),
 			dsl.DNSLookupGetaddrinfo(),
 		),
-		dsl.ParallelEndpointMeasurements(
+		dsl.MeasureMultipleEndpoints(
 			dsl.Compose(
 				dsl.MakeEndpointList(443),
 				dsl.MakeEndpointPipeline(

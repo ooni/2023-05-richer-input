@@ -42,7 +42,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 	r.AddFunctionTemplate(&dnsLookupGetaddrinfoTemplate{})
 	r.AddFunctionTemplate(&dnsLookupParallelTemplate{})
 	r.AddFunctionTemplate(&dnsLookupUDPTemplate{})
-	r.AddFunctionTemplate(&parallelEndpointMeasurementsTemplate{})
+	r.AddFunctionTemplate(&measureMultipleEndpointsTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionALPNTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionSkipVerifyTemplate{})

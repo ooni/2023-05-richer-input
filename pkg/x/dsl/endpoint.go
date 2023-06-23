@@ -133,29 +133,29 @@ func (fx *makeEndpointPipelineFunc) apply(ctx context.Context, rtx *Runtime, inp
 // parallel_endpoint_measurements
 //
 
-type parallelEndpointMeasurementsTemplate struct{}
+type measureMultipleEndpointsTemplate struct{}
 
 // Compile implements FunctionTemplate.
-func (t *parallelEndpointMeasurementsTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+func (t *measureMultipleEndpointsTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
 	fs, err := CompileFunctionArgumentsList(registry, arguments)
 	if err != nil {
 		return nil, err
 	}
-	f := &parallelEndpointMeasurementsFunc{fs}
+	f := &measureMultipleEndpointsFunc{fs}
 	return f, nil
 }
 
 // Name implements FunctionTemplate.
-func (t *parallelEndpointMeasurementsTemplate) Name() string {
-	return "parallel_endpoint_measurements"
+func (t *measureMultipleEndpointsTemplate) Name() string {
+	return "measure_multiple_endpoints"
 }
 
-type parallelEndpointMeasurementsFunc struct {
+type measureMultipleEndpointsFunc struct {
 	fs []Function
 }
 
 // Apply implements Function.
-func (fx *parallelEndpointMeasurementsFunc) Apply(ctx context.Context, rtx *Runtime, input any) any {
+func (fx *measureMultipleEndpointsFunc) Apply(ctx context.Context, rtx *Runtime, input any) any {
 	switch val := input.(type) {
 	case error:
 		return val
@@ -174,7 +174,7 @@ func (fx *parallelEndpointMeasurementsFunc) Apply(ctx context.Context, rtx *Runt
 	}
 }
 
-func (fx *parallelEndpointMeasurementsFunc) apply(ctx context.Context, rtx *Runtime, input *DNSLookupOutput) any {
+func (fx *measureMultipleEndpointsFunc) apply(ctx context.Context, rtx *Runtime, input *DNSLookupOutput) any {
 	// execute functions in parallel
 	results := ApplyInputToFunctionList(ctx, 2, rtx, fx.fs, input)
 
