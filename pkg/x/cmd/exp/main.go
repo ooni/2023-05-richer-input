@@ -27,20 +27,19 @@ func main() {
 		),
 	)
 
-	rtx := dsl.NewRuntime(dsl.RuntimeOptionLogger(log.Log))
-	defer rtx.Close()
-
 	{
 		data := runtimex.Try1(json.Marshal(template))
 		fmt.Fprintf(os.Stderr, "%s\n", string(data))
 	}
 
 	registry := dsl.NewFunctionRegistry()
-
 	function, err := dsl.CompileInvocation(registry, template)
 	if err != nil {
 		log.Fatalf("%+v", err)
 	}
+
+	rtx := dsl.NewRuntime(dsl.RuntimeOptionLogger(log.Log))
+	defer rtx.Close()
 
 	result := function.Apply(context.Background(), rtx, &dsl.Void{})
 	log.Infof("%T %+v", result, result)
