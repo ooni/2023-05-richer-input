@@ -2,7 +2,24 @@ package dsl
 
 import (
 	"context"
+	"time"
+
+	"github.com/ooni/probe-engine/pkg/measurexlite"
+	"github.com/ooni/probe-engine/pkg/netxlite"
 )
+
+// DNSLookupOutput is the result of DNS lookup functions.
+type DNSLookupOutput struct {
+	// Domain is MANDATORY and contains the domain we tried to resolve.
+	Domain string
+
+	// Addresses is OPTIONAL and contains resolved addresses (if any).
+	Addresses []string
+}
+
+//
+// dns_lookup_parallel
+//
 
 type dnsLookupParallelTemplate struct{}
 
@@ -80,4 +97,134 @@ func (fx *dnsLookupParallelFunc) apply(ctx context.Context, rtx *Runtime, input 
 		output.Addresses = append(output.Addresses, addr)
 	}
 	return output
+}
+
+//
+// dns_lookup_udp
+//
+
+type dnsLookupUDPTemplate struct{}
+
+// Compile implements FunctionTemplate.
+func (t *dnsLookupUDPTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+	value, err := ExpectSingleScalarArgument[string](arguments)
+	if err != nil {
+		return nil, err
+	}
+	opt := &TypedFunctionAdapter[string, *DNSLookupOutput]{&dnsLookupUDPFunc{value}}
+	return opt, nil
+}
+
+// Name implements FunctionTemplate.
+func (t *dnsLookupUDPTemplate) Name() string {
+	return "dns_lookup_udp"
+}
+
+type dnsLookupUDPFunc struct {
+	endpoint string
+}
+
+// Apply implements TypedFunction.
+func (f *dnsLookupUDPFunc) Apply(ctx context.Context, rtx *Runtime, domain string) (*DNSLookupOutput, error) {
+	// create trace
+	trace := measurexlite.NewTrace(rtx.idGenerator.Add(1), rtx.zeroTime)
+
+	// start the operation logger
+	ol := measurexlite.NewOperationLogger(
+		rtx.logger,
+		"[#%d] DNSLookupUDP endpoint=%s domain=%s",
+		trace.Index,
+		f.endpoint,
+		domain,
+	)
+
+	// setup
+	ctx, cancel := context.WithTimeout(ctx, 4*time.Second)
+	defer cancel()
+
+	// instantiate a resolver
+	resolver := trace.NewParallelUDPResolver(
+		rtx.logger,
+		netxlite.NewDialerWithoutResolver(rtx.logger),
+		f.endpoint,
+	)
+
+	// lookup
+	addrs, err := resolver.LookupHost(ctx, domain)
+
+	// stop the operation logger
+	ol.Stop(err)
+
+	// save observations
+	rtx.saveObservations(trace)
+
+	// handle the error case
+	if err != nil {
+		return nil, err
+	}
+
+	// handle the successful case
+	return &DNSLookupOutput{Domain: domain, Addresses: addrs}, nil
+}
+
+//
+// dns_lookup_getaddrinfo
+//
+
+// dnsLookupGetaddrinfoTemplate is the [FunctionTemplate] for getaddrinfo.
+type dnsLookupGetaddrinfoTemplate struct{}
+
+// Compile implements FunctionTemplate.
+func (t *dnsLookupGetaddrinfoTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+	if len(arguments) != 0 {
+		return nil, NewErrCompile("getaddrinfo is a niladic function")
+	}
+	fx := &TypedFunctionAdapter[string, *DNSLookupOutput]{&dnsLookupGetaddrinfoFunc{}}
+	return fx, nil
+}
+
+// Name implements FunctionTemplate.
+func (t *dnsLookupGetaddrinfoTemplate) Name() string {
+	return "dns_lookup_getaddrinfo"
+}
+
+// dnsLookupGetaddrinfoFunc is the function implementing getaddrinfo.
+type dnsLookupGetaddrinfoFunc struct{}
+
+// Apply implements TypedFunction.
+func (fx *dnsLookupGetaddrinfoFunc) Apply(ctx context.Context, rtx *Runtime, domain string) (*DNSLookupOutput, error) {
+	// create trace
+	trace := measurexlite.NewTrace(rtx.idGenerator.Add(1), rtx.zeroTime)
+
+	// start the operation logger
+	ol := measurexlite.NewOperationLogger(
+		rtx.logger,
+		"[#%d] DNSLookupGetaddrinfo domain=%s",
+		trace.Index,
+		domain,
+	)
+
+	// setup
+	ctx, cancel := context.WithTimeout(ctx, 4*time.Second)
+	defer cancel()
+
+	// instantiate a resolver
+	resolver := trace.NewStdlibResolver(rtx.logger)
+
+	// lookup
+	addrs, err := resolver.LookupHost(ctx, domain)
+
+	// stop the operation logger
+	ol.Stop(err)
+
+	// save observations
+	rtx.saveObservations(trace)
+
+	// handle the error case
+	if err != nil {
+		return nil, err
+	}
+
+	// handle the successful case
+	return &DNSLookupOutput{Domain: domain, Addresses: addrs}, nil
 }

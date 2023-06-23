@@ -40,7 +40,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 
 	r.AddFunctionTemplate(&composeTemplate{})
 	r.AddFunctionTemplate(&dnsLookupParallelTemplate{})
-	r.AddFunctionTemplate(&getaddrinfoTemplate{})
+	r.AddFunctionTemplate(&dnsLookupGetaddrinfoTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionALPNTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionSkipVerifyTemplate{})
@@ -48,7 +48,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 	r.AddFunctionTemplate(&makeEndpointListTemplate{})
 	r.AddFunctionTemplate(&makeEndpointPipelineTemplate{})
 	r.AddFunctionTemplate(&stringTemplate{})
-	r.AddFunctionTemplate(&udpResolverTemplate{})
+	r.AddFunctionTemplate(&dnsLookupUDPTemplate{})
 
 	return r
 }

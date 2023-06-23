@@ -15,8 +15,8 @@ func main() {
 	template := dsl.Compose(
 		dsl.String("www.example.com"),
 		dsl.DNSLookupParallel(
-			dsl.UDPResolver("8.8.8.8:53"),
-			dsl.Getaddrinfo(),
+			dsl.DNSLookupUDP("8.8.8.8:53"),
+			dsl.DNSLookupGetaddrinfo(),
 		),
 		dsl.MakeEndpointList(443),
 		dsl.MakeEndpointPipeline(
