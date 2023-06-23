@@ -64,6 +64,11 @@ func (r *FunctionRegistry) FunctionTemplate(name string) (FunctionTemplate, bool
 	return template, good
 }
 
+// Compile compiles a function invocation to a [Function] using the [FunctionRegistry].
+func (r *FunctionRegistry) Compile(invocation []any) (Function, error) {
+	return CompileInvocation(r, invocation)
+}
+
 // NewErrCompile returns a new [ErrCompile] instance.
 func NewErrCompile(format string, v ...any) error {
 	return fmt.Errorf("%w: %s", ErrCompile, fmt.Sprintf(format, v...))

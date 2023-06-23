@@ -36,12 +36,12 @@ func main() {
 	}
 
 	registry := dsl.NewFunctionRegistry()
-	function := runtimex.Try1(dsl.CompileInvocation(registry, template))
+	f0 := runtimex.Try1(registry.Compile(template))
 
 	rtx := dsl.NewRuntime(dsl.RuntimeOptionLogger(log.Log))
 	defer rtx.Close()
 
-	result := function.Apply(context.Background(), rtx, &dsl.Void{})
+	result := f0.Apply(context.Background(), rtx, &dsl.Void{})
 	log.Infof("%T %+v", result, result)
 
 	observations := rtx.ExtractObservations()
