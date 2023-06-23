@@ -8,7 +8,7 @@ import (
 	"context"
 	"time"
 
-	fbmessengermini "github.com/ooni/2023-05-richer-input/pkg/experiment/fbmessenger"
+	fbmessengernew "github.com/ooni/2023-05-richer-input/pkg/experiment/fbmessenger"
 	"github.com/ooni/2023-05-richer-input/pkg/modelx"
 	"github.com/ooni/probe-engine/pkg/experiment/fbmessenger"
 	"github.com/ooni/probe-engine/pkg/model"
@@ -49,8 +49,8 @@ func (nt *fbmessengerNettest) Run(ctx context.Context) error {
 
 	// create a new experiment instance
 	var exp model.ExperimentMeasurer
-	if nt.args.ExperimentalFlags["mini_nettests"] {
-		exp = fbmessengermini.NewMeasurer(nt.args.Targets)
+	if nt.args.ExperimentalFlags["dsl"] {
+		exp = fbmessengernew.NewMeasurer(nt.args.Targets)
 	} else {
 		exp = fbmessenger.NewExperimentMeasurer(fbmessenger.Config{})
 	}

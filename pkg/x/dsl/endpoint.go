@@ -115,7 +115,8 @@ func (fx *newEndpointPipelineFunc) Apply(ctx context.Context, rtx *Runtime, inpu
 
 func (fx *newEndpointPipelineFunc) apply(ctx context.Context, rtx *Runtime, input []*Endpoint) any {
 	// collect output in parallel
-	res := ApplyFunctionToInputList(ctx, 2, rtx, fx.f0, input)
+	const parallelism = 2
+	res := ApplyFunctionToInputList(ctx, parallelism, rtx, fx.f0, input)
 
 	// reduce the output to Exception|Void
 	for _, entry := range res {
@@ -176,7 +177,8 @@ func (fx *measureMultipleEndpointsFunc) Apply(ctx context.Context, rtx *Runtime,
 
 func (fx *measureMultipleEndpointsFunc) apply(ctx context.Context, rtx *Runtime, input *DNSLookupOutput) any {
 	// execute functions in parallel
-	results := ApplyInputToFunctionList(ctx, 2, rtx, fx.fs, input)
+	const parallelism = 2
+	results := ApplyInputToFunctionList(ctx, parallelism, rtx, fx.fs, input)
 
 	// handles exceptions and otherwise ignore everything else
 	for _, result := range results {

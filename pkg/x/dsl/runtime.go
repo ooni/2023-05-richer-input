@@ -2,6 +2,8 @@ package dsl
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"net"
 	"sync"
@@ -158,4 +160,20 @@ func (rtx *Runtime) ExtractObservations() []*Observations {
 	out := rtx.observations
 	rtx.observations = []*Observations{}
 	return out
+}
+
+// ErrException indicates that [CallVoidFunction] returned an [Exception].
+var ErrException = errors.New("dsl: exception")
+
+// CallVoidFunction calls a function taking [Void] as input and returns
+// an error if calling the function throws an [Exception].
+func (rtx *Runtime) CallVoidFunction(ctx context.Context, f Function) error {
+	result := f.Apply(ctx, rtx, &Void{})
+	switch v := result.(type) {
+	case *Exception:
+		return fmt.Errorf("%w: %s", ErrException, v.Reason)
+
+	default:
+		return nil
+	}
 }

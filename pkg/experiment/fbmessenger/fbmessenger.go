@@ -4,11 +4,11 @@ package fbmessenger
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"sync"
 
-	"github.com/ooni/2023-05-richer-input/pkg/analysis"
-	"github.com/ooni/2023-05-richer-input/pkg/mininettest"
-	"github.com/ooni/2023-05-richer-input/pkg/modelx"
-	"github.com/ooni/probe-engine/pkg/dslx"
+	"github.com/ooni/2023-05-richer-input/pkg/x/dsl"
+	"github.com/ooni/probe-engine/pkg/geoipx"
 	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/ooni/probe-engine/pkg/optional"
 )
@@ -54,138 +54,255 @@ func (m *Measurer) GetSummaryKeys(*model.Measurement) (any, error) {
 
 // TestKeys contains the experiment test keys.
 type TestKeys struct {
-	// The TestKeys embed Observations.
-	*dslx.Observations
+	// dnsFlags contains the DNS flags.`
+	dnsFlags map[string]optional.Value[bool]
 
-	// FacebookBAPIDNSConsistent indicates whether the DNS response we
-	// got for the B API is consistent with our expectations.
-	FacebookBAPIDNSConsistent optional.Value[bool] `json:"facebook_b_api_dns_consistent"`
+	// mu provides mutual exclusion.
+	mu sync.Mutex
 
-	// FacebookBAPIReachable indicates whether the B API is reachable.
-	FacebookBAPIReachable optional.Value[bool] `json:"facebook_b_api_reachable"`
+	// observations contains the observations we collected.
+	observations *dsl.Observations
 
-	// FacebookDNSBlocking indicates whether there's DNS blocking
-	FacebookDNSBlocking optional.Value[bool] `json:"facebook_dns_blocking"`
+	// overallFlags contains the overall flags.
+	overallFlags map[string]optional.Value[bool]
 
-	// FacebookSTUNDNSConsistent indicates whether the STUN endpoint is DNS consistent
-	FacebookSTUNDNSConsistent optional.Value[bool] `json:"facebook_stun_dns_consistent"`
+	// tcpCounters counts TCP successes.
+	tcpCounters map[string]int
+}
 
-	// FacebookSTUNReachable indicates whether the STUN endpoint is reachable
-	FacebookSTUNReachable optional.Value[bool] `json:"facebook_stun_reachable"`
+var _ json.Marshaler = &TestKeys{}
 
-	// FacebookTCPBlocking indicates whether there's TCP blocking
-	FacebookTCPBlocking optional.Value[bool] `json:"facebook_tcp_blocking"`
+// MarshalJSON implements json.Marshaler.
+func (tk *TestKeys) MarshalJSON() ([]byte, error) {
+	defer tk.mu.Unlock()
+	tk.mu.Lock()
+	m := tk.observations.AsMap()
+	for key, value := range tk.dnsFlags {
+		m[key] = value
+	}
+	for key, value := range tk.tcpCounters {
+		m[key] = value > 0
+	}
+	for key, value := range tk.overallFlags {
+		m[key] = value
+	}
+	return json.Marshal(m)
+}
+
+func (tk *TestKeys) computeOverallKeys() {
+	defer tk.mu.Unlock()
+	tk.mu.Lock()
+	tk.computeOverallDNSKeysLocked()
+	tk.computeOverallTCPKeysLocked()
+}
+
+func (tk *TestKeys) computeOverallDNSKeysLocked() {
+	var (
+		countFalse int
+		countTrue  int
+	)
+	for _, value := range tk.dnsFlags {
+		if value.IsNone() {
+			continue
+		}
+		if value.Unwrap() {
+			countTrue++
+			continue
+		}
+		countFalse++
+	}
+	const key = "facebook_dns_blocking"
+	if countFalse <= 0 && countTrue <= 0 {
+		tk.overallFlags[key] = optional.None[bool]()
+		return
+	}
+	tk.overallFlags[key] = optional.Some(countFalse > 0)
+}
+
+func (tk *TestKeys) computeOverallTCPKeysLocked() {
+	const key = "facebook_tcp_blocking"
+	if len(tk.tcpCounters) <= 0 {
+		tk.overallFlags[key] = optional.None[bool]()
+		return
+	}
+	for _, value := range tk.tcpCounters {
+		if value == 0 {
+			tk.overallFlags[key] = optional.Some(true)
+			return
+		}
+	}
+	tk.overallFlags[key] = optional.Some(false)
 }
 
 // Run implements model.ExperimentMeasurer
 func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
-	// parse the mini nettests
-	var miniNettests []modelx.MiniNettestDescriptor
-	if err := json.Unmarshal(m.RawOptions, &miniNettests); err != nil {
+	// parse the targets
+	var ast []any
+	if err := json.Unmarshal(m.RawOptions, &ast); err != nil {
 		return err
 	}
 
-	// instantiate the mini nettest environment
-	env := mininettest.NewEnvironment(
-		args.Session.Logger(),
-		args.Measurement.MeasurementStartTimeSaved,
-	)
+	// create a functions registry
+	registry := dsl.NewFunctionRegistry()
 
 	// create the testkeys
 	tk := &TestKeys{
-		Observations:              dslx.NewObservations(),
-		FacebookBAPIDNSConsistent: optional.None[bool](),
-		FacebookBAPIReachable:     optional.None[bool](),
-		FacebookDNSBlocking:       optional.None[bool](),
-		FacebookSTUNDNSConsistent: optional.None[bool](),
-		FacebookSTUNReachable:     optional.None[bool](),
-		FacebookTCPBlocking:       optional.None[bool](),
+		dnsFlags:     map[string]optional.Value[bool]{},
+		mu:           sync.Mutex{},
+		observations: dsl.NewObservations(),
+		overallFlags: map[string]optional.Value[bool]{},
+		tcpCounters:  map[string]int{},
 	}
 
-	// execute the mini nettests
-	var completed int
-	for _, descr := range miniNettests {
-		observations, err := env.Run(ctx, &descr)
-		if err != nil {
-			return err
-		}
-		tk.runAnalysis(args.Session.Logger(), descr.ID, observations)
-		tk.Observations = mininettest.MergeObservations(tk.Observations, observations)
-		completed++
-		args.Callbacks.OnProgress(
-			float64(completed)/float64(len(miniNettests)),
-			"fbmessenger",
-		)
+	// register local function templates
+	registry.AddFunctionTemplate(&dnsConsistencyCheckTemplate{tk})
+	registry.AddFunctionTemplate(&tcpReachabilityCheckTemplate{tk})
+
+	// compile the AST to a function
+	function, err := registry.Compile(ast)
+	if err != nil {
+		return err
 	}
 
-	// finalize the testkeys by flipping overall results
-	// in case they're still none.
-	if completed > 0 && tk.FacebookDNSBlocking.IsNone() {
-		tk.FacebookDNSBlocking = optional.Some(false)
-	}
-	if completed > 0 && tk.FacebookTCPBlocking.IsNone() {
-		tk.FacebookTCPBlocking = optional.Some(false)
+	// create the DSL runtime
+	rtx := dsl.NewRuntime(
+		dsl.RuntimeOptionLogger(args.Session.Logger()),
+		dsl.RuntimeOptionZeroTime(args.Measurement.MeasurementStartTimeSaved),
+	)
+	defer rtx.Close()
+
+	// evaluate the function
+	if err := rtx.CallVoidFunction(ctx, function); err != nil {
+		return err
 	}
 
-	// obtain the testkeys
+	// obtain the observations
+	tk.observations = dsl.ReduceObservations(rtx.ExtractObservations()...)
+
+	// finally, compute the overall test keys
+	tk.computeOverallKeys()
+
+	// save the testkeys
 	args.Measurement.TestKeys = tk
 	return nil
 }
 
-// runAnalysis MUTATES the test keys using the given observations and mininettest name.
-func (tk *TestKeys) runAnalysis(logger model.Logger, name string, observations *dslx.Observations) {
-	// select what to do depending on the name of the mininettest
-	switch name {
-	case "fbmessenger-stun":
-		placeholder := optional.None[bool]()
-		tk.update(&tk.FacebookSTUNDNSConsistent, &placeholder, observations)
-
-	case "fbmessenger-b-api":
-		tk.update(&tk.FacebookBAPIDNSConsistent, &tk.FacebookBAPIReachable, observations)
-
-	case "fbmessenger-b-graph":
-		// TODO(bassosimone): implement
-
-	case "fbmessenger-b-edge-mqtt":
-		// TODO(bassosimone): implement
-
-	case "fbmessenger-external-cdn":
-		// TODO(bassosimone): implement
-
-	case "fbmessenger-scontent-cdn":
-		// TODO(bassosimone): implement
-
-	case "fbmessenger-star":
-		// TODO(bassosimone): implement
-
-	default:
-		// nothing
-	}
-}
+//
+// fbmessenger_dns_consistency_check
+//
 
 // facebookASN is Facebook's ASN
 const facebookASN = 32934
 
-// update MUTATES selected parts of the test keys.
-func (tk *TestKeys) update(consistent, reachable *optional.Value[bool], observations *dslx.Observations) {
-	// determine whether the result contains consistent DNS lookups.
-	*consistent = analysis.DNSOnlyContainsASN(facebookASN, observations.Queries...)
+type dnsConsistencyCheckTemplate struct {
+	tk *TestKeys
+}
 
-	// if not consistent, update DNS blocking.
-	if !consistent.IsNone() && !consistent.Unwrap() {
-		tk.FacebookDNSBlocking = optional.Some(true)
-		// TODO(bassosimone): we should make sure we're following the spirit of the spec,
-		// which the code below is trying to follow more closely.
-		tk.FacebookTCPBlocking = optional.Some(false)
-		*reachable = optional.Some(false)
-		return
+// Compile implements dsl.FunctionTemplate.
+func (t *dnsConsistencyCheckTemplate) Compile(registry *dsl.FunctionRegistry, arguments []any) (dsl.Function, error) {
+	endpoint, err := dsl.ExpectSingleScalarArgument[string](arguments)
+	if err != nil {
+		return nil, err
 	}
+	// TODO(bassosimone): do we need to validate the endpoint name with a regexp here?
+	fx := &dnsConsistencyCheckFunc{endpoint, t.tk}
+	return fx, nil
+}
 
-	// determine whether the TCP endpoint was reachable.
-	*reachable = analysis.TCPContainsAtLeastOneSuccess(observations.TCPConnect...)
+// Name implements dsl.FunctionTemplate.
+func (t *dnsConsistencyCheckTemplate) Name() string {
+	return "fbmessenger_dns_consistency_check"
+}
 
-	// if not reachable, update TCP blocking.
-	if !reachable.IsNone() && !reachable.Unwrap() {
-		tk.FacebookTCPBlocking = optional.Some(true)
+type dnsConsistencyCheckFunc struct {
+	endpoint string
+	tk       *TestKeys
+}
+
+// Apply implements dsl.Function.
+func (fx *dnsConsistencyCheckFunc) Apply(ctx context.Context, rtx *dsl.Runtime, input any) any {
+	switch val := input.(type) {
+	case *dsl.DNSLookupOutput:
+		endpoint_flag := fmt.Sprintf("facebook_%s_dns_consistent", fx.endpoint)
+		result := fx.isConsistent(val.Addresses)
+		fx.tk.mu.Lock()
+		fx.tk.dnsFlags[endpoint_flag] = result
+		fx.tk.mu.Unlock()
+		// Implementation note: probably the original implementation stopped here in case
+		// the IP address was not consistent but it seems better to continue anyway because
+		// we know that ooni/data is going to do a better analysis than the probe.
+		return input
+
+	default:
+		return input
+	}
+}
+
+func (fx *dnsConsistencyCheckFunc) isConsistent(addresses []string) optional.Value[bool] {
+	for _, address := range addresses {
+		asn, _, err := geoipx.LookupASN(address)
+		if err != nil {
+			continue
+		}
+		result := asn == facebookASN
+		if !result {
+			return optional.Some(false)
+		}
+	}
+	if len(addresses) <= 0 {
+		return optional.None[bool]()
+	}
+	return optional.Some(true)
+}
+
+//
+// fbmessenger_tcp_reachability_check
+//
+
+type tcpReachabilityCheckTemplate struct {
+	tk *TestKeys
+}
+
+// Compile implements dsl.FunctionTemplate.
+func (t *tcpReachabilityCheckTemplate) Compile(registry *dsl.FunctionRegistry, arguments []any) (dsl.Function, error) {
+	endpoint, err := dsl.ExpectSingleScalarArgument[string](arguments)
+	if err != nil {
+		return nil, err
+	}
+	// TODO(bassosimone): do we need to validate the endpoint name with a regexp here?
+	fx := &tcpReachabilityCheckFunc{endpoint, t.tk}
+	return fx, nil
+}
+
+// Name implements dsl.FunctionTemplate.
+func (t *tcpReachabilityCheckTemplate) Name() string {
+	return "fbmessenger_tcp_reachability_check"
+}
+
+type tcpReachabilityCheckFunc struct {
+	endpoint string
+	tk       *TestKeys
+}
+
+// Apply implements dsl.Function.
+func (fx *tcpReachabilityCheckFunc) Apply(ctx context.Context, rtx *dsl.Runtime, input any) any {
+	endpoint_flag := fmt.Sprintf("facebook_%s_reachable", fx.endpoint)
+	switch input.(type) {
+	case *dsl.TCPConnection:
+		fx.tk.mu.Lock()
+		fx.tk.tcpCounters[endpoint_flag]++
+		fx.tk.mu.Unlock()
+		return input
+
+	case error:
+		fx.tk.mu.Lock()
+		if _, found := fx.tk.tcpCounters[endpoint_flag]; !found {
+			fx.tk.tcpCounters[endpoint_flag] = 0
+		}
+		fx.tk.mu.Unlock()
+		return input
+
+	default:
+		return input
 	}
 }

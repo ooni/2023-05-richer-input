@@ -45,6 +45,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 	r.AddFunctionTemplate(&dnsLookupUDPTemplate{})
 	r.AddFunctionTemplate(&httpReadResponseBodySnapshotTemplate{})
 	r.AddFunctionTemplate(&httpRoundTripTemplate{})
+	r.AddFunctionTemplate(&measureMultipleDomainsTemplate{})
 	r.AddFunctionTemplate(&measureMultipleEndpointsTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionALPNTemplate{})
@@ -60,6 +61,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 	r.AddFunctionTemplate(&tlsHandshakeOptionRootCATemplate{})
 	r.AddFunctionTemplate(&tlsHandshakeOptionSkipVerifyTemplate{})
 	r.AddFunctionTemplate(&tlsHandshakeOptionSNITemplate{})
+	r.AddFunctionTemplate(&tryCompose{})
 
 	return r
 }

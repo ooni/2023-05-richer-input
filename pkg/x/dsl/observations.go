@@ -36,3 +36,29 @@ func NewObservations() *Observations {
 		QUICHandshakes: []*model.ArchivalTLSOrQUICHandshakeResult{},
 	}
 }
+
+// ReduceObservations reduces a list of observations to a single [Observations].
+func ReduceObservations(inputs ...*Observations) (output *Observations) {
+	output = NewObservations()
+	for _, input := range inputs {
+		output.NetworkEvents = append(output.NetworkEvents, input.NetworkEvents...)
+		output.QUICHandshakes = append(output.QUICHandshakes, input.QUICHandshakes...)
+		output.Queries = append(output.Queries, input.Queries...)
+		output.Requests = append(output.Requests, input.Requests...)
+		output.TCPConnect = append(output.TCPConnect, input.TCPConnect...)
+		output.TLSHandshakes = append(output.TLSHandshakes, input.TLSHandshakes...)
+	}
+	return
+}
+
+// AsMap returns a map from string to any containing the observations.
+func (obs *Observations) AsMap() map[string]any {
+	return map[string]any{
+		"network_events":  obs.NetworkEvents,
+		"queries":         obs.Queries,
+		"requests":        obs.Requests,
+		"tcp_connect":     obs.TCPConnect,
+		"tls_handshakes":  obs.TLSHandshakes,
+		"quic_handshakes": obs.QUICHandshakes,
+	}
+}
