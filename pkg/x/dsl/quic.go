@@ -22,8 +22,36 @@ type QUICConnection struct {
 	// Domain is the domain we're using.
 	Domain string
 
+	// TLSConfig is the TLS configuration we used.
+	TLSConfig *tls.Config
+
 	// TraceID is the index of the trace we're using.
 	TraceID int64
+}
+
+// address implements httpRoundTripConnection.
+func (c *QUICConnection) address() string {
+	return c.Address
+}
+
+// domain implements httpRoundTripConnection.
+func (c *QUICConnection) domain() string {
+	return c.Domain
+}
+
+// network implements httpRoundTripConnection.
+func (c *QUICConnection) network() string {
+	return "udp"
+}
+
+// scheme implements httpRoundTripConnection.
+func (c *QUICConnection) scheme() string {
+	return "https"
+}
+
+// traceID implements httpRoundTripConnection.
+func (c *QUICConnection) traceID() int64 {
+	return c.TraceID
 }
 
 //
@@ -204,7 +232,7 @@ func (t *quicHandshakeTemplate) Compile(registry *FunctionRegistry, arguments []
 	for _, o := range opts {
 		option, good := o.(quicHandshakeOption)
 		if !good {
-			return nil, NewErrCompile("cannot convert %T (%v) to quicHandshakeOption", o, o)
+			return nil, NewErrCompile("cannot convert %T (%v) to %T", o, o, option)
 		}
 		f.options = append(f.options, option)
 	}
@@ -282,10 +310,11 @@ func (fx *quicHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *End
 
 	// handle the successful case
 	out := &QUICConnection{
-		Address: input.Address,
-		Conn:    quicConn,
-		Domain:  input.Domain,
-		TraceID: trace.Index,
+		Address:   input.Address,
+		Conn:      quicConn,
+		Domain:    input.Domain,
+		TLSConfig: &config.tls,
+		TraceID:   trace.Index,
 	}
 	return out, nil
 }

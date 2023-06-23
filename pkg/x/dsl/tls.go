@@ -25,6 +25,31 @@ type TLSConnection struct {
 	TraceID int64
 }
 
+// address implements httpRoundTripConnection.
+func (c *TLSConnection) address() string {
+	return c.Address
+}
+
+// domain implements httpRoundTripConnection.
+func (c *TLSConnection) domain() string {
+	return c.Domain
+}
+
+// network implements httpRoundTripConnection.
+func (c *TLSConnection) network() string {
+	return "tcp"
+}
+
+// scheme implements httpRoundTripConnection.
+func (c *TLSConnection) scheme() string {
+	return "https"
+}
+
+// traceID implements httpRoundTripConnection.
+func (c *TLSConnection) traceID() int64 {
+	return c.TraceID
+}
+
 //
 // tls_handshake_option_alpn
 //

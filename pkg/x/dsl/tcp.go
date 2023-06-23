@@ -24,6 +24,31 @@ type TCPConnection struct {
 	TraceID int64
 }
 
+// address implements httpRoundTripConnection.
+func (c *TCPConnection) address() string {
+	return c.Address
+}
+
+// domain implements httpRoundTripConnection.
+func (c *TCPConnection) domain() string {
+	return c.Domain
+}
+
+// network implements httpRoundTripConnection.
+func (c *TCPConnection) network() string {
+	return "tcp"
+}
+
+// scheme implements httpRoundTripConnection.
+func (c *TCPConnection) scheme() string {
+	return "http"
+}
+
+// traceID implements httpRoundTripConnection.
+func (c *TCPConnection) traceID() int64 {
+	return c.TraceID
+}
+
 type tcpConnectTemplate struct{}
 
 // Compile implements FunctionTemplate.

@@ -31,6 +31,11 @@ func DNSLookupUDP(value string) []any {
 	return EncodeFunctionScalar(&dnsLookupUDPTemplate{}, value)
 }
 
+// HTTPRoundTrip sends an HTTP request and receives the response.
+func HTTPRoundTrip(options ...any) []any {
+	return EncodeFunctionList(&httpRoundTripTemplate{}, options)
+}
+
 // MakeEndpointList transforms IP addresses to a list of endpoints.
 func MakeEndpointList(port uint16) []any {
 	return EncodeFunctionScalar(&makeEndpointListTemplate{}, port)
