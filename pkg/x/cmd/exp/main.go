@@ -33,10 +33,7 @@ func main() {
 	}
 
 	registry := dsl.NewFunctionRegistry()
-	function, err := dsl.CompileInvocation(registry, template)
-	if err != nil {
-		log.Fatalf("%+v", err)
-	}
+	function := runtimex.Try1(dsl.CompileInvocation(registry, template))
 
 	rtx := dsl.NewRuntime(dsl.RuntimeOptionLogger(log.Log))
 	defer rtx.Close()
