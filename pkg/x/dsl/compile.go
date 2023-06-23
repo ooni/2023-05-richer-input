@@ -61,6 +61,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 	r.AddFunctionTemplate(&tlsHandshakeOptionRootCATemplate{})
 	r.AddFunctionTemplate(&tlsHandshakeOptionSkipVerifyTemplate{})
 	r.AddFunctionTemplate(&tlsHandshakeOptionSNITemplate{})
+	r.AddFunctionTemplate(&tryCompose{})
 
 	return r
 }

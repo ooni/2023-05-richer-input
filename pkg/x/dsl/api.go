@@ -120,3 +120,10 @@ func TLSHandshakeOptionSkipVerify(value bool) []any {
 func TLSHandshake(options ...any) []any {
 	return EncodeFunctionList(&tlsHandshakeTemplate{}, options)
 }
+
+// TryCompose is like [Compose] except that it replaces the composed functions with
+// the identity function when compilation fails. This mechanism exist such that probes
+// that do not support some functionality can still continue to work.
+func TryCompose(expressions ...any) []any {
+	return EncodeFunctionList(&tryCompose{}, expressions)
+}

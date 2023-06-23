@@ -73,6 +73,9 @@ func main() {
 		dsl.Compose(
 			dsl.String("stun.fbsbx.com"),
 			dsl.DNSLookupGetaddrinfo(),
+			dsl.TryCompose(
+				[]any{"fbmessenger_dns_consistency_check", "stun"},
+			),
 			// dns consistency check
 		),
 		dsl.Compose(
