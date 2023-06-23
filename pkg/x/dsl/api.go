@@ -9,14 +9,21 @@ func Compose(functions ...any) []any {
 	return EncodeFunctionList(&composeTemplate{}, functions)
 }
 
+// DNSLookupGetaddrinfo resolves a domain name using getaddrinfo.
+func DNSLookupGetaddrinfo() []any {
+	return []any{(&dnsLookupGetaddrinfoTemplate{}).Name()}
+}
+
 // DNSLookupParallel executes N resolvers in parallel.
 func DNSLookupParallel(functions ...any) []any {
 	return EncodeFunctionList(&dnsLookupParallelTemplate{}, functions)
 }
 
-// DNSLookupGetaddrinfo resolves a domain name using getaddrinfo.
-func DNSLookupGetaddrinfo() []any {
-	return []any{(&dnsLookupGetaddrinfoTemplate{}).Name()}
+// DNSLookupUDP constructs an UDP resolver using the given endpoint address. For IPv4
+// endpoints use the "<address>:<port>" pattern (e.g., "8.8.8.8.8:53"). Make sure you
+// quote the address (e.g., "[2001:4860:4860::8844]:53") for IPv6 endpoints.
+func DNSLookupUDP(value string) []any {
+	return EncodeFunctionScalar(&dnsLookupUDPTemplate{}, value)
 }
 
 // MakeEndpointList transforms IP addresses to a list of endpoints.
@@ -54,9 +61,7 @@ func String(value string) []any {
 	return EncodeFunctionScalar(&stringTemplate{}, value)
 }
 
-// DNSLookupUDP constructs an UDP resolver using the given endpoint address. For IPv4
-// endpoints use the "<address>:<port>" pattern (e.g., "8.8.8.8.8:53"). Make sure you
-// quote the address (e.g., "[2001:4860:4860::8844]:53") for IPv6 endpoints.
-func DNSLookupUDP(value string) []any {
-	return EncodeFunctionScalar(&dnsLookupUDPTemplate{}, value)
+// TCPConnect creates TCP connections.
+func TCPConnect() []any {
+	return []any{(&tcpConnectTemplate{}).Name()}
 }

@@ -20,13 +20,14 @@ func main() {
 		),
 		dsl.MakeEndpointList(443),
 		dsl.MakeEndpointPipeline(
-			dsl.QUICHandshake(
+			dsl.TCPConnect(),
+			//dsl.QUICHandshake(
 			/*
 				dsl.QUICHandshakeOptionALPN("h3"),
 				dsl.QUICHandshakeOptionSNI("www.example.com"),
 				dsl.QUICHandshakeOptionSkipVerify(true),
 			*/
-			),
+			//),
 		),
 	)
 

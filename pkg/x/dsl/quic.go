@@ -10,6 +10,21 @@ import (
 	"github.com/quic-go/quic-go"
 )
 
+// QUICConnection is the type returned by a successful QUIC handshake.
+type QUICConnection struct {
+	// Address is the endpoint address we're using.
+	Address string
+
+	// Conn is the established QUIC connection.
+	Conn quic.EarlyConnection
+
+	// Domain is the domain we're using.
+	Domain string
+
+	// TraceID is the index of the trace we're using.
+	TraceID int64
+}
+
 //
 // quic_handshake_option_alpn
 //
@@ -171,6 +186,7 @@ type quicHandshakeFunc struct {
 	options []quicHandshakeOption
 }
 
+// Apply implements TypedFunc
 func (fx *quicHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *Endpoint) (*QUICConnection, error) {
 	// initialize config
 	config := &quicHandshakeConfig{
@@ -221,17 +237,10 @@ func (fx *quicHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *End
 
 	// handle the successful case
 	out := &QUICConnection{
+		Address: input.Address,
 		Conn:    quicConn,
+		Domain:  input.Domain,
 		TraceID: trace.Index,
 	}
 	return out, nil
-}
-
-// QUICConnection is the type returned by a successful QUIC handshake.
-type QUICConnection struct {
-	// Conn is the established connection.
-	Conn quic.EarlyConnection
-
-	// TraceID is the index of the trace we're using.
-	TraceID int64
 }

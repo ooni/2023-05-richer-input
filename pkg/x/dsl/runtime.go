@@ -121,7 +121,7 @@ func (rtx *Runtime) maybeTrackQUICConn(conn quic.EarlyConnection) {
 	}
 }
 
-func (rtx *Runtime) maybeTrackNetConn(conn net.Conn) {
+func (rtx *Runtime) maybeTrackConn(conn net.Conn) {
 	if conn != nil {
 		rtx.trackCloser(conn)
 	}

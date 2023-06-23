@@ -39,8 +39,9 @@ func NewFunctionRegistry() *FunctionRegistry {
 	// and add such a template to the list below by keeping it sorted.
 
 	r.AddFunctionTemplate(&composeTemplate{})
-	r.AddFunctionTemplate(&dnsLookupParallelTemplate{})
 	r.AddFunctionTemplate(&dnsLookupGetaddrinfoTemplate{})
+	r.AddFunctionTemplate(&dnsLookupParallelTemplate{})
+	r.AddFunctionTemplate(&dnsLookupUDPTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionALPNTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionSkipVerifyTemplate{})
@@ -48,7 +49,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 	r.AddFunctionTemplate(&makeEndpointListTemplate{})
 	r.AddFunctionTemplate(&makeEndpointPipelineTemplate{})
 	r.AddFunctionTemplate(&stringTemplate{})
-	r.AddFunctionTemplate(&dnsLookupUDPTemplate{})
+	r.AddFunctionTemplate(&tcpConnectTemplate{})
 
 	return r
 }
