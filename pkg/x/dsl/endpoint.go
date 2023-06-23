@@ -126,5 +126,67 @@ func (fx *makeEndpointPipelineFunc) apply(ctx context.Context, rtx *Runtime, inp
 			// otherwise it's fine
 		}
 	}
-	return &Void{}
+	return &Skip{}
+}
+
+//
+// parallel_endpoint_measurements
+//
+
+type parallelEndpointMeasurementsTemplate struct{}
+
+// Compile implements FunctionTemplate.
+func (t *parallelEndpointMeasurementsTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+	fs, err := CompileFunctionArgumentsList(registry, arguments)
+	if err != nil {
+		return nil, err
+	}
+	f := &parallelEndpointMeasurementsFunc{fs}
+	return f, nil
+}
+
+// Name implements FunctionTemplate.
+func (t *parallelEndpointMeasurementsTemplate) Name() string {
+	return "parallel_endpoint_measurements"
+}
+
+type parallelEndpointMeasurementsFunc struct {
+	fs []Function
+}
+
+// Apply implements Function.
+func (fx *parallelEndpointMeasurementsFunc) Apply(ctx context.Context, rtx *Runtime, input any) any {
+	switch val := input.(type) {
+	case error:
+		return val
+
+	case *Skip:
+		return val
+
+	case *Exception:
+		return val
+
+	case *DNSLookupOutput:
+		return fx.apply(ctx, rtx, val)
+
+	default:
+		return NewException("%T: unexpected %T type (value: %+v)", fx, val, val)
+	}
+}
+
+func (fx *parallelEndpointMeasurementsFunc) apply(ctx context.Context, rtx *Runtime, input *DNSLookupOutput) any {
+	// execute functions in parallel
+	results := ApplyInputToFunctionList(ctx, 2, rtx, fx.fs, input)
+
+	// handles exceptions and otherwise ignore everything else
+	for _, result := range results {
+		switch value := result.(type) {
+		case *Exception:
+			return value
+
+		default:
+			// ignore
+		}
+	}
+	return &Skip{}
 }

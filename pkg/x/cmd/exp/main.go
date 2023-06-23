@@ -18,16 +18,31 @@ func main() {
 			dsl.DNSLookupUDP("8.8.8.8:53"),
 			dsl.DNSLookupGetaddrinfo(),
 		),
-		dsl.MakeEndpointList(443),
-		dsl.MakeEndpointPipeline(
-			dsl.TCPConnect(),
-			//dsl.QUICHandshake(
-			/*
-				dsl.QUICHandshakeOptionALPN("h3"),
-				dsl.QUICHandshakeOptionSNI("www.example.com"),
-				dsl.QUICHandshakeOptionSkipVerify(true),
-			*/
-			//),
+		dsl.ParallelEndpointMeasurements(
+			dsl.Compose(
+				dsl.MakeEndpointList(443),
+				dsl.MakeEndpointPipeline(
+					dsl.TCPConnect(),
+				),
+			),
+			dsl.Compose(
+				dsl.MakeEndpointList(80),
+				dsl.MakeEndpointPipeline(
+					dsl.TCPConnect(),
+				),
+			),
+			dsl.Compose(
+				dsl.MakeEndpointList(443),
+				dsl.MakeEndpointPipeline(
+					dsl.QUICHandshake(
+					/*
+						dsl.QUICHandshakeOptionALPN("h3"),
+						dsl.QUICHandshakeOptionSNI("www.example.com"),
+						dsl.QUICHandshakeOptionSkipVerify(true),
+					*/
+					),
+				),
+			),
 		),
 	)
 

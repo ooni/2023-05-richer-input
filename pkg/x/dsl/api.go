@@ -36,6 +36,11 @@ func MakeEndpointPipeline(functions ...any) []any {
 	return EncodeFunctionList(&makeEndpointPipelineTemplate{}, functions)
 }
 
+// ParallelEndpointMeasurements measures multiple endpoints in parallel.
+func ParallelEndpointMeasurements(functions ...any) []any {
+	return EncodeFunctionList(&parallelEndpointMeasurementsTemplate{}, functions)
+}
+
 // QUICHandshakeOptionALPN configures application-level protocol negotiation.
 func QUICHandshakeOptionALPN(value ...string) []any {
 	return EncodeFunctionList(&quicHandshakeOptionALPNTemplate{}, value)
