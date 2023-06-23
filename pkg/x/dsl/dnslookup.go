@@ -2,6 +2,7 @@ package dsl
 
 import (
 	"context"
+	"net"
 	"time"
 
 	"github.com/ooni/probe-engine/pkg/measurexlite"
@@ -227,4 +228,44 @@ func (fx *dnsLookupGetaddrinfoFunc) Apply(ctx context.Context, rtx *Runtime, dom
 
 	// handle the successful case
 	return &DNSLookupOutput{Domain: domain, Addresses: addrs}, nil
+}
+
+//
+// dns_lookup_static
+//
+
+type dnsLookupStaticTemplate struct{}
+
+// Compile implements FunctionTemplate.
+func (t *dnsLookupStaticTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+	value, err := ExpectListArguments[string](arguments)
+	if err != nil {
+		return nil, err
+	}
+	// TODO(bassosimone): do we need to remove duplicates here?
+	for _, entry := range value {
+		if net.ParseIP(entry) == nil {
+			return nil, NewErrCompile("dns_lookup_static: invalid IP address: %s", entry)
+		}
+	}
+	fx := &TypedFunctionAdapter[string, *DNSLookupOutput]{&dnsLookupStaticFunc{value}}
+	return fx, nil
+}
+
+// Name implements FunctionTemplate.
+func (t *dnsLookupStaticTemplate) Name() string {
+	return "dns_lookup_static"
+}
+
+type dnsLookupStaticFunc struct {
+	addresses []string
+}
+
+// Apply implements TypedFunction.
+func (fx *dnsLookupStaticFunc) Apply(ctx context.Context, rtx *Runtime, domain string) (*DNSLookupOutput, error) {
+	output := &DNSLookupOutput{
+		Domain:    domain,
+		Addresses: fx.addresses,
+	}
+	return output, nil
 }

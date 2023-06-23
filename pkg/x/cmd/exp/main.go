@@ -18,6 +18,7 @@ func main() {
 			dsl.DNSLookupUDP("8.8.8.8:53"),
 			dsl.DNSLookupUDP("[2001:4860:4860::8844]:53"),
 			dsl.DNSLookupGetaddrinfo(),
+			dsl.DNSLookupStatic("10.10.34.34", "10.10.34.35"),
 		),
 		dsl.MeasureMultipleEndpoints(
 			dsl.Compose(
