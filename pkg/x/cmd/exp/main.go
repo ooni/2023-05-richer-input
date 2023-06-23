@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/apex/log"
-	"github.com/ooni/2023-05-richer-input/pkg/x/dsl"
+	"github.com/ooni/2023-05-richer-input/pkg/dsl"
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 

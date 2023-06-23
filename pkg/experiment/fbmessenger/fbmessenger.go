@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/ooni/2023-05-richer-input/pkg/x/dsl"
+	"github.com/ooni/2023-05-richer-input/pkg/dsl"
 	"github.com/ooni/probe-engine/pkg/geoipx"
 	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/ooni/probe-engine/pkg/optional"
