@@ -51,6 +51,11 @@ func NewEndpointPipeline(functions ...any) []any {
 	return EncodeFunctionList(&newEndpointPipelineTemplate{}, functions)
 }
 
+// MeasureMultipleDomains measures multiple domains in parallel.
+func MeasureMultipleDomains(functions ...any) []any {
+	return EncodeFunctionList(&measureMultipleDomainsTemplate{}, functions)
+}
+
 // MeasureMultipleEndpoints measures multiple endpoints in parallel.
 func MeasureMultipleEndpoints(functions ...any) []any {
 	return EncodeFunctionList(&measureMultipleEndpointsTemplate{}, functions)

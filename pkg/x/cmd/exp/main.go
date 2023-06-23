@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	template := dsl.Compose(
+	_ = dsl.Compose(
 		dsl.String("www.example.com"),
 		dsl.DNSLookupParallel(
 			dsl.DNSLookupUDP("8.8.8.8:53"),
@@ -65,6 +65,74 @@ func main() {
 					dsl.HTTPRoundTrip(),
 					dsl.HTTPReadResponseBodySnapshot(),
 				),
+			),
+		),
+	)
+
+	template := dsl.MeasureMultipleDomains(
+		dsl.Compose(
+			dsl.String("stun.fbsbx.com"),
+			dsl.DNSLookupGetaddrinfo(),
+			// dns consistency check
+		),
+		dsl.Compose(
+			dsl.String("b-api.facebook.com"),
+			dsl.DNSLookupGetaddrinfo(),
+			// dns consistent check
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.TCPConnect(),
+				// tcp reachability check
+			),
+		),
+		dsl.Compose(
+			dsl.String("b-graph.facebook.com"),
+			dsl.DNSLookupGetaddrinfo(),
+			// dns consistent check
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.TCPConnect(),
+				// tcp reachability check
+			),
+		),
+		dsl.Compose(
+			dsl.String("edge-mqtt.facebook.com"),
+			dsl.DNSLookupGetaddrinfo(),
+			// dns consistent check
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.TCPConnect(),
+				// tcp reachability check
+			),
+		),
+		dsl.Compose(
+			dsl.String("external.xx.fbcdn.net"),
+			dsl.DNSLookupGetaddrinfo(),
+			// dns consistent check
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.TCPConnect(),
+				// tcp reachability check
+			),
+		),
+		dsl.Compose(
+			dsl.String("scontent.xx.fbcdn.net"),
+			dsl.DNSLookupGetaddrinfo(),
+			// dns consistent check
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.TCPConnect(),
+				// tcp reachability check
+			),
+		),
+		dsl.Compose(
+			dsl.String("star.c10r.facebook.com"),
+			dsl.DNSLookupGetaddrinfo(),
+			// dns consistent check
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.TCPConnect(),
+				// tcp reachability check
 			),
 		),
 	)

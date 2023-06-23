@@ -65,7 +65,8 @@ func (fx *dnsLookupParallelFunc) Apply(ctx context.Context, rtx *Runtime, input 
 
 func (fx *dnsLookupParallelFunc) apply(ctx context.Context, rtx *Runtime, input string) any {
 	// execute functions in parallel
-	results := ApplyInputToFunctionList(ctx, 5, rtx, fx.fs, input)
+	const parallelism = 5
+	results := ApplyInputToFunctionList(ctx, parallelism, rtx, fx.fs, input)
 
 	// reduce the resolved addresses, ignore errors, but handle exceptions
 	uniq := make(map[string]bool)
@@ -268,4 +269,67 @@ func (fx *dnsLookupStaticFunc) Apply(ctx context.Context, rtx *Runtime, domain s
 		Addresses: fx.addresses,
 	}
 	return output, nil
+}
+
+//
+// measure_multiple_domains
+//
+
+type measureMultipleDomainsTemplate struct{}
+
+// Compile implements FunctionTemplate.
+func (t *measureMultipleDomainsTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+	fs, err := CompileFunctionArgumentsList(registry, arguments)
+	if err != nil {
+		return nil, err
+	}
+	f := &measureMultipleDomainsFunc{fs}
+	return f, nil
+}
+
+// Name implements FunctionTemplate.
+func (t *measureMultipleDomainsTemplate) Name() string {
+	return "measure_multiple_domains"
+}
+
+type measureMultipleDomainsFunc struct {
+	fs []Function
+}
+
+// Apply implements Function.
+func (fx *measureMultipleDomainsFunc) Apply(ctx context.Context, rtx *Runtime, input any) any {
+	switch val := input.(type) {
+	case error:
+		return val
+
+	case *Skip:
+		return val
+
+	case *Exception:
+		return val
+
+	case *Void:
+		return fx.apply(ctx, rtx, val)
+
+	default:
+		return NewException("%T: unexpected %T type (value: %+v)", fx, val, val)
+	}
+}
+
+func (fx *measureMultipleDomainsFunc) apply(ctx context.Context, rtx *Runtime, input *Void) any {
+	// execute functions in parallel
+	const parallelism = 2
+	results := ApplyInputToFunctionList(ctx, parallelism, rtx, fx.fs, input)
+
+	// handles exceptions and otherwise ignore everything else
+	for _, result := range results {
+		switch value := result.(type) {
+		case *Exception:
+			return value
+
+		default:
+			// ignore
+		}
+	}
+	return &Skip{}
 }
