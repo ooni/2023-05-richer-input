@@ -4,8 +4,11 @@ package fbmessenger
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"sync"
 
 	"github.com/ooni/2023-05-richer-input/pkg/x/dsl"
+	"github.com/ooni/probe-engine/pkg/geoipx"
 	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/ooni/probe-engine/pkg/optional"
 )
@@ -51,22 +54,62 @@ func (m *Measurer) GetSummaryKeys(*model.Measurement) (any, error) {
 
 // TestKeys contains the experiment test keys.
 type TestKeys struct {
+	// dnsFlags contains the DNS flags.`
+	dnsFlags map[string]optional.Value[bool]
+
+	// mu provides mutual exclusion.
+	mu sync.Mutex
+
 	// observations contains the observations we collected.
 	observations *dsl.Observations
 
-	// flags contains the top-level flags.`
-	flags map[string]optional.Value[bool]
+	// overallFlags contains the overall flags.
+	overallFlags map[string]optional.Value[bool]
 }
 
 var _ json.Marshaler = &TestKeys{}
 
 // MarshalJSON implements json.Marshaler.
 func (tk *TestKeys) MarshalJSON() ([]byte, error) {
+	defer tk.mu.Unlock()
+	tk.mu.Lock()
 	m := tk.observations.AsMap()
-	for key, value := range tk.flags {
+	for key, value := range tk.dnsFlags {
+		m[key] = value
+	}
+	for key, value := range tk.overallFlags {
 		m[key] = value
 	}
 	return json.Marshal(m)
+}
+
+func (tk *TestKeys) computeOverallKeys() {
+	defer tk.mu.Unlock()
+	tk.mu.Lock()
+	tk.computeOverallDNSKeysLocked()
+}
+
+func (tk *TestKeys) computeOverallDNSKeysLocked() {
+	var (
+		countFalse int
+		countTrue  int
+	)
+	for _, value := range tk.dnsFlags {
+		if value.IsNone() {
+			continue
+		}
+		if value.Unwrap() {
+			countTrue++
+			continue
+		}
+		countFalse++
+	}
+	const key = "facebook_dns_blocking"
+	if countFalse <= 0 && countTrue <= 0 {
+		tk.overallFlags[key] = optional.None[bool]()
+		return
+	}
+	tk.overallFlags[key] = optional.Some(countFalse > 0)
 }
 
 // Run implements model.ExperimentMeasurer
@@ -79,6 +122,17 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 
 	// create a functions registry
 	registry := dsl.NewFunctionRegistry()
+
+	// create the testkeys
+	tk := &TestKeys{
+		dnsFlags:     map[string]optional.Value[bool]{},
+		mu:           sync.Mutex{},
+		observations: dsl.NewObservations(),
+		overallFlags: map[string]optional.Value[bool]{},
+	}
+
+	// register local function templates
+	registry.AddFunctionTemplate(&dnsConsistencyCheckTemplate{tk})
 
 	// compile the AST to a function
 	function, err := registry.Compile(ast)
@@ -93,12 +147,6 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 	)
 	defer rtx.Close()
 
-	// create the testkeys
-	tk := &TestKeys{
-		observations: dsl.NewObservations(),
-		flags:        map[string]optional.Value[bool]{},
-	}
-
 	// evaluate the function
 	if err := rtx.CallVoidFunction(ctx, function); err != nil {
 		return err
@@ -107,10 +155,78 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 	// obtain the observations
 	tk.observations = dsl.ReduceObservations(rtx.ExtractObservations()...)
 
+	// finally, compute the overall test keys
+	tk.computeOverallKeys()
+
 	// save the testkeys
 	args.Measurement.TestKeys = tk
 	return nil
 }
 
+//
+// fbmessenger_dns_consistency_check
+//
+
 // facebookASN is Facebook's ASN
-//const facebookASN = 32934
+const facebookASN = 32934
+
+type dnsConsistencyCheckTemplate struct {
+	tk *TestKeys
+}
+
+// Compile implements dsl.FunctionTemplate.
+func (t *dnsConsistencyCheckTemplate) Compile(registry *dsl.FunctionRegistry, arguments []any) (dsl.Function, error) {
+	endpoint, err := dsl.ExpectSingleScalarArgument[string](arguments)
+	if err != nil {
+		return nil, err
+	}
+	// TODO(bassosimone): do we need to validate the endpoint name with a regexp here?
+	fx := &dnsConsistencyCheckFunc{endpoint, t.tk}
+	return fx, nil
+}
+
+// Name implements dsl.FunctionTemplate.
+func (t *dnsConsistencyCheckTemplate) Name() string {
+	return "fbmessenger_dns_consistency_check"
+}
+
+type dnsConsistencyCheckFunc struct {
+	endpoint string
+	tk       *TestKeys
+}
+
+// Apply implements dsl.Function.
+func (fx *dnsConsistencyCheckFunc) Apply(ctx context.Context, rtx *dsl.Runtime, input any) any {
+	switch val := input.(type) {
+	case *dsl.DNSLookupOutput:
+		endpoint_flag := fmt.Sprintf("facebook_%s_dns_consistent", fx.endpoint)
+		result := fx.isConsistent(val.Addresses)
+		fx.tk.mu.Lock()
+		fx.tk.dnsFlags[endpoint_flag] = result
+		fx.tk.mu.Unlock()
+		// Implementation note: probably the original implementation stopped here in case
+		// the IP address was not consistent but it seems better to continue anyway because
+		// we know that ooni/data is going to do a better analysis than the probe.
+		return input
+
+	default:
+		return input
+	}
+}
+
+func (fx *dnsConsistencyCheckFunc) isConsistent(addresses []string) optional.Value[bool] {
+	for _, address := range addresses {
+		asn, _, err := geoipx.LookupASN(address)
+		if err != nil {
+			continue
+		}
+		result := asn == facebookASN
+		if !result {
+			return optional.Some(false)
+		}
+	}
+	if len(addresses) <= 0 {
+		return optional.None[bool]()
+	}
+	return optional.Some(true)
+}
