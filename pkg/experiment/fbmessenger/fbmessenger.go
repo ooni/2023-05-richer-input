@@ -65,6 +65,9 @@ type TestKeys struct {
 
 	// overallFlags contains the overall flags.
 	overallFlags map[string]optional.Value[bool]
+
+	// tcpCounters counts TCP successes.
+	tcpCounters map[string]int
 }
 
 var _ json.Marshaler = &TestKeys{}
@@ -77,6 +80,9 @@ func (tk *TestKeys) MarshalJSON() ([]byte, error) {
 	for key, value := range tk.dnsFlags {
 		m[key] = value
 	}
+	for key, value := range tk.tcpCounters {
+		m[key] = value > 0
+	}
 	for key, value := range tk.overallFlags {
 		m[key] = value
 	}
@@ -87,6 +93,7 @@ func (tk *TestKeys) computeOverallKeys() {
 	defer tk.mu.Unlock()
 	tk.mu.Lock()
 	tk.computeOverallDNSKeysLocked()
+	tk.computeOverallTCPKeysLocked()
 }
 
 func (tk *TestKeys) computeOverallDNSKeysLocked() {
@@ -112,6 +119,21 @@ func (tk *TestKeys) computeOverallDNSKeysLocked() {
 	tk.overallFlags[key] = optional.Some(countFalse > 0)
 }
 
+func (tk *TestKeys) computeOverallTCPKeysLocked() {
+	const key = "facebook_tcp_blocking"
+	if len(tk.tcpCounters) <= 0 {
+		tk.overallFlags[key] = optional.None[bool]()
+		return
+	}
+	for _, value := range tk.tcpCounters {
+		if value == 0 {
+			tk.overallFlags[key] = optional.Some(true)
+			return
+		}
+	}
+	tk.overallFlags[key] = optional.Some(false)
+}
+
 // Run implements model.ExperimentMeasurer
 func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 	// parse the targets
@@ -129,10 +151,12 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 		mu:           sync.Mutex{},
 		observations: dsl.NewObservations(),
 		overallFlags: map[string]optional.Value[bool]{},
+		tcpCounters:  map[string]int{},
 	}
 
 	// register local function templates
 	registry.AddFunctionTemplate(&dnsConsistencyCheckTemplate{tk})
+	registry.AddFunctionTemplate(&tcpReachabilityCheckTemplate{tk})
 
 	// compile the AST to a function
 	function, err := registry.Compile(ast)
@@ -229,4 +253,56 @@ func (fx *dnsConsistencyCheckFunc) isConsistent(addresses []string) optional.Val
 		return optional.None[bool]()
 	}
 	return optional.Some(true)
+}
+
+//
+// fbmessenger_tcp_reachability_check
+//
+
+type tcpReachabilityCheckTemplate struct {
+	tk *TestKeys
+}
+
+// Compile implements dsl.FunctionTemplate.
+func (t *tcpReachabilityCheckTemplate) Compile(registry *dsl.FunctionRegistry, arguments []any) (dsl.Function, error) {
+	endpoint, err := dsl.ExpectSingleScalarArgument[string](arguments)
+	if err != nil {
+		return nil, err
+	}
+	// TODO(bassosimone): do we need to validate the endpoint name with a regexp here?
+	fx := &tcpReachabilityCheckFunc{endpoint, t.tk}
+	return fx, nil
+}
+
+// Name implements dsl.FunctionTemplate.
+func (t *tcpReachabilityCheckTemplate) Name() string {
+	return "fbmessenger_tcp_reachability_check"
+}
+
+type tcpReachabilityCheckFunc struct {
+	endpoint string
+	tk       *TestKeys
+}
+
+// Apply implements dsl.Function.
+func (fx *tcpReachabilityCheckFunc) Apply(ctx context.Context, rtx *dsl.Runtime, input any) any {
+	endpoint_flag := fmt.Sprintf("facebook_%s_reachable", fx.endpoint)
+	switch input.(type) {
+	case *dsl.TCPConnection:
+		fx.tk.mu.Lock()
+		fx.tk.tcpCounters[endpoint_flag]++
+		fx.tk.mu.Unlock()
+		return input
+
+	case error:
+		fx.tk.mu.Lock()
+		if _, found := fx.tk.tcpCounters[endpoint_flag]; !found {
+			fx.tk.tcpCounters[endpoint_flag] = 0
+		}
+		fx.tk.mu.Unlock()
+		return input
+
+	default:
+		return input
+	}
 }
