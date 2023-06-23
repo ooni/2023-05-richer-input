@@ -115,7 +115,7 @@ func (fx *makeEndpointPipelineFunc) Apply(ctx context.Context, rtx *Runtime, inp
 
 func (fx *makeEndpointPipelineFunc) apply(ctx context.Context, rtx *Runtime, input []*Endpoint) any {
 	// collect output in parallel
-	res := ParallelApply(ctx, 2, rtx, fx.f0, input)
+	res := ApplyFunctionToInputList(ctx, 2, rtx, fx.f0, input)
 
 	// reduce the output to Exception|Void
 	for _, entry := range res {

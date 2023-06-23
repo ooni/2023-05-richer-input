@@ -9,6 +9,11 @@ func Compose(functions ...any) []any {
 	return EncodeFunctionList(&composeTemplate{}, functions)
 }
 
+// DNSLookupParallel executes N resolvers in parallel.
+func DNSLookupParallel(functions ...any) []any {
+	return EncodeFunctionList(&dnsLookupParallelTemplate{}, functions)
+}
+
 // Getaddrinfo resolves a domain name using getaddrinfo.
 func Getaddrinfo() []any {
 	return []any{(&getaddrinfoTemplate{}).Name()}

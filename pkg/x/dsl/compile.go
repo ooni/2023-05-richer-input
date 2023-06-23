@@ -39,6 +39,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 	// and add such a template to the list below by keeping it sorted.
 
 	r.AddFunctionTemplate(&composeTemplate{})
+	r.AddFunctionTemplate(&dnsLookupParallelTemplate{})
 	r.AddFunctionTemplate(&getaddrinfoTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionALPNTemplate{})
