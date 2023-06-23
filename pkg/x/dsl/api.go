@@ -41,14 +41,14 @@ func HTTPRoundTrip(options ...any) []any {
 	return EncodeFunctionList(&httpRoundTripTemplate{}, options)
 }
 
-// MakeEndpointList transforms IP addresses to a list of endpoints.
-func MakeEndpointList(port uint16) []any {
-	return EncodeFunctionScalar(&makeEndpointListTemplate{}, port)
+// MakeEndpointsForPort transforms IP addresses to a list of endpoints.
+func MakeEndpointsForPort(port uint16) []any {
+	return EncodeFunctionScalar(&makeEndpointsForPortTemplate{}, port)
 }
 
-// MakeEndpointPipeline creates a pipeline for measuring endpoints in parallel.
-func MakeEndpointPipeline(functions ...any) []any {
-	return EncodeFunctionList(&makeEndpointPipelineTemplate{}, functions)
+// NewEndpointPipeline creates a pipeline for measuring endpoints in parallel.
+func NewEndpointPipeline(functions ...any) []any {
+	return EncodeFunctionList(&newEndpointPipelineTemplate{}, functions)
 }
 
 // MeasureMultipleEndpoints measures multiple endpoints in parallel.

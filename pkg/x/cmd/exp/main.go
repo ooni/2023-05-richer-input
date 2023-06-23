@@ -22,8 +22,8 @@ func main() {
 		),
 		dsl.MeasureMultipleEndpoints(
 			dsl.Compose(
-				dsl.MakeEndpointList(443),
-				dsl.MakeEndpointPipeline(
+				dsl.MakeEndpointsForPort(443),
+				dsl.NewEndpointPipeline(
 					dsl.TCPConnect(),
 					dsl.TLSHandshake(
 					/*
@@ -41,16 +41,16 @@ func main() {
 				),
 			),
 			dsl.Compose(
-				dsl.MakeEndpointList(80),
-				dsl.MakeEndpointPipeline(
+				dsl.MakeEndpointsForPort(80),
+				dsl.NewEndpointPipeline(
 					dsl.TCPConnect(),
 					dsl.HTTPRoundTrip(),
 					dsl.HTTPReadResponseBodySnapshot(),
 				),
 			),
 			dsl.Compose(
-				dsl.MakeEndpointList(443),
-				dsl.MakeEndpointPipeline(
+				dsl.MakeEndpointsForPort(443),
+				dsl.NewEndpointPipeline(
 					dsl.QUICHandshake(
 					/*
 						dsl.QUICHandshakeOptionALPN("h3"),

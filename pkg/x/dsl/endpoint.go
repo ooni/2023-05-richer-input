@@ -24,32 +24,32 @@ type Endpoint struct {
 }
 
 //
-// make_endpoint_list
+// make_endpoints_for_port
 //
 
-type makeEndpointListTemplate struct{}
+type makeEndpointsForPortTemplate struct{}
 
 // Compile implements FunctionTemplate.
-func (t *makeEndpointListTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+func (t *makeEndpointsForPortTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
 	value, err := ExpectSingleUint16Argument(arguments)
 	if err != nil {
 		return nil, err
 	}
-	opt := &TypedFunctionAdapter[*DNSLookupOutput, []*Endpoint]{&makeEndpointListFunc{value}}
+	opt := &TypedFunctionAdapter[*DNSLookupOutput, []*Endpoint]{&makeEndpointsForPortFunc{value}}
 	return opt, nil
 }
 
 // Name implements FunctionTemplate.
-func (t *makeEndpointListTemplate) Name() string {
-	return "make_endpoint_list"
+func (t *makeEndpointsForPortTemplate) Name() string {
+	return "make_endpoints_for_port"
 }
 
-type makeEndpointListFunc struct {
+type makeEndpointsForPortFunc struct {
 	port uint16
 }
 
 // Apply implements TypedFunc
-func (fx *makeEndpointListFunc) Apply(ctx context.Context, rtx *Runtime, input *DNSLookupOutput) ([]*Endpoint, error) {
+func (fx *makeEndpointsForPortFunc) Apply(ctx context.Context, rtx *Runtime, input *DNSLookupOutput) ([]*Endpoint, error) {
 	// reduce to unique IP addresses
 	uniq := make(map[string]bool)
 	for _, addr := range input.Addresses {
@@ -69,32 +69,32 @@ func (fx *makeEndpointListFunc) Apply(ctx context.Context, rtx *Runtime, input *
 }
 
 //
-// make_endpoint_pipeline
+// new_endpoint_pipeline
 //
 
-type makeEndpointPipelineTemplate struct{}
+type newEndpointPipelineTemplate struct{}
 
 // Compile implements FunctionTemplate.
-func (t *makeEndpointPipelineTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+func (t *newEndpointPipelineTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
 	fs, err := CompileFunctionArgumentsList(registry, arguments)
 	if err != nil {
 		return nil, err
 	}
-	f := &makeEndpointPipelineFunc{compose(fs...)}
+	f := &newEndpointPipelineFunc{compose(fs...)}
 	return f, nil
 }
 
 // Name implements FunctionTemplate.
-func (t *makeEndpointPipelineTemplate) Name() string {
-	return "make_endpoint_pipeline"
+func (t *newEndpointPipelineTemplate) Name() string {
+	return "new_endpoint_pipeline"
 }
 
-type makeEndpointPipelineFunc struct {
+type newEndpointPipelineFunc struct {
 	f0 Function
 }
 
 // Apply implements Function.
-func (fx *makeEndpointPipelineFunc) Apply(ctx context.Context, rtx *Runtime, input any) any {
+func (fx *newEndpointPipelineFunc) Apply(ctx context.Context, rtx *Runtime, input any) any {
 	switch val := input.(type) {
 	case error:
 		return val
@@ -113,7 +113,7 @@ func (fx *makeEndpointPipelineFunc) Apply(ctx context.Context, rtx *Runtime, inp
 	}
 }
 
-func (fx *makeEndpointPipelineFunc) apply(ctx context.Context, rtx *Runtime, input []*Endpoint) any {
+func (fx *newEndpointPipelineFunc) apply(ctx context.Context, rtx *Runtime, input []*Endpoint) any {
 	// collect output in parallel
 	res := ApplyFunctionToInputList(ctx, 2, rtx, fx.f0, input)
 
