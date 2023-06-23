@@ -21,6 +21,8 @@ func ExpectSingleUint16Argument(arguments []any) (uint16, error) {
 		return value, nil
 	}
 
+	// TODO(bassosimone): double check how the stdlib does this
+
 	// fallback to the case where we did read the value from a JSON, which
 	// will always represent numbers as float64 when not given a schema
 	value, err := ExpectSingleScalarArgument[float64](arguments)

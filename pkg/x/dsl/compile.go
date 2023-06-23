@@ -61,12 +61,13 @@ func NewFunctionRegistry() *FunctionRegistry {
 	return r
 }
 
-// AddFunctionTemplate adds a [FunctionTemplate] to the built-in list.
+// AddFunctionTemplate adds a [FunctionTemplate] to the built-in list. You only need
+// this method if you aim to extend the set of templates recognized by default.
 func (r *FunctionRegistry) AddFunctionTemplate(template FunctionTemplate) {
 	r.m[template.Name()] = template
 }
 
-// FunctionTemplate returns the [FunctionTemplate] with the give name.
+// FunctionTemplate returns the [FunctionTemplate] with the given name.
 func (r *FunctionRegistry) FunctionTemplate(name string) (FunctionTemplate, bool) {
 	template, good := r.m[name]
 	return template, good
