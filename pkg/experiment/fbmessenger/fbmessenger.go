@@ -62,8 +62,11 @@ var _ json.Marshaler = &TestKeys{}
 
 // MarshalJSON implements json.Marshaler.
 func (tk *TestKeys) MarshalJSON() ([]byte, error) {
-	// TODO(bassosimone): implement
-	return json.Marshal(nil)
+	m := tk.observations.AsMap()
+	for key, value := range tk.flags {
+		m[key] = value
+	}
+	return json.Marshal(m)
 }
 
 // Run implements model.ExperimentMeasurer
