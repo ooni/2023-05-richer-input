@@ -3,6 +3,7 @@ package dsl
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"time"
 
 	"github.com/ooni/probe-engine/pkg/measurexlite"
@@ -99,6 +100,49 @@ func (fx *quicHandshakeOptionSkipVerifyFunc) Apply(ctx context.Context, rtx *Run
 // apply implements quicHandshakeOption.
 func (fx *quicHandshakeOptionSkipVerifyFunc) apply(options *quicHandshakeConfig) {
 	options.tls.InsecureSkipVerify = fx.value
+}
+
+//
+// quic_handshake_option_root_ca
+//
+
+type quicHandshakeOptionRootCATemplate struct{}
+
+// Compile implements FunctionTemplate.
+func (t *quicHandshakeOptionRootCATemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+	value, err := ExpectListArguments[string](arguments)
+	if err != nil {
+		return nil, err
+	}
+	pool := x509.NewCertPool()
+	for _, entry := range value {
+		if !pool.AppendCertsFromPEM([]byte(entry)) {
+			return nil, NewErrCompile("cannot parse PEM-encoded x509 certificate")
+		}
+	}
+	opt := &quicHandshakeOptionRootCAFunc{pool}
+	return opt, nil
+}
+
+// Name implements FunctionTemplate.
+func (t *quicHandshakeOptionRootCATemplate) Name() string {
+	return "quic_handshake_option_root_ca"
+}
+
+type quicHandshakeOptionRootCAFunc struct {
+	pool *x509.CertPool
+}
+
+var _ quicHandshakeOption = &quicHandshakeOptionRootCAFunc{}
+
+// Apply implements Function.
+func (fx *quicHandshakeOptionRootCAFunc) Apply(ctx context.Context, rtx *Runtime, input any) any {
+	return NewException("function not implemented")
+}
+
+// apply implements quicHandshakeOption.
+func (fx *quicHandshakeOptionRootCAFunc) apply(options *quicHandshakeConfig) {
+	options.tls.RootCAs = fx.pool.Clone()
 }
 
 //

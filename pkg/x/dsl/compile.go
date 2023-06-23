@@ -45,6 +45,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 	r.AddFunctionTemplate(&measureMultipleEndpointsTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionALPNTemplate{})
+	r.AddFunctionTemplate(&quicHandshakeOptionRootCATemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionSkipVerifyTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeOptionSNITemplate{})
 	r.AddFunctionTemplate(&makeEndpointListTemplate{})

@@ -46,6 +46,11 @@ func QUICHandshakeOptionALPN(value ...string) []any {
 	return EncodeFunctionList(&quicHandshakeOptionALPNTemplate{}, value)
 }
 
+// QUICHandshakeOptionRootCA uses a custom root CA for measuring.
+func QUICHandshakeOptionRootCA(value ...string) []any {
+	return EncodeFunctionList(&quicHandshakeOptionRootCATemplate{}, value)
+}
+
 // QUICHandshakeOptionSNI configures the server name used during the QUIC handshake.
 func QUICHandshakeOptionSNI(value string) []any {
 	return EncodeFunctionScalar(&quicHandshakeOptionSNITemplate{}, value)
