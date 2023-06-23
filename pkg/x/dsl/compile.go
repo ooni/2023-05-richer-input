@@ -43,6 +43,7 @@ func NewFunctionRegistry() *FunctionRegistry {
 	r.AddFunctionTemplate(&dnsLookupParallelTemplate{})
 	r.AddFunctionTemplate(&dnsLookupStaticTemplate{})
 	r.AddFunctionTemplate(&dnsLookupUDPTemplate{})
+	r.AddFunctionTemplate(&httpReadResponseBodySnapshotTemplate{})
 	r.AddFunctionTemplate(&httpRoundTripTemplate{})
 	r.AddFunctionTemplate(&measureMultipleEndpointsTemplate{})
 	r.AddFunctionTemplate(&quicHandshakeTemplate{})

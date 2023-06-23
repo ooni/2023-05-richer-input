@@ -21,6 +21,9 @@ type TLSConnection struct {
 	// Domain is the domain we're using.
 	Domain string
 
+	// TLSNegotiatedProtocol is the result of the ALPN negotiation.
+	TLSNegotiatedProtocol string
+
 	// TraceID is the index of the trace we're using.
 	TraceID int64
 }
@@ -43,6 +46,11 @@ func (c *TLSConnection) network() string {
 // scheme implements httpRoundTripConnection.
 func (c *TLSConnection) scheme() string {
 	return "https"
+}
+
+// tlsNegotiatedProtocol implements httpRoundTripConnection.
+func (c *TLSConnection) tlsNegotiatedProtocol() string {
+	return c.TLSNegotiatedProtocol
 }
 
 // traceID implements httpRoundTripConnection.
@@ -287,7 +295,7 @@ func (fx *tlsHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *TCPC
 	defer cancel()
 
 	// handshake
-	conn, _, err := handshaker.Handshake(ctx, input.Conn, &config.tls)
+	conn, state, err := handshaker.Handshake(ctx, input.Conn, &config.tls)
 
 	// stop the operation logger
 	ol.Stop(err)
@@ -296,7 +304,7 @@ func (fx *tlsHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *TCPC
 	rtx.maybeTrackConn(conn)
 
 	// save observations
-	rtx.saveObservations(trace)
+	rtx.extractObservations(trace)
 
 	// handle the error case
 	if err != nil {
@@ -305,10 +313,11 @@ func (fx *tlsHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *TCPC
 
 	// handle the successful case
 	out := &TLSConnection{
-		Address: input.Address,
-		Conn:    conn.(netxlite.TLSConn), // guaranteed to work
-		Domain:  input.Domain,
-		TraceID: trace.Index,
+		Address:               input.Address,
+		Conn:                  conn.(netxlite.TLSConn), // guaranteed to work
+		Domain:                input.Domain,
+		TLSNegotiatedProtocol: state.NegotiatedProtocol,
+		TraceID:               trace.Index,
 	}
 	return out, nil
 }

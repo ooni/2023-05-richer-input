@@ -44,6 +44,11 @@ func (c *TCPConnection) scheme() string {
 	return "http"
 }
 
+// tlsNegotiatedProtocol implements httpRoundTripConnection.
+func (c *TCPConnection) tlsNegotiatedProtocol() string {
+	return ""
+}
+
 // traceID implements httpRoundTripConnection.
 func (c *TCPConnection) traceID() int64 {
 	return c.TraceID
@@ -98,7 +103,7 @@ func (fx *tcpConnectFunc) Apply(ctx context.Context, rtx *Runtime, input *Endpoi
 	rtx.maybeTrackConn(conn)
 
 	// save observations
-	rtx.saveObservations(trace)
+	rtx.extractObservations(trace)
 
 	// handle the error case
 	if err != nil {

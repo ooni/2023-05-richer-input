@@ -27,10 +27,29 @@ func ExpectSingleUint16Argument(arguments []any) (uint16, error) {
 	if err != nil {
 		return 0, err
 	}
-	if math.IsNaN(value) || math.IsInf(value, 0) || value < 0 || value >= math.MaxUint16 || math.Mod(value, 1) != 0 {
+	if math.IsNaN(value) || math.IsInf(value, 0) || value < 0 || value > math.MaxUint16 || math.Mod(value, 1) != 0 {
 		return 0, NewErrCompile("cannot convert %T (%v) to uint16", value, value)
 	}
 	return uint16(math.Trunc(value)), nil
+}
+
+// ExpectSingleInt64Argument is a specialization of ExpectSingleScalarArgument for int64.
+func ExpectSingleInt64Argument(arguments []any) (int64, error) {
+	// try handling the case where we set the int64 explicitly first
+	if value, err := ExpectSingleScalarArgument[int64](arguments); err == nil {
+		return value, nil
+	}
+
+	// fallback to the case where we did read the value from a JSON, which
+	// will always represent numbers as float64 when not given a schema
+	value, err := ExpectSingleScalarArgument[float64](arguments)
+	if err != nil {
+		return 0, err
+	}
+	if math.IsNaN(value) || math.IsInf(value, 0) || value < math.MinInt64 || value > math.MaxInt64 || math.Mod(value, 1) != 0 {
+		return 0, NewErrCompile("cannot convert %T (%v) to int64", value, value)
+	}
+	return int64(math.Trunc(value)), nil
 }
 
 // ExpectListArguments expects the arguments to be a list of T.

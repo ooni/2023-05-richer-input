@@ -3,6 +3,7 @@ package dsl
 import (
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"time"
@@ -126,14 +127,26 @@ type HTTPRoundTripResponse struct {
 	// Finished is when the HTTP round trip finished.
 	Finished time.Time
 
+	// Network is the underlying network.
+	Network string
+
+	// Request is the HTTP request.
+	Request *http.Request
+
 	// Response is the OPTIONAL HTTP response.
 	Response optional.Value[*http.Response]
 
 	// Started is when the HTTP round trip started.
 	Started time.Time
 
+	// TLSNegotiatedProtocol is the protocol negotiated by TLS or QUIC.
+	TLSNegotiatedProtocol string
+
 	// TraceID is the index of the trace we're using.
 	TraceID int64
+
+	// TransportNetwork is the network reported by the HTTPTransport.
+	TransportNetwork string
 }
 
 func (fx *httpRoundTripFunc) responseOrException(resp *HTTPRoundTripResponse, exc *Exception) any {
@@ -186,6 +199,9 @@ type httpRoundTripConnection interface {
 	// scheme returns the scheme we should use
 	scheme() string
 
+	// tlsNegotiatedProtocol is the protocol negotiated by TLS or QUIC.
+	tlsNegotiatedProtocol() string
+
 	// traceID returns the trace ID
 	traceID() int64
 }
@@ -223,13 +239,17 @@ func (fx *httpRoundTripFunc) applyTransport(ctx context.Context, rtx *Runtime,
 
 	// prepare the response
 	output := &HTTPRoundTripResponse{
-		Address:  conn.address(),
-		Domain:   conn.domain(),
-		Error:    err,
-		Finished: finished,
-		Response: optional.None[*http.Response](),
-		Started:  started,
-		TraceID:  conn.traceID(),
+		Address:               conn.address(),
+		Domain:                conn.domain(),
+		Error:                 err,
+		Finished:              finished,
+		Network:               conn.network(),
+		Request:               req,
+		Response:              optional.None[*http.Response](),
+		Started:               started,
+		TLSNegotiatedProtocol: conn.tlsNegotiatedProtocol(),
+		TraceID:               conn.traceID(),
+		TransportNetwork:      txp.Network(),
 	}
 	if err == nil {
 		runtimex.Assert(resp != nil, "expected non nil *http.Response")
@@ -251,6 +271,9 @@ func (fx *httpRoundTripFunc) newHTTPRequest(
 		urlPath:              "/",
 		urlScheme:            conn.scheme(),
 		userAgentHeader:      model.HTTPHeaderUserAgent,
+	}
+	for _, opt := range fx.options {
+		opt.apply(config)
 	}
 
 	URL := &url.URL{
@@ -293,4 +316,124 @@ func (fx *httpRoundTripFunc) newHTTPRequest(
 	}
 
 	return req, nil
+}
+
+//
+// http_read_response_body_snapshot
+//
+
+type httpReadResponseBodySnapshotTemplate struct{}
+
+// Compile implements FunctionTemplate.
+func (t *httpReadResponseBodySnapshotTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+	f := &httpResponseBodySnapshotFunc{
+		options: []httpResponseBodySnapshotOption{},
+	}
+
+	opts, err := CompileFunctionArgumentsList(registry, arguments)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, o := range opts {
+		option, good := o.(httpResponseBodySnapshotOption)
+		if !good {
+			return nil, NewErrCompile("cannot convert %T (%v) to %T", o, o, option)
+		}
+		f.options = append(f.options, option)
+	}
+
+	fx := &TypedFunctionAdapter[*HTTPRoundTripResponse, *Skip]{f}
+	return fx, nil
+}
+
+// Name implements FunctionTemplate.
+func (t *httpReadResponseBodySnapshotTemplate) Name() string {
+	return "http_read_response_body_snapshot"
+}
+
+type httpResponseBodySnapshotConfig struct {
+	snapshotSize int64
+}
+
+type httpResponseBodySnapshotOption interface {
+	apply(options *httpResponseBodySnapshotConfig)
+}
+
+type httpResponseBodySnapshotFunc struct {
+	options []httpResponseBodySnapshotOption
+}
+
+func (fx *httpResponseBodySnapshotFunc) Apply(
+	ctx context.Context, rtx *Runtime, input *HTTPRoundTripResponse) (*Skip, error) {
+	// initialize the configuration
+	config := &httpResponseBodySnapshotConfig{
+		snapshotSize: 1 << 19,
+	}
+	for _, opt := range fx.options {
+		opt.apply(config)
+	}
+
+	// manually create a single 1-length observations structure because
+	// the trace cannot automatically capture HTTP events
+	observations := NewObservations()
+
+	// record when the HTTP round trip had started
+	started := input.Started.Sub(rtx.zeroTime)
+	observations.NetworkEvents = append(observations.NetworkEvents,
+		measurexlite.NewAnnotationArchivalNetworkEvent(
+			input.TraceID,
+			started,
+			"http_transaction_start",
+		))
+
+	// if possible, read the body snapshot
+	var (
+		body []byte
+		err  error = input.Error
+		resp *http.Response
+	)
+	if !input.Response.IsNone() {
+		resp = input.Response.Unwrap()
+		defer resp.Body.Close()
+		reader := io.LimitReader(resp.Body, config.snapshotSize)
+		body, err = netxlite.ReadAllContext(ctx, reader)
+	}
+
+	// record when we finished attempting to read the body
+	finished := time.Since(rtx.zeroTime)
+	observations.NetworkEvents = append(observations.NetworkEvents,
+		measurexlite.NewAnnotationArchivalNetworkEvent(
+			input.TraceID,
+			finished,
+			"http_transaction_done",
+		))
+
+	// synthesize an HTTP observation
+	observations.Requests = append(observations.Requests,
+		measurexlite.NewArchivalHTTPRequestResult(
+			input.TraceID,
+			started,
+			input.Network,
+			input.Address,
+			input.TLSNegotiatedProtocol,
+			input.TransportNetwork,
+			input.Request,
+			resp,
+			config.snapshotSize,
+			body,
+			err,
+			finished,
+		))
+
+	// save the observations
+	rtx.saveObservations(observations)
+
+	// handle the failure case
+	if err != nil {
+		return nil, err
+	}
+
+	// handle the successful case
+	return &Skip{}, nil
 }

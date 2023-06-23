@@ -133,7 +133,7 @@ func (rtx *Runtime) trackCloser(closer io.Closer) {
 	rtx.mu.Unlock()
 }
 
-func (rtx *Runtime) saveObservations(trace *measurexlite.Trace) {
+func (rtx *Runtime) extractObservations(trace *measurexlite.Trace) {
 	observations := &Observations{
 		NetworkEvents:  trace.NetworkEvents(),
 		Queries:        trace.DNSLookupsFromRoundTrip(),
@@ -142,6 +142,10 @@ func (rtx *Runtime) saveObservations(trace *measurexlite.Trace) {
 		TLSHandshakes:  trace.TLSHandshakes(),
 		QUICHandshakes: trace.QUICHandshakes(),
 	}
+	rtx.saveObservations(observations)
+}
+
+func (rtx *Runtime) saveObservations(observations *Observations) {
 	rtx.mu.Lock()
 	rtx.observations = append(rtx.observations, observations)
 	rtx.mu.Unlock()

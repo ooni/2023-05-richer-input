@@ -25,6 +25,9 @@ type QUICConnection struct {
 	// TLSConfig is the TLS configuration we used.
 	TLSConfig *tls.Config
 
+	// TLSNegotiatedProtocol is the result of the ALPN negotiation.
+	TLSNegotiatedProtocol string
+
 	// TraceID is the index of the trace we're using.
 	TraceID int64
 }
@@ -47,6 +50,11 @@ func (c *QUICConnection) network() string {
 // scheme implements httpRoundTripConnection.
 func (c *QUICConnection) scheme() string {
 	return "https"
+}
+
+// tlsNegotiatedProtocol implements httpRoundTripConnection.
+func (c *QUICConnection) tlsNegotiatedProtocol() string {
+	return c.TLSNegotiatedProtocol
 }
 
 // traceID implements httpRoundTripConnection.
@@ -301,7 +309,7 @@ func (fx *quicHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *End
 	rtx.maybeTrackQUICConn(quicConn)
 
 	// save observations
-	rtx.saveObservations(trace)
+	rtx.extractObservations(trace)
 
 	// handle the error case
 	if err != nil {
@@ -310,11 +318,12 @@ func (fx *quicHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *End
 
 	// handle the successful case
 	out := &QUICConnection{
-		Address:   input.Address,
-		Conn:      quicConn,
-		Domain:    input.Domain,
-		TLSConfig: &config.tls,
-		TraceID:   trace.Index,
+		Address:               input.Address,
+		Conn:                  quicConn,
+		Domain:                input.Domain,
+		TLSConfig:             &config.tls,
+		TLSNegotiatedProtocol: quicConn.ConnectionState().TLS.NegotiatedProtocol,
+		TraceID:               trace.Index,
 	}
 	return out, nil
 }

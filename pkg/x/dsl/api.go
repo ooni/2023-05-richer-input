@@ -31,6 +31,11 @@ func DNSLookupUDP(value string) []any {
 	return EncodeFunctionScalar(&dnsLookupUDPTemplate{}, value)
 }
 
+// HTTPReadResponseBodySnapshot reads a snapshot of the response body.
+func HTTPReadResponseBodySnapshot(options ...any) []any {
+	return EncodeFunctionList(&httpReadResponseBodySnapshotTemplate{}, options)
+}
+
 // HTTPRoundTrip sends an HTTP request and receives the response.
 func HTTPRoundTrip(options ...any) []any {
 	return EncodeFunctionList(&httpRoundTripTemplate{}, options)

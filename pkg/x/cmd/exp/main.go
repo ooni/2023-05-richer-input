@@ -37,6 +37,7 @@ func main() {
 					*/
 					),
 					dsl.HTTPRoundTrip(),
+					dsl.HTTPReadResponseBodySnapshot(),
 				),
 			),
 			dsl.Compose(
@@ -44,6 +45,7 @@ func main() {
 				dsl.MakeEndpointPipeline(
 					dsl.TCPConnect(),
 					dsl.HTTPRoundTrip(),
+					dsl.HTTPReadResponseBodySnapshot(),
 				),
 			),
 			dsl.Compose(
@@ -61,6 +63,7 @@ func main() {
 					*/
 					),
 					dsl.HTTPRoundTrip(),
+					dsl.HTTPReadResponseBodySnapshot(),
 				),
 			),
 		),

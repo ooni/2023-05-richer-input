@@ -23,3 +23,16 @@ type Observations struct {
 	// QUICHandshakes contains the QUIC handshakes results.
 	QUICHandshakes []*model.ArchivalTLSOrQUICHandshakeResult `json:"quic_handshakes"`
 }
+
+// NewObservations initializes all measurements to empty arrays and returns the
+// Observations skeleton.
+func NewObservations() *Observations {
+	return &Observations{
+		NetworkEvents:  []*model.ArchivalNetworkEvent{},
+		Queries:        []*model.ArchivalDNSLookupResult{},
+		Requests:       []*model.ArchivalHTTPRequestResult{},
+		TCPConnect:     []*model.ArchivalTCPConnectResult{},
+		TLSHandshakes:  []*model.ArchivalTLSOrQUICHandshakeResult{},
+		QUICHandshakes: []*model.ArchivalTLSOrQUICHandshakeResult{},
+	}
+}

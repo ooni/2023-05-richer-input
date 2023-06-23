@@ -157,7 +157,7 @@ func (f *dnsLookupUDPFunc) Apply(ctx context.Context, rtx *Runtime, domain strin
 	ol.Stop(err)
 
 	// save observations
-	rtx.saveObservations(trace)
+	rtx.extractObservations(trace)
 
 	// handle the error case
 	if err != nil {
@@ -219,7 +219,7 @@ func (fx *dnsLookupGetaddrinfoFunc) Apply(ctx context.Context, rtx *Runtime, dom
 	ol.Stop(err)
 
 	// save observations
-	rtx.saveObservations(trace)
+	rtx.extractObservations(trace)
 
 	// handle the error case
 	if err != nil {
