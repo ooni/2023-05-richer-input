@@ -238,6 +238,12 @@ func (t *quicHandshakeTemplate) Compile(registry *FunctionRegistry, arguments []
 	}
 
 	for _, o := range opts {
+		// the identity behaves as the do-nothing option
+		if _, good := o.(*Identity); good {
+			continue
+		}
+
+		// otherwise we must have a quicHandshakeOption here
 		option, good := o.(quicHandshakeOption)
 		if !good {
 			return nil, NewErrCompile("cannot convert %T (%v) to %T", o, o, option)

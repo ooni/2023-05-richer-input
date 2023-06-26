@@ -22,7 +22,7 @@ func (t *composeTemplate) Name() string {
 
 func compose(fs ...Function) Function {
 	if len(fs) <= 0 {
-		fs = append(fs, &identity{})
+		fs = append(fs, &Identity{})
 	}
 	f0 := fs[0]
 	for _, fx := range fs[1:] {
@@ -44,9 +44,10 @@ func (f *compose2Func) Apply(ctx context.Context, rtx *Runtime, input any) any {
 	return f.f2.Apply(ctx, rtx, f.f1.Apply(ctx, rtx, input))
 }
 
-type identity struct{}
+// Identity is a function that returns its input argument in output.
+type Identity struct{}
 
 // Apply implements Function.
-func (f *identity) Apply(ctx context.Context, rtx *Runtime, input any) any {
+func (f *Identity) Apply(ctx context.Context, rtx *Runtime, input any) any {
 	return input
 }

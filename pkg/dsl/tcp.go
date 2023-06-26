@@ -58,6 +58,7 @@ type tcpConnectTemplate struct{}
 
 // Compile implements FunctionTemplate.
 func (t *tcpConnectTemplate) Compile(registry *FunctionRegistry, arguments []any) (Function, error) {
+	// TODO(bassosimone): we should have options here
 	if len(arguments) != 0 {
 		return nil, NewErrCompile("tcp_connect is a niladic function")
 	}

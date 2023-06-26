@@ -35,6 +35,12 @@ func (t *httpRoundTripTemplate) Compile(registry *FunctionRegistry, arguments []
 	}
 
 	for _, o := range opts {
+		// the identity behaves as the do-nothing option
+		if _, good := o.(*Identity); good {
+			continue
+		}
+
+		// otherwise, we must have an httpRoundTripOption here
 		option, good := o.(httpRoundTripOption)
 		if !good {
 			return nil, NewErrCompile("cannot convert %T (%v) to %T", o, o, option)
@@ -336,6 +342,12 @@ func (t *httpReadResponseBodySnapshotTemplate) Compile(registry *FunctionRegistr
 	}
 
 	for _, o := range opts {
+		// the identity behaves as the do-nothing option
+		if _, good := o.(*Identity); good {
+			continue
+		}
+
+		// otherwise we must have an httpResponseBodySnapshotOption here
 		option, good := o.(httpResponseBodySnapshotOption)
 		if !good {
 			return nil, NewErrCompile("cannot convert %T (%v) to %T", o, o, option)

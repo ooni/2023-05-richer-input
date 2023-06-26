@@ -234,6 +234,12 @@ func (t *tlsHandshakeTemplate) Compile(registry *FunctionRegistry, arguments []a
 	}
 
 	for _, o := range opts {
+		// the identity behaves as the do-nothing option
+		if _, good := o.(*Identity); good {
+			continue
+		}
+
+		// otherwise we must have a tlsHandshakeOption here
 		option, good := o.(tlsHandshakeOption)
 		if !good {
 			return nil, NewErrCompile("cannot convert %T (%v) to tlsHandshakeOption", o, o)

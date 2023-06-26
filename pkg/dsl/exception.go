@@ -2,7 +2,7 @@ package dsl
 
 import "fmt"
 
-// Exception indicates that a [Func] generated an exception.
+// Exception indicates that a [Function] generated an exception.
 type Exception struct {
 	Reason string
 }
