@@ -148,8 +148,8 @@ type HTTPRoundTripResponse struct {
 	// TLSNegotiatedProtocol is the protocol negotiated by TLS or QUIC.
 	TLSNegotiatedProtocol string
 
-	// TraceID is the index of the trace we're using.
-	TraceID int64
+	// Trace is the trace we're using.
+	Trace *measurexlite.Trace
 
 	// TransportNetwork is the network reported by the HTTPTransport.
 	TransportNetwork string
@@ -208,8 +208,8 @@ type httpRoundTripConnection interface {
 	// tlsNegotiatedProtocol is the protocol negotiated by TLS or QUIC.
 	tlsNegotiatedProtocol() string
 
-	// traceID returns the trace ID
-	traceID() int64
+	// trace returns the trace we're using.
+	trace() *measurexlite.Trace
 }
 
 func (fx *httpRoundTripFunc) applyTransport(ctx context.Context, rtx *Runtime,
@@ -229,7 +229,7 @@ func (fx *httpRoundTripFunc) applyTransport(ctx context.Context, rtx *Runtime,
 	ol := measurexlite.NewOperationLogger(
 		rtx.logger,
 		"[#%d] HTTPRequest %s with %s/%s host=%s",
-		conn.traceID(),
+		conn.trace().Index,
 		req.URL.String(),
 		conn.address(),
 		conn.network(),
@@ -254,7 +254,7 @@ func (fx *httpRoundTripFunc) applyTransport(ctx context.Context, rtx *Runtime,
 		Response:              optional.None[*http.Response](),
 		Started:               started,
 		TLSNegotiatedProtocol: conn.tlsNegotiatedProtocol(),
-		TraceID:               conn.traceID(),
+		Trace:                 conn.trace(),
 		TransportNetwork:      txp.Network(),
 	}
 	if err == nil {
@@ -394,7 +394,7 @@ func (fx *httpResponseBodySnapshotFunc) Apply(
 	started := input.Started.Sub(rtx.zeroTime)
 	observations.NetworkEvents = append(observations.NetworkEvents,
 		measurexlite.NewAnnotationArchivalNetworkEvent(
-			input.TraceID,
+			input.Trace.Index,
 			started,
 			"http_transaction_start",
 		))
@@ -416,7 +416,7 @@ func (fx *httpResponseBodySnapshotFunc) Apply(
 	finished := time.Since(rtx.zeroTime)
 	observations.NetworkEvents = append(observations.NetworkEvents,
 		measurexlite.NewAnnotationArchivalNetworkEvent(
-			input.TraceID,
+			input.Trace.Index,
 			finished,
 			"http_transaction_done",
 		))
@@ -424,7 +424,7 @@ func (fx *httpResponseBodySnapshotFunc) Apply(
 	// synthesize an HTTP observation
 	observations.Requests = append(observations.Requests,
 		measurexlite.NewArchivalHTTPRequestResult(
-			input.TraceID,
+			input.Trace.Index,
 			started,
 			input.Network,
 			input.Address,
@@ -440,6 +440,12 @@ func (fx *httpResponseBodySnapshotFunc) Apply(
 
 	// save the observations
 	rtx.saveObservations(observations)
+
+	// save additional network observations collected using the trace, which is
+	// mainly going to be I/O events necessary to measure throttling
+	rtx.saveObservations(&Observations{
+		NetworkEvents: input.Trace.NetworkEvents(),
+	})
 
 	// handle the failure case
 	if err != nil {

@@ -28,8 +28,8 @@ type QUICConnection struct {
 	// TLSNegotiatedProtocol is the result of the ALPN negotiation.
 	TLSNegotiatedProtocol string
 
-	// TraceID is the index of the trace we're using.
-	TraceID int64
+	// Trace is the trace we're using.
+	Trace *measurexlite.Trace
 }
 
 // address implements httpRoundTripConnection.
@@ -57,9 +57,9 @@ func (c *QUICConnection) tlsNegotiatedProtocol() string {
 	return c.TLSNegotiatedProtocol
 }
 
-// traceID implements httpRoundTripConnection.
-func (c *QUICConnection) traceID() int64 {
-	return c.TraceID
+// trace implements httpRoundTripConnection.
+func (c *QUICConnection) trace() *measurexlite.Trace {
+	return c.Trace
 }
 
 //
@@ -329,7 +329,7 @@ func (fx *quicHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *End
 		Domain:                input.Domain,
 		TLSConfig:             &config.tls,
 		TLSNegotiatedProtocol: quicConn.ConnectionState().TLS.NegotiatedProtocol,
-		TraceID:               trace.Index,
+		Trace:                 trace,
 	}
 	return out, nil
 }

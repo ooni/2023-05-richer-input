@@ -20,8 +20,8 @@ type TCPConnection struct {
 	// Domain is the domain we're using.
 	Domain string
 
-	// TraceID is the index of the trace we're using.
-	TraceID int64
+	// Trace is the trace we're using.
+	Trace *measurexlite.Trace
 }
 
 // address implements httpRoundTripConnection.
@@ -49,9 +49,9 @@ func (c *TCPConnection) tlsNegotiatedProtocol() string {
 	return ""
 }
 
-// traceID implements httpRoundTripConnection.
-func (c *TCPConnection) traceID() int64 {
-	return c.TraceID
+// trace implements httpRoundTripConnection.
+func (c *TCPConnection) trace() *measurexlite.Trace {
+	return c.Trace
 }
 
 type tcpConnectTemplate struct{}
@@ -116,7 +116,7 @@ func (fx *tcpConnectFunc) Apply(ctx context.Context, rtx *Runtime, input *Endpoi
 		Address: input.Address,
 		Conn:    conn,
 		Domain:  input.Domain,
-		TraceID: trace.Index,
+		Trace:   trace,
 	}
 	return out, nil
 }
