@@ -147,9 +147,9 @@ func (rtx *Runtime) extractObservations(trace *measurexlite.Trace) {
 	rtx.saveObservations(observations)
 }
 
-func (rtx *Runtime) saveObservations(observations *Observations) {
+func (rtx *Runtime) saveObservations(observations ...*Observations) {
 	rtx.mu.Lock()
-	rtx.observations = append(rtx.observations, observations)
+	rtx.observations = append(rtx.observations, observations...)
 	rtx.mu.Unlock()
 }
 

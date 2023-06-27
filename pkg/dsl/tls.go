@@ -24,8 +24,8 @@ type TLSConnection struct {
 	// TLSNegotiatedProtocol is the result of the ALPN negotiation.
 	TLSNegotiatedProtocol string
 
-	// TraceID is the index of the trace we're using.
-	TraceID int64
+	// Trace is the trace we're using.
+	Trace *measurexlite.Trace
 }
 
 // address implements httpRoundTripConnection.
@@ -53,9 +53,9 @@ func (c *TLSConnection) tlsNegotiatedProtocol() string {
 	return c.TLSNegotiatedProtocol
 }
 
-// traceID implements httpRoundTripConnection.
-func (c *TLSConnection) traceID() int64 {
-	return c.TraceID
+// trace implements httpRoundTripConnection.
+func (c *TLSConnection) trace() *measurexlite.Trace {
+	return c.Trace
 }
 
 //
@@ -281,8 +281,8 @@ func (fx *tlsHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *TCPC
 		opt.apply(config)
 	}
 
-	// create trace
-	trace := measurexlite.NewTrace(input.TraceID, rtx.zeroTime)
+	// reuse the trace created for TCP
+	trace := input.Trace
 
 	// start the operation logger
 	ol := measurexlite.NewOperationLogger(
@@ -323,7 +323,7 @@ func (fx *tlsHandshakeFunc) Apply(ctx context.Context, rtx *Runtime, input *TCPC
 		Conn:                  conn.(netxlite.TLSConn), // guaranteed to work
 		Domain:                input.Domain,
 		TLSNegotiatedProtocol: state.NegotiatedProtocol,
-		TraceID:               trace.Index,
+		Trace:                 trace,
 	}
 	return out, nil
 }
