@@ -47,7 +47,7 @@ func NewRuntime(options ...RuntimeOption) *Runtime {
 	rtx := &Runtime{
 		closers:      []io.Closer{},
 		idGenerator:  &atomic.Int64{},
-		logger:       nil,
+		logger:       model.DiscardLogger,
 		observations: []*Observations{},
 		mu:           sync.Mutex{},
 		zeroTime:     time.Now(),

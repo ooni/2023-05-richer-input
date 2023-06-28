@@ -7,13 +7,15 @@ import (
 	"github.com/ooni/2023-05-richer-input/pkg/unlang/unruntime"
 )
 
-// Compiler is the [ric] compiler. The zero value of this struct
+// Compiler is the [uncompiler] compiler. The zero value of this struct
 // is invalid; please, use [NewCompiler] to construct.
 type Compiler struct {
 	m map[string]FuncTemplate
 }
 
-// NewCompiler creates a new [Compile].
+// NewCompiler creates a new [Compiler]. This function calls [Compiler.RegisterFuncTemplate]
+// for all the [FuncTemplate] defined by the [uncompiler] package. Therefore, you do not need
+// to manually register templates.
 func NewCompiler() *Compiler {
 	c := &Compiler{
 		m: map[string]FuncTemplate{},
@@ -59,14 +61,14 @@ func NewCompiler() *Compiler {
 }
 
 // RegisterFuncTemplate registers a [FuncTemplate]. The [NewCompiler] constructor
-// already registers all the [FuncTemplate] implemented by [ric]. You only need to
+// already registers all the [FuncTemplate] implemented by [uncompiler]. You only need to
 // call this method to register additional [FuncTemplate].
 func (c *Compiler) RegisterFuncTemplate(f FuncTemplate) {
 	c.m[f.TemplateName()] = f
 }
 
 // ErrNoSuchTemplate is returned when there's no such template with the given name.
-var ErrNoSuchTemplate = errors.New("uncompiler: no such template")
+var ErrNoSuchTemplate = errors.New("uncompile: no such template")
 
 // Compile compiles an [*ASTNode] to a [unruntime.Func].
 func (c *Compiler) Compile(node *ASTNode) (unruntime.Func, error) {
@@ -89,4 +91,9 @@ func (c *Compiler) compileNodes(nodes ...*ASTNode) (out []unruntime.Func, err er
 		out = append(out, fx)
 	}
 	return out, nil
+}
+
+func (c *Compiler) templateExists(name string) bool {
+	_, found := c.m[name]
+	return found
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/ooni/2023-05-richer-input/pkg/unlang/unruntime"
 )
 
-// QUICHandshakeArguments contains arguments for "quic_handshake".
+// QUICHandshakeArguments contains arguments for [unruntime.QUICHandshake].
 type QUICHandshakeArguments struct {
 	ALPN       []string `json:"alpn,omitempty"`
 	SkipVerify bool     `json:"skip_verify,omitempty"`
@@ -14,10 +14,10 @@ type QUICHandshakeArguments struct {
 	X509Certs  []string `json:"x509_certs,omitempty"`
 }
 
-// QUICHandshakeTemplate is the template for "quic_handshake".
+// QUICHandshakeTemplate is the template for [unruntime.QUICHandshake].
 type QUICHandshakeTemplate struct{}
 
-// Compile implements FuncTemplate.
+// Compile implements [FuncTemplate].
 func (QUICHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
 	var (
 		arguments QUICHandshakeArguments
@@ -43,7 +43,7 @@ func (QUICHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (unrunti
 	return unruntime.QUICHandshake(options...), nil
 }
 
-// TemplateName implements FuncTemplate.
+// TemplateName implements [FuncTemplate].
 func (QUICHandshakeTemplate) TemplateName() string {
 	return "quic_handshake"
 }

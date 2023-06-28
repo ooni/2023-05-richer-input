@@ -6,7 +6,7 @@ import (
 	"github.com/ooni/2023-05-richer-input/pkg/unlang/unruntime"
 )
 
-// TLSHandshakeArguments contains arguments for "tls_handshake".
+// TLSHandshakeArguments contains arguments for [unruntime.TLSHandshake].
 type TLSHandshakeArguments struct {
 	ALPN       []string `json:"alpn,omitempty"`
 	SkipVerify bool     `json:"skip_verify,omitempty"`
@@ -14,10 +14,10 @@ type TLSHandshakeArguments struct {
 	X509Certs  []string `json:"x509_certs,omitempty"`
 }
 
-// TLSHandshakeTemplate is the template for "tls_handshake".
+// TLSHandshakeTemplate is the template for [unruntime.TLSHandshake].
 type TLSHandshakeTemplate struct{}
 
-// Compile implements FuncTemplate.
+// Compile implements [FuncTemplate].
 func (TLSHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
 	var (
 		arguments TLSHandshakeArguments
@@ -43,7 +43,7 @@ func (TLSHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntim
 	return unruntime.TLSHandshake(options...), nil
 }
 
-// TemplateName implements FuncTemplate.
+// TemplateName implements [FuncTemplate].
 func (TLSHandshakeTemplate) TemplateName() string {
 	return "tls_handshake"
 }
