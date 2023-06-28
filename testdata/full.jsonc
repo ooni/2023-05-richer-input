@@ -105,76 +105,7 @@
 			"with_arguments": {
 				"nettest_name": "facebook_messenger",
 				"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
-				"suite_name": "im",
-
-				// Note how here the richer input contains mininettests that
-				// the experiment should run. This functionality allows us to
-				// tweak the behavior of experiments using the check-in API.
-				//
-				// The engine ignores the mininettests it does not know.
-				//
-				// We initially determine the results in the probe and later we
-				// will move the algorithm in the fastpath.
-				//
-				// We will not generate the top-level keys that cannot be
-				// generated given the available mininettest IDs.
-				"targets": [
-					{
-						"id": "fbmessenger-stun",
-						"run_mini_nettest": "dns-lookup",
-						"with_target": {
-							"domain": "stun.fbsbx.com"
-						}
-					},
-					{
-						"id": "fbmessenger-b-api",
-						"run_mini_nettest": "tcp-connect-domain",
-						"with_target": {
-							"domain": "b-api.facebook.com",
-							"port": 443
-						}
-					},
-					{
-						"id": "fbmessenger-b-graph",
-						"run_mini_nettest": "tcp-connect-domain",
-						"with_target": {
-							"domain": "b-graph.facebook.com",
-							"port": 443
-						}
-					},
-					{
-						"id": "fbmessenger-b-edge-mqtt",
-						"run_mini_nettest": "tcp-connect-domain",
-						"with_target": {
-							"domain": "edge-mqtt.facebook.com",
-							"port": 443
-						}
-					},
-					{
-						"id": "fbmessenger-external-cdn",
-						"run_mini_nettest": "tcp-connect-domain",
-						"with_target": {
-							"domain": "external.xx.fbcdn.net",
-							"port": 443
-						}
-					},
-					{
-						"id": "fbmessenger-scontent-cdn",
-						"run_mini_nettest": "tcp-connect-domain",
-						"with_target": {
-							"domain": "scontent.xx.fbcdn.net",
-							"port": 443
-						}
-					},
-					{
-						"id": "fbmessenger-star",
-						"run_mini_nettest": "tcp-connect-domain",
-						"with_target": {
-							"domain": "star.c10r.facebook.com",
-							"port": 443
-						}
-					}
-				]
+				"suite_name": "im"
 			}
 		},
 

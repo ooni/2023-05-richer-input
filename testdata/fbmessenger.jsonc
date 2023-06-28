@@ -9,230 +9,450 @@
 				"nettest_name": "facebook_messenger",
 				"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
 				"suite_name": "im",
-				"targets": [
-					"measure_multiple_domains",
-					[
-						"compose",
-						[
-							"string",
-							"stun.fbsbx.com"
-						],
-						[
-							"dns_lookup_getaddrinfo"
-						],
-						[
-							"try_compose",
-							[
-								"fbmessenger_dns_consistency_check",
-								"stun"
+				"targets": {
+					"func": "measure_multiple_domains",
+					"arguments": {},
+					"children": [
+						{
+							"func": "compose",
+							"arguments": {},
+							"children": [
+								{
+									"func": "domain_name",
+									"arguments": {
+										"domain": "stun.fbsbx.com"
+									},
+									"children": []
+								},
+								{
+									"func": "dns_lookup_getaddrinfo",
+									"arguments": {},
+									"children": []
+								},
+								{
+									"func": "if_func_exists",
+									"arguments": {},
+									"children": [
+										{
+											"func": "fbmessenger_dns_consistency_check",
+											"arguments": {
+												"endpoint_name": "stun"
+											},
+											"children": []
+										}
+									]
+								},
+								{
+									"func": "discard",
+									"arguments": {},
+									"children": []
+								}
 							]
-						]
-					],
-					[
-						"compose",
-						[
-							"string",
-							"b-api.facebook.com"
-						],
-						[
-							"dns_lookup_getaddrinfo"
-						],
-						[
-							"try_compose",
-							[
-								"fbmessenger_dns_consistency_check",
-								"b_api"
+						},
+						{
+							"func": "compose",
+							"arguments": {},
+							"children": [
+								{
+									"func": "domain_name",
+									"arguments": {
+										"domain": "b-api.facebook.com"
+									},
+									"children": []
+								},
+								{
+									"func": "dns_lookup_getaddrinfo",
+									"arguments": {},
+									"children": []
+								},
+								{
+									"func": "if_func_exists",
+									"arguments": {},
+									"children": [
+										{
+											"func": "fbmessenger_dns_consistency_check",
+											"arguments": {
+												"endpoint_name": "b_api"
+											},
+											"children": []
+										}
+									]
+								},
+								{
+									"func": "make_endpoints_for_port",
+									"arguments": {
+										"port": 443
+									},
+									"children": []
+								},
+								{
+									"func": "new_endpoint_pipeline",
+									"arguments": {},
+									"children": [
+										{
+											"func": "tcp_connect",
+											"arguments": {},
+											"children": []
+										},
+										{
+											"func": "if_func_exists",
+											"arguments": {},
+											"children": [
+												{
+													"func": "fbmessenger_tcp_reachability_check",
+													"arguments": {
+														"endpoint_name": "b_api"
+													},
+													"children": []
+												}
+											]
+										},
+										{
+											"func": "discard",
+											"arguments": {},
+											"children": []
+										}
+									]
+								}
 							]
-						],
-						[
-							"make_endpoints_for_port",
-							443
-						],
-						[
-							"new_endpoint_pipeline",
-							[
-								"tcp_connect"
-							],
-							[
-								"try_compose",
-								[
-									"fbmessenger_tcp_reachability_check",
-									"b_api"
-								]
+						},
+						{
+							"func": "compose",
+							"arguments": {},
+							"children": [
+								{
+									"func": "domain_name",
+									"arguments": {
+										"domain": "b-graph.facebook.com"
+									},
+									"children": []
+								},
+								{
+									"func": "dns_lookup_getaddrinfo",
+									"arguments": {},
+									"children": []
+								},
+								{
+									"func": "if_func_exists",
+									"arguments": {},
+									"children": [
+										{
+											"func": "fbmessenger_dns_consistency_check",
+											"arguments": {
+												"endpoint_name": "b_graph"
+											},
+											"children": []
+										}
+									]
+								},
+								{
+									"func": "make_endpoints_for_port",
+									"arguments": {
+										"port": 443
+									},
+									"children": []
+								},
+								{
+									"func": "new_endpoint_pipeline",
+									"arguments": {},
+									"children": [
+										{
+											"func": "tcp_connect",
+											"arguments": {},
+											"children": []
+										},
+										{
+											"func": "if_func_exists",
+											"arguments": {},
+											"children": [
+												{
+													"func": "fbmessenger_tcp_reachability_check",
+													"arguments": {
+														"endpoint_name": "b_graph"
+													},
+													"children": []
+												}
+											]
+										},
+										{
+											"func": "discard",
+											"arguments": {},
+											"children": []
+										}
+									]
+								}
 							]
-						]
-					],
-					[
-						"compose",
-						[
-							"string",
-							"b-graph.facebook.com"
-						],
-						[
-							"dns_lookup_getaddrinfo"
-						],
-						[
-							"try_compose",
-							[
-								"fbmessenger_dns_consistency_check",
-								"b_graph"
+						},
+						{
+							"func": "compose",
+							"arguments": {},
+							"children": [
+								{
+									"func": "domain_name",
+									"arguments": {
+										"domain": "edge-mqtt.facebook.com"
+									},
+									"children": []
+								},
+								{
+									"func": "dns_lookup_getaddrinfo",
+									"arguments": {},
+									"children": []
+								},
+								{
+									"func": "if_func_exists",
+									"arguments": {},
+									"children": [
+										{
+											"func": "fbmessenger_dns_consistency_check",
+											"arguments": {
+												"endpoint_name": "edge"
+											},
+											"children": []
+										}
+									]
+								},
+								{
+									"func": "make_endpoints_for_port",
+									"arguments": {
+										"port": 443
+									},
+									"children": []
+								},
+								{
+									"func": "new_endpoint_pipeline",
+									"arguments": {},
+									"children": [
+										{
+											"func": "tcp_connect",
+											"arguments": {},
+											"children": []
+										},
+										{
+											"func": "if_func_exists",
+											"arguments": {},
+											"children": [
+												{
+													"func": "fbmessenger_tcp_reachability_check",
+													"arguments": {
+														"endpoint_name": "edge"
+													},
+													"children": []
+												}
+											]
+										},
+										{
+											"func": "discard",
+											"arguments": {},
+											"children": []
+										}
+									]
+								}
 							]
-						],
-						[
-							"make_endpoints_for_port",
-							443
-						],
-						[
-							"new_endpoint_pipeline",
-							[
-								"tcp_connect"
-							],
-							[
-								"try_compose",
-								[
-									"fbmessenger_tcp_reachability_check",
-									"b_graph"
-								]
+						},
+						{
+							"func": "compose",
+							"arguments": {},
+							"children": [
+								{
+									"func": "domain_name",
+									"arguments": {
+										"domain": "external.xx.fbcdn.net"
+									},
+									"children": []
+								},
+								{
+									"func": "dns_lookup_getaddrinfo",
+									"arguments": {},
+									"children": []
+								},
+								{
+									"func": "if_func_exists",
+									"arguments": {},
+									"children": [
+										{
+											"func": "fbmessenger_dns_consistency_check",
+											"arguments": {
+												"endpoint_name": "external_cdn"
+											},
+											"children": []
+										}
+									]
+								},
+								{
+									"func": "make_endpoints_for_port",
+									"arguments": {
+										"port": 443
+									},
+									"children": []
+								},
+								{
+									"func": "new_endpoint_pipeline",
+									"arguments": {},
+									"children": [
+										{
+											"func": "tcp_connect",
+											"arguments": {},
+											"children": []
+										},
+										{
+											"func": "if_func_exists",
+											"arguments": {},
+											"children": [
+												{
+													"func": "fbmessenger_tcp_reachability_check",
+													"arguments": {
+														"endpoint_name": "external_cdn"
+													},
+													"children": []
+												}
+											]
+										},
+										{
+											"func": "discard",
+											"arguments": {},
+											"children": []
+										}
+									]
+								}
 							]
-						]
-					],
-					[
-						"compose",
-						[
-							"string",
-							"edge-mqtt.facebook.com"
-						],
-						[
-							"dns_lookup_getaddrinfo"
-						],
-						[
-							"try_compose",
-							[
-								"fbmessenger_dns_consistency_check",
-								"edge"
+						},
+						{
+							"func": "compose",
+							"arguments": {},
+							"children": [
+								{
+									"func": "domain_name",
+									"arguments": {
+										"domain": "scontent.xx.fbcdn.net"
+									},
+									"children": []
+								},
+								{
+									"func": "dns_lookup_getaddrinfo",
+									"arguments": {},
+									"children": []
+								},
+								{
+									"func": "if_func_exists",
+									"arguments": {},
+									"children": [
+										{
+											"func": "fbmessenger_dns_consistency_check",
+											"arguments": {
+												"endpoint_name": "scontent_cdn"
+											},
+											"children": []
+										}
+									]
+								},
+								{
+									"func": "make_endpoints_for_port",
+									"arguments": {
+										"port": 443
+									},
+									"children": []
+								},
+								{
+									"func": "new_endpoint_pipeline",
+									"arguments": {},
+									"children": [
+										{
+											"func": "tcp_connect",
+											"arguments": {},
+											"children": []
+										},
+										{
+											"func": "if_func_exists",
+											"arguments": {},
+											"children": [
+												{
+													"func": "fbmessenger_tcp_reachability_check",
+													"arguments": {
+														"endpoint_name": "scontent_cdn"
+													},
+													"children": []
+												}
+											]
+										},
+										{
+											"func": "discard",
+											"arguments": {},
+											"children": []
+										}
+									]
+								}
 							]
-						],
-						[
-							"make_endpoints_for_port",
-							443
-						],
-						[
-							"new_endpoint_pipeline",
-							[
-								"tcp_connect"
-							],
-							[
-								"try_compose",
-								[
-									"fbmessenger_tcp_reachability_check",
-									"edge"
-								]
+						},
+						{
+							"func": "compose",
+							"arguments": {},
+							"children": [
+								{
+									"func": "domain_name",
+									"arguments": {
+										"domain": "star.c10r.facebook.com"
+									},
+									"children": []
+								},
+								{
+									"func": "dns_lookup_getaddrinfo",
+									"arguments": {},
+									"children": []
+								},
+								{
+									"func": "if_func_exists",
+									"arguments": {},
+									"children": [
+										{
+											"func": "fbmessenger_dns_consistency_check",
+											"arguments": {
+												"endpoint_name": "star"
+											},
+											"children": []
+										}
+									]
+								},
+								{
+									"func": "make_endpoints_for_port",
+									"arguments": {
+										"port": 443
+									},
+									"children": []
+								},
+								{
+									"func": "new_endpoint_pipeline",
+									"arguments": {},
+									"children": [
+										{
+											"func": "tcp_connect",
+											"arguments": {},
+											"children": []
+										},
+										{
+											"func": "if_func_exists",
+											"arguments": {},
+											"children": [
+												{
+													"func": "fbmessenger_tcp_reachability_check",
+													"arguments": {
+														"endpoint_name": "star"
+													},
+													"children": []
+												}
+											]
+										},
+										{
+											"func": "discard",
+											"arguments": {},
+											"children": []
+										}
+									]
+								}
 							]
-						]
-					],
-					[
-						"compose",
-						[
-							"string",
-							"external.xx.fbcdn.net"
-						],
-						[
-							"dns_lookup_getaddrinfo"
-						],
-						[
-							"try_compose",
-							[
-								"fbmessenger_dns_consistency_check",
-								"external_cdn"
-							]
-						],
-						[
-							"make_endpoints_for_port",
-							443
-						],
-						[
-							"new_endpoint_pipeline",
-							[
-								"tcp_connect"
-							],
-							[
-								"try_compose",
-								[
-									"fbmessenger_tcp_reachability_check",
-									"external_cdn"
-								]
-							]
-						]
-					],
-					[
-						"compose",
-						[
-							"string",
-							"scontent.xx.fbcdn.net"
-						],
-						[
-							"dns_lookup_getaddrinfo"
-						],
-						[
-							"try_compose",
-							[
-								"fbmessenger_dns_consistency_check",
-								"scontent_cdn"
-							]
-						],
-						[
-							"make_endpoints_for_port",
-							443
-						],
-						[
-							"new_endpoint_pipeline",
-							[
-								"tcp_connect"
-							],
-							[
-								"try_compose",
-								[
-									"fbmessenger_tcp_reachability_check",
-									"scontent_cdn"
-								]
-							]
-						]
-					],
-					[
-						"compose",
-						[
-							"string",
-							"star.c10r.facebook.com"
-						],
-						[
-							"dns_lookup_getaddrinfo"
-						],
-						[
-							"try_compose",
-							[
-								"fbmessenger_dns_consistency_check",
-								"star"
-							]
-						],
-						[
-							"make_endpoints_for_port",
-							443
-						],
-						[
-							"new_endpoint_pipeline",
-							[
-								"tcp_connect"
-							],
-							[
-								"try_compose",
-								[
-									"fbmessenger_tcp_reachability_check",
-									"star"
-								]
-							]
-						]
+						}
 					]
-				]
+				}
 			}
 		}
 	],
