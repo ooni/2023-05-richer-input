@@ -27,6 +27,9 @@ type domainNameFunc struct {
 }
 
 func (f *domainNameFunc) Apply(ctx context.Context, rtx *Runtime, input *Void) (*DNSLookupInput, error) {
+	if !ValidDomainNames(f.domain) {
+		return nil, &ErrException{&Exception{&ErrInvalidDomain{f.domain}}}
+	}
 	return &DNSLookupInput{f.domain}, nil
 }
 
@@ -118,6 +121,11 @@ type dnsLookupUDPFunc struct {
 }
 
 func (f *dnsLookupUDPFunc) Apply(ctx context.Context, rtx *Runtime, input *DNSLookupInput) (*DNSLookupOutput, error) {
+	// make sure the target endpoint is valid
+	if !ValidEndpoints(f.endpoint) {
+		return nil, &ErrException{&Exception{&ErrInvalidEndpoint{f.endpoint}}}
+	}
+
 	// create trace
 	trace := measurexlite.NewTrace(rtx.idGenerator.Add(1), rtx.zeroTime)
 
@@ -214,6 +222,10 @@ type dnsLookupStaticFunc struct {
 }
 
 func (f *dnsLookupStaticFunc) Apply(ctx context.Context, rtx *Runtime, input *DNSLookupInput) (*DNSLookupOutput, error) {
+	if !ValidIPAddrs(f.addresses...) {
+		return nil, &ErrException{&Exception{&ErrInvalidAddressList{f.addresses}}}
+	}
+
 	output := &DNSLookupOutput{
 		Domain:    input.Domain,
 		Addresses: f.addresses,

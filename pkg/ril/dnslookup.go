@@ -1,16 +1,20 @@
 package ril
 
 import (
-	"net"
+	"fmt"
 
 	"github.com/ooni/2023-05-richer-input/pkg/ric"
+	"github.com/ooni/2023-05-richer-input/pkg/rix"
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
 // DomainName returns a [*Func] that constructs a [DomainNameType].
 //
+// This function PANICS if provided an invalid domain.
+//
 // The main returned [*Func] type is: [VoidType] -> [DomainNameType].
 func DomainName(domain string) *Func {
+	runtimex.Assert(rix.ValidDomainNames(domain), fmt.Sprintf("invalid domain: %s", domain))
 	return &Func{
 		Name:       templateName[ric.DomainNameTemplate](),
 		InputType:  VoidType,
@@ -46,9 +50,7 @@ func DNSLookupGetaddrinfo() *Func {
 // The main returned [Func] type is: [DomainNameType] -> [DNSLookupResultType].
 func DNSLookupStatic(addresses ...string) *Func {
 	// make sure each entry is a valid IP address as documented
-	for _, entry := range addresses {
-		panicUnlessValidIPAddress(entry)
-	}
+	runtimex.Assert(rix.ValidIPAddrs(addresses...), fmt.Sprintf("invalid addresses: %v", addresses))
 
 	// build and return a [Func]
 	return &Func{
@@ -92,9 +94,7 @@ func DNSLookupParallel(fs ...*Func) *Func {
 // The main returned [*Func] type is: [DomainNameType] -> [DNSLookupResultType].
 func DNSLookupUDP(endpoint string) *Func {
 	// make sure we're given a valid endpoint
-	address, sport := runtimex.Try2(net.SplitHostPort(endpoint))
-	panicUnlessValidIPAddress(address)
-	panicUnlessValidPort(sport)
+	runtimex.Assert(rix.ValidEndpoints(endpoint), fmt.Sprintf("invalid endpoint: %s", endpoint))
 
 	// build and return a [Func]
 	return &Func{
