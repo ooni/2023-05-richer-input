@@ -45,8 +45,11 @@ func ExampleExportASTNode() {
 			// TCPConnectionType -> TLSConnectionType
 			undsl.TLSHandshake(),
 
-			// TLSConnectionType -> VoidType
+			// TLSConnectionType -> HTTPResponseType
 			undsl.HTTPTransaction(),
+
+			// HTTPResponseType -> VoidType
+			undsl.Discard(undsl.HTTPResponseType),
 		),
 	)
 
@@ -59,7 +62,7 @@ func ExampleExportASTNode() {
 	// print the serialized JSON
 	fmt.Printf("%s\n", string(data))
 
-	// output: {"func":"compose","arguments":{},"children":[{"func":"domain_name","arguments":{"domain":"www.example.com"},"children":[]},{"func":"dns_lookup_parallel","arguments":{},"children":[{"func":"dns_lookup_getaddrinfo","arguments":{},"children":[]},{"func":"dns_lookup_udp","arguments":{"endpoint":"8.8.4.4:53"},"children":[]}]},{"func":"make_endpoints_for_port","arguments":{"port":443},"children":[]},{"func":"new_endpoint_pipeline","arguments":{},"children":[{"func":"tcp_connect","arguments":{},"children":[]},{"func":"if_func_exists","arguments":{},"children":[{"func":"foobar_check_tcp_connect","arguments":{},"children":[]}]},{"func":"tls_handshake","arguments":{},"children":[]},{"func":"http_transaction","arguments":{},"children":[]}]}]}
+	// output: {"func":"compose","arguments":{},"children":[{"func":"domain_name","arguments":{"domain":"www.example.com"},"children":[]},{"func":"dns_lookup_parallel","arguments":{},"children":[{"func":"dns_lookup_getaddrinfo","arguments":{},"children":[]},{"func":"dns_lookup_udp","arguments":{"endpoint":"8.8.4.4:53"},"children":[]}]},{"func":"make_endpoints_for_port","arguments":{"port":443},"children":[]},{"func":"new_endpoint_pipeline","arguments":{},"children":[{"func":"tcp_connect","arguments":{},"children":[]},{"func":"if_func_exists","arguments":{},"children":[{"func":"foobar_check_tcp_connect","arguments":{},"children":[]}]},{"func":"tls_handshake","arguments":{},"children":[]},{"func":"http_transaction","arguments":{},"children":[]},{"func":"discard","arguments":{},"children":[]}]}]}
 }
 
 func TestExportASTNode(t *testing.T) {

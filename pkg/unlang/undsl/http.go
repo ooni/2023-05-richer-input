@@ -86,7 +86,7 @@ func HTTPTransaction(options ...HTTPTransactionOption) *Func {
 	return &Func{
 		Name:       templateName[uncompiler.HTTPTransactionTemplate](),
 		InputType:  SumType(TCPConnectionType, TLSConnectionType, QUICConnectionType),
-		OutputType: VoidType,
+		OutputType: HTTPResponseType,
 		Arguments:  args,
 		Children:   []*Func{},
 	}

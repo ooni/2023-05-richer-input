@@ -60,6 +60,9 @@ const ErrorType = SimpleType("error")
 // ExceptionType is the type of [*unruntime.Exception].
 const ExceptionType = SimpleType("*Exception")
 
+// HTTPResponseType is the type of [*unruntime.HTTPResponse].
+const HTTPResponseType = SimpleType("*HTTPResponse")
+
 // ListOfEndpointType is the type of a list of [*unruntime.Endpoint].
 const ListOfEndpointType = SimpleType("[]*Endpoint")
 

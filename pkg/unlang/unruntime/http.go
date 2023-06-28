@@ -10,6 +10,7 @@ import (
 	"github.com/ooni/probe-engine/pkg/measurexlite"
 	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/ooni/probe-engine/pkg/netxlite"
+	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
 type httpTransactionConfig struct {
@@ -117,6 +118,27 @@ func HTTPTransactionOptionUserAgent(value string) HTTPTransactionOption {
 	}
 }
 
+// HTTPResponse is the response produced by an [HTTPTransaction] on success.
+type HTTPResponse struct {
+	// Address is the original endpoint address.
+	Address string
+
+	// Domain is the original domain.
+	Domain string
+
+	// Network is the original endpoint network.
+	Network string
+
+	// Request is the original request.
+	Request *http.Request
+
+	// Response is the response.
+	Response *http.Response
+
+	// ResponseBodySnapshot is the body snapshot.
+	ResponseBodySnapshot []byte
+}
+
 // HTTPTransaction returns a [Func] that sends an HTTP request and reads the
 // corresponding HTTP response and its body.
 //
@@ -127,7 +149,7 @@ func HTTPTransactionOptionUserAgent(value string) HTTPTransactionOption {
 //
 // - collects observations and stores them into the [*Runtime];
 //
-// - returns an [error] or a [*Void].
+// - returns an [error] or an [*HTTPResponse].
 func HTTPTransaction(options ...HTTPTransactionOption) Func {
 	return &httpTransactionFunc{options}
 }
@@ -162,7 +184,7 @@ func (f *httpTransactionFunc) Apply(ctx context.Context, rtx *Runtime, input any
 }
 
 func (f *httpTransactionFunc) applyQUIC(
-	ctx context.Context, rtx *Runtime, conn *QUICConnection) (*Void, error) {
+	ctx context.Context, rtx *Runtime, conn *QUICConnection) (*HTTPResponse, error) {
 	txp := netxlite.NewHTTP3Transport(
 		rtx.logger,
 		netxlite.NewSingleUseQUICDialer(conn.Conn),
@@ -172,7 +194,7 @@ func (f *httpTransactionFunc) applyQUIC(
 }
 
 func (f *httpTransactionFunc) applyTCP(
-	ctx context.Context, rtx *Runtime, conn *TCPConnection) (*Void, error) {
+	ctx context.Context, rtx *Runtime, conn *TCPConnection) (*HTTPResponse, error) {
 	txp := netxlite.NewHTTPTransport(
 		rtx.logger,
 		netxlite.NewSingleUseDialer(conn.Conn),
@@ -182,7 +204,7 @@ func (f *httpTransactionFunc) applyTCP(
 }
 
 func (f *httpTransactionFunc) applyTLS(
-	ctx context.Context, rtx *Runtime, conn *TLSConnection) (*Void, error) {
+	ctx context.Context, rtx *Runtime, conn *TLSConnection) (*HTTPResponse, error) {
 	txp := netxlite.NewHTTPTransport(
 		rtx.logger,
 		netxlite.NewNullDialer(),
@@ -212,7 +234,7 @@ type httpTransactionConnection interface {
 }
 
 func (f *httpTransactionFunc) applyTransport(ctx context.Context, rtx *Runtime,
-	txp model.HTTPTransport, conn httpTransactionConnection) (*Void, error) {
+	txp model.HTTPTransport, conn httpTransactionConnection) (*HTTPResponse, error) {
 	// setup
 	const timeout = 10 * time.Second
 	ctx, cancel := context.WithTimeout(ctx, timeout)
@@ -269,7 +291,9 @@ func (f *httpTransactionFunc) applyTransport(ctx context.Context, rtx *Runtime,
 	// perform round trip
 	resp, err := txp.RoundTrip(req)
 	if err != nil {
-		// make sure we close the response body
+		// make sure we eventually close the response body (note that closing
+		// at the end of this function with `defer` would prevent the caller from
+		// continuing to read the body, which isn't optimal...)
 		rtx.trackCloser(resp.Body)
 
 		// TODO(bassosimone): here we should use StreamAllContext such that we
@@ -313,7 +337,22 @@ func (f *httpTransactionFunc) applyTransport(ctx context.Context, rtx *Runtime,
 		"http_transaction_done",
 	))
 
-	return &Void{}, nil
+	// handle the case where we failed
+	if err != nil {
+		return nil, err
+	}
+
+	// prepare the value to return
+	runtimex.Assert(resp != nil, "expected response to be non-nil here")
+	output := &HTTPResponse{
+		Address:              conn.address(),
+		Domain:               conn.domain(),
+		Network:              conn.network(),
+		Request:              req,
+		Response:             resp,
+		ResponseBodySnapshot: body,
+	}
+	return output, nil
 }
 
 func (f *httpTransactionFunc) newHTTPRequest(ctx context.Context,
