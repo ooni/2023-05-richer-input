@@ -16,10 +16,17 @@ type MakeEndpointsForPortTemplate struct{}
 
 // Compile implements [FuncTemplate].
 func (MakeEndpointsForPortTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
+	// parse the args
 	var arguments MakeEndpointsForPortArguments
 	if err := json.Unmarshal(node.Arguments, &arguments); err != nil {
 		return nil, err
 	}
+
+	// we must not have any children
+	if len(node.Children) != 0 {
+		return nil, ErrInvalidNumberOfChildren
+	}
+
 	return unruntime.MakeEndpointsForPort(arguments.Port), nil
 }
 
@@ -33,10 +40,21 @@ type NewEndpointPipelineTemplate struct{}
 
 // Compile implements [FuncTemplate].
 func (NewEndpointPipelineTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
+	// there are no arguments
+	var empty empty
+	if err := json.Unmarshal(node.Arguments, &empty); err != nil {
+		return nil, err
+	}
+
+	// we need at least one children
+	if len(node.Children) < 1 {
+		return nil, ErrInvalidNumberOfChildren
+	}
 	children, err := compiler.compileNodes(node.Children...)
 	if err != nil {
 		return nil, err
 	}
+
 	return unruntime.NewEndpointPipeline(children...), nil
 }
 

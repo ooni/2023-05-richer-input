@@ -26,10 +26,17 @@ type DomainNameTemplate struct{}
 
 // Compile implements [FuncTemplate].
 func (DomainNameTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
+	// parse the arguments
 	var arguments DomainNameArguments
 	if err := json.Unmarshal(node.Arguments, &arguments); err != nil {
 		return nil, err
 	}
+
+	// we must not have any children
+	if len(node.Children) != 0 {
+		return nil, ErrInvalidNumberOfChildren
+	}
+
 	return unruntime.DomainName(arguments.Domain), nil
 }
 
@@ -43,6 +50,17 @@ type DNSLookupGetaddrinfoTemplate struct{}
 
 // Compile implements [FuncTemplate].
 func (DNSLookupGetaddrinfoTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
+	// there are no arguments
+	var empty empty
+	if err := json.Unmarshal(node.Arguments, &empty); err != nil {
+		return nil, err
+	}
+
+	// we must not have any children
+	if len(node.Children) != 0 {
+		return nil, ErrInvalidNumberOfChildren
+	}
+
 	return unruntime.DNSLookupGetaddrinfo(), nil
 }
 
@@ -56,10 +74,17 @@ type DNSLookupStaticTemplate struct{}
 
 // Compile implements [FuncTemplate].
 func (DNSLookupStaticTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
+	// parse the arguments
 	var arguments DNSLookupStaticArguments
 	if err := json.Unmarshal(node.Arguments, &arguments); err != nil {
 		return nil, err
 	}
+
+	// we must not have any children
+	if len(node.Children) != 0 {
+		return nil, ErrInvalidNumberOfChildren
+	}
+
 	return unruntime.DNSLookupStatic(arguments.Addresses...), nil
 }
 
@@ -73,10 +98,21 @@ type DNSLookupParallelTemplate struct{}
 
 // Compile implements [FuncTemplate].
 func (DNSLookupParallelTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
+	// there are no arguments
+	var empty empty
+	if err := json.Unmarshal(node.Arguments, &empty); err != nil {
+		return nil, err
+	}
+
+	// we need at least one children
+	if len(node.Children) < 1 {
+		return nil, ErrInvalidNumberOfChildren
+	}
 	children, err := compiler.compileNodes(node.Children...)
 	if err != nil {
 		return nil, err
 	}
+
 	return unruntime.DNSLookupParallel(children...), nil
 }
 
@@ -90,10 +126,17 @@ type DNSLookupUDPTemplate struct{}
 
 // Compile implements [FuncTemplate].
 func (DNSLookupUDPTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
+	// parse the args
 	var arguments DNSLookupUDPArguments
 	if err := json.Unmarshal(node.Arguments, &arguments); err != nil {
 		return nil, err
 	}
+
+	// we must not have any children
+	if len(node.Children) != 0 {
+		return nil, ErrInvalidNumberOfChildren
+	}
+
 	return unruntime.DNSLookupUDP(arguments.Endpoint), nil
 }
 

@@ -1,6 +1,7 @@
 package uncompiler
 
 import (
+	"encoding/json"
 	"errors"
 
 	"github.com/ooni/2023-05-richer-input/pkg/unlang/unruntime"
@@ -21,9 +22,17 @@ type IfFuncExistsTemplate struct{}
 
 // Compile implements [FuncTemplate].
 func (IfFuncExistsTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
+	// there are no arguments
+	var empty empty
+	if err := json.Unmarshal(node.Arguments, &empty); err != nil {
+		return nil, err
+	}
+
+	// we need exactly one children
 	if len(node.Children) != 1 {
 		return nil, ErrInvalidNumberOfChildren
 	}
+
 	f0 := node.Children[0]
 	if !compiler.templateExists(f0.Func) {
 		return &unruntime.Identity{}, nil

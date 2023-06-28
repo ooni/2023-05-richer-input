@@ -19,6 +19,7 @@ type QUICHandshakeTemplate struct{}
 
 // Compile implements [FuncTemplate].
 func (QUICHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
+	// parse the arguments
 	var (
 		arguments QUICHandshakeArguments
 		options   []unruntime.QUICHandshakeOption
@@ -38,6 +39,11 @@ func (QUICHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (unrunti
 	}
 	if len(arguments.X509Certs) > 0 {
 		options = append(options, unruntime.QUICHandshakeOptionX509Certs(arguments.X509Certs...))
+	}
+
+	// we must not have any children
+	if len(node.Children) != 0 {
+		return nil, ErrInvalidNumberOfChildren
 	}
 
 	return unruntime.QUICHandshake(options...), nil

@@ -19,6 +19,7 @@ type TLSHandshakeTemplate struct{}
 
 // Compile implements [FuncTemplate].
 func (TLSHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntime.Func, error) {
+	// parse the args
 	var (
 		arguments TLSHandshakeArguments
 		options   []unruntime.TLSHandshakeOption
@@ -38,6 +39,11 @@ func (TLSHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (unruntim
 	}
 	if len(arguments.X509Certs) > 0 {
 		options = append(options, unruntime.TLSHandshakeOptionX509Certs(arguments.X509Certs...))
+	}
+
+	// we must not have any children
+	if len(node.Children) != 0 {
+		return nil, ErrInvalidNumberOfChildren
 	}
 
 	return unruntime.TLSHandshake(options...), nil
