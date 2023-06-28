@@ -25,37 +25,37 @@ func (t SimpleType) AsMap() map[SimpleType]bool {
 
 // String implements [ComplexType].
 func (t SimpleType) String() string {
-	return fmt.Sprintf("Maybe[%s]", string(t))
+	return string(t)
 }
 
 const (
 	// DNSLookupResultType is the type of the result of a DNS lookup.
-	DNSLookupResultType = SimpleType("DNSLookupResult")
+	DNSLookupResultType = SimpleType("*DNSLookupResult")
 
 	// DomainNameType is the type of a domain name.
-	DomainNameType = SimpleType("DomainName")
+	DomainNameType = SimpleType("*DomainName")
 
 	// EndpointType is the type of a TCP or UDP endpoint.
-	EndpointType = SimpleType("Endpoint")
+	EndpointType = SimpleType("*Endpoint")
 
 	// HTTPRoundTripResponseType is the type produced by the HTTP round trip.
-	HTTPRoundTripResponseType = SimpleType("HTTPRoundTripResponse")
+	HTTPRoundTripResponseType = SimpleType("*HTTPRoundTripResponse")
 
 	// ListOfEndpointType is the type of a list of [EndpointType].
-	ListOfEndpointType = SimpleType("ListOfEndpoint")
+	ListOfEndpointType = SimpleType("[]*Endpoint")
 
 	// QUICConnectionType is the type of a established QUIC connection.
-	QUICConnectionType = SimpleType("QUICConnection")
+	QUICConnectionType = SimpleType("*QUICConnection")
 
 	// TCPConnectionType is the type of a established TCP connection.
-	TCPConnectionType = SimpleType("TCPConnection")
+	TCPConnectionType = SimpleType("*TCPConnection")
 
 	// TLSConnectionType is the type of a established TLS connection.
-	TLSConnectionType = SimpleType("TLSConnection")
+	TLSConnectionType = SimpleType("*TLSConnection")
 
 	// VoidType represent the lack of input arguments when used as the input type and the
 	// lack of a return value when used as the output type.
-	VoidType = SimpleType("Void")
+	VoidType = SimpleType("*Void")
 )
 
 // SumType is the sum of some [SimpleType].
@@ -139,4 +139,12 @@ func typeCheckFuncList(context string, inputType, outputType SimpleType, fs ...*
 		}
 	}
 	return fs
+}
+
+// CompleteTypeName maps the type name used by this package to the real type name
+// used by the [riengine]. Basically, each type T used by this package maps to a sum
+// type T|error|*Exception|*Skip inside the [riengine] package. This sum type gives
+// us additional flexibility in terms of handling and routing a [Func] input.
+func CompleteTypeName(t ComplexType) string {
+	return fmt.Sprintf("%s|error|*Exception|*Skip", t.String())
 }
