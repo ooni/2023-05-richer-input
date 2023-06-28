@@ -1,27 +1,14 @@
 package ril
 
-// HTTPRoundTrip returns a [*Func] that uses a connection to perform an HTTP round trip, i.e., to
-// send a request and receive the response headers.
+// HTTPTransaction returns a [*Func] that uses a connection to send an HTTP request and
+// read the corresponding HTTP response and its response body.
 //
-// The main returned [*Func] type is: ConnType -> [HTTPRoundTripResponseType] where ConnType is
-// the [SumType] of [TCPConnectionType], [TLSConnectionType], [QUICConnectionType].
-func HTTPRoundTrip() *Func {
+// The main returned [*Func] type is: ConnType -> [VoidType] where ConnType is the [SumType]
+// of [TCPConnectionType], [TLSConnectionType], [QUICConnectionType].
+func HTTPTransaction() *Func {
 	return &Func{
-		Name:       "http_round_trip",
+		Name:       "http_transaction",
 		InputType:  SumType(TCPConnectionType, TLSConnectionType, QUICConnectionType),
-		OutputType: HTTPRoundTripResponseType,
-		Arguments:  nil,
-		Children:   []*Func{},
-	}
-}
-
-// HTTPReadResponseBodySnapshot returns a [*Func] that reads a snapshot of the response body.
-//
-// The main returned [*Func] type is: [HTTPRoundTripResponseType] -> [VoidType].
-func HTTPReadResponseBodySnapshot() *Func {
-	return &Func{
-		Name:       "http_read_response_body_snapshot",
-		InputType:  HTTPRoundTripResponseType,
 		OutputType: VoidType,
 		Arguments:  nil,
 		Children:   []*Func{},

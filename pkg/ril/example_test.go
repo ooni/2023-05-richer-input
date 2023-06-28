@@ -44,11 +44,8 @@ func Example() {
 			// TCPConnectionType -> TLSConnectionType
 			ril.TLSHandshake(),
 
-			// TLSConnectionType -> HTTPRoundTripResponseType
-			ril.HTTPRoundTrip(),
-
-			// HTTPRoundTripResponseType -> VoidType
-			ril.HTTPReadResponseBodySnapshot(),
+			// TLSConnectionType -> VoidType
+			ril.HTTPTransaction(),
 		),
 	)
 
@@ -61,5 +58,5 @@ func Example() {
 	// print the serialized JSON
 	fmt.Printf("%s\n", string(data))
 
-	// output: {"func":"compose","arguments":null,"children":[{"func":"dns_lookup_input","arguments":{"domain":"www.example.com"},"children":[]},{"func":"dns_lookup_parallel","arguments":null,"children":[{"func":"dns_lookup_getaddrinfo","arguments":null,"children":[]},{"func":"dns_lookup_udp","arguments":{"endpoint":"8.8.4.4:53"},"children":[]}]},{"func":"make_endpoints_for_port","arguments":{"port":443},"children":[]},{"func":"new_endpoint_pipeline","arguments":null,"children":[{"func":"tcp_connect","arguments":null,"children":[]},{"func":"if_func_exists","arguments":null,"children":[{"func":"foobar_check_tcp_connect","arguments":null,"children":[]}]},{"func":"tls_handshake","arguments":{},"children":[]},{"func":"http_round_trip","arguments":null,"children":[]},{"func":"http_read_response_body_snapshot","arguments":null,"children":[]}]}]}
+	// output: {"func":"compose","arguments":null,"children":[{"func":"dns_lookup_input","arguments":{"domain":"www.example.com"},"children":[]},{"func":"dns_lookup_parallel","arguments":null,"children":[{"func":"dns_lookup_getaddrinfo","arguments":null,"children":[]},{"func":"dns_lookup_udp","arguments":{"endpoint":"8.8.4.4:53"},"children":[]}]},{"func":"make_endpoints_for_port","arguments":{"port":443},"children":[]},{"func":"new_endpoint_pipeline","arguments":null,"children":[{"func":"tcp_connect","arguments":null,"children":[]},{"func":"if_func_exists","arguments":null,"children":[{"func":"foobar_check_tcp_connect","arguments":null,"children":[]}]},{"func":"tls_handshake","arguments":{},"children":[]},{"func":"http_transaction","arguments":null,"children":[]}]}]}
 }
