@@ -34,9 +34,9 @@ func QUICHandshakeOptionSkipVerify(v bool) QUICHandshakeOption {
 	}
 }
 
-// QUICHandshake returns a [Func] that performs QUIC handshakes.
+// QUICHandshake returns a [*Func] that performs QUIC handshakes.
 //
-// The returned [Func] has this type: [EndpointType] -> [QUICConnectionType].
+// The main returned [*Func] type is: [EndpointType] -> [QUICConnectionType].
 func QUICHandshake(options ...QUICHandshakeOption) *Func {
 	args := &riengine.QUICHandshakeArguments{}
 	for _, option := range options {

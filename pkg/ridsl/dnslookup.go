@@ -7,9 +7,9 @@ import (
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
-// DomainName returns a [Func] that constructs a [DomainNameType].
+// DomainName returns a [*Func] that constructs a [DomainNameType].
 //
-// The returned [Func] type is: [VoidType] -> [DomainNameType].
+// The main returned [*Func] type is: [VoidType] -> [DomainNameType].
 func DomainName(domain string) *Func {
 	return &Func{
 		Name:       "dns_lookup_input",
@@ -22,12 +22,12 @@ func DomainName(domain string) *Func {
 	}
 }
 
-// DNSLookupGetaddrinfo returns a [Func] that performs DNS lookups using getaddrinfo.
+// DNSLookupGetaddrinfo returns a [*Func] that performs DNS lookups using getaddrinfo.
 //
-// The returned [Func] will fallback to the standard library pure Go resolver when the
+// The returned [*Func] will fallback to the standard library pure Go resolver when the
 // code is compiled using the `-tags netgo` command line flag.
 //
-// The returned [Func] type is: [DomainNameType] -> [DNSLookupResultType].
+// The main returned [*Func] type is: [DomainNameType] -> [DNSLookupResultType].
 func DNSLookupGetaddrinfo() *Func {
 	return &Func{
 		Name:       "dns_lookup_getaddrinfo",
@@ -38,12 +38,12 @@ func DNSLookupGetaddrinfo() *Func {
 	}
 }
 
-// DNSLookupStatic returns a [Func] that simulates a DNS resolver but always
+// DNSLookupStatic returns a [*Func] that simulates a DNS resolver but always
 // returns the given static list of IP addresses when invoked.
 //
 // This function PANICS if provided invalid IP addresses.
 //
-// The returned [Func] type is: [DomainNameType] -> [DNSLookupResultType].
+// The main returned [Func] type is: [DomainNameType] -> [DNSLookupResultType].
 func DNSLookupStatic(addresses ...string) *Func {
 	// make sure each entry is a valid IP address as documented
 	for _, entry := range addresses {
@@ -62,13 +62,13 @@ func DNSLookupStatic(addresses ...string) *Func {
 	}
 }
 
-// DNSLookupParallel returns a [Func] that composes N resolvers together and
+// DNSLookupParallel returns a [*Func] that composes N resolvers together and
 // runs all of them in parallel with a limited fixed parallelism.
 //
-// Each provided [Func] MUST have this type: [DomainNameType] -> [DNSLookupResultType]. If
+// Each provided [*Func] MUST have this main type: [DomainNameType] -> [DNSLookupResultType]. If
 // that is not the case, then this function will PANIC.
 //
-// The returned [Func] type is: [DomainNameType] -> [DNSLookupResultType].
+// The main returned [*Func] type is: [DomainNameType] -> [DNSLookupResultType].
 func DNSLookupParallel(fs ...*Func) *Func {
 	return &Func{
 		Name:       "dns_lookup_parallel",
@@ -84,12 +84,12 @@ func DNSLookupParallel(fs ...*Func) *Func {
 	}
 }
 
-// DNSLookupUDP returns a [Func] that performs DNS lookups using the given UDP endoint.
+// DNSLookupUDP returns a [*Func] that performs DNS lookups using the given UDP endoint.
 //
 // The endpoint format MUST be "ADDR:PORT" for IPv4 and "[ADDR]:PORT" for IPv6. This function
 // will PANIC if either the address and/or the port aren't valid.
 //
-// The returned [Func] type is: [DomainNameType] -> [DNSLookupResultType].
+// The main returned [*Func] type is: [DomainNameType] -> [DNSLookupResultType].
 func DNSLookupUDP(endpoint string) *Func {
 	// make sure we're given a valid endpoint
 	address, sport := runtimex.Try2(net.SplitHostPort(endpoint))

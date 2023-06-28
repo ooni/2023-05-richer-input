@@ -1,9 +1,9 @@
 package ridsl
 
-// HTTPRoundTrip returns a [Func] that uses a connection to perform an HTTP round trip, i.e., to
+// HTTPRoundTrip returns a [*Func] that uses a connection to perform an HTTP round trip, i.e., to
 // send a request and receive the response headers.
 //
-// The returned [Func] has this type: ConnType -> [HTTPRoundTripResponseType] where ConnType is
+// The main returned [*Func] type is: ConnType -> [HTTPRoundTripResponseType] where ConnType is
 // the [SumType] of [TCPConnectionType], [TLSConnectionType], [QUICConnectionType].
 func HTTPRoundTrip() *Func {
 	return &Func{
@@ -15,9 +15,9 @@ func HTTPRoundTrip() *Func {
 	}
 }
 
-// HTTPReadResponseBodySnapshot returns a [Func] that reads a snapshot of the response body.
+// HTTPReadResponseBodySnapshot returns a [*Func] that reads a snapshot of the response body.
 //
-// The returned [Func] has this type: [HTTPRoundTripResponseType] -> [VoidType].
+// The main returned [*Func] type is: [HTTPRoundTripResponseType] -> [VoidType].
 func HTTPReadResponseBodySnapshot() *Func {
 	return &Func{
 		Name:       "http_read_response_body_snapshot",

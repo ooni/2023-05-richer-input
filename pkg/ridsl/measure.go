@@ -1,11 +1,11 @@
 package ridsl
 
-// MeasureMultipleDomains returns a [Func] for measuring some domains in parallel.
+// MeasureMultipleDomains returns a [*Func] for measuring some domains in parallel.
 //
-// Each fs [Func] MUST have this type: [VoidType] -> [VoidType]. If that is not the case,
+// Each fs [*Func] MUST have this main type: [VoidType] -> [VoidType]. If that is not the case,
 // then [MeasureMultipleDomains] will PANIC.
 //
-// The returned [Func] has this type: [VoidType] -> [VoidType].
+// The main returned [*Func] type is: [VoidType] -> [VoidType].
 func MeasureMultipleDomains(fs ...*Func) *Func {
 	return &Func{
 		Name:       "measure_multiple_domains",
@@ -16,12 +16,12 @@ func MeasureMultipleDomains(fs ...*Func) *Func {
 	}
 }
 
-// MeasureMultipleDomains returns a [Func] for measuring some endpoints in parallel.
+// MeasureMultipleDomains returns a [*Func] for measuring some endpoints in parallel.
 //
-// Each fs [Func] MUST have this type: [DNSLookupResultType] -> [VoidType]. If that is not the
+// Each fs [*Func] MUST have this main type: [DNSLookupResultType] -> [VoidType]. If that is not the
 // case, then [MeasureMultipleEndpoints] will PANIC.
 //
-// The returned [Func] has this type: [DNSLookupResultType] -> [VoidType].
+// The main returned [*Func] type is: [DNSLookupResultType] -> [VoidType].
 func MeasureMultipleEndpoints(fs ...*Func) *Func {
 	return &Func{
 		Name:       "measure_multiple_endpoints",

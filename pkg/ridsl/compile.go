@@ -1,6 +1,6 @@
 package ridsl
 
-// Compile converts a [Func] to an [ASTNode].
+// Compile converts a [*Func] to an [*ASTNode].
 func Compile(f *Func) *ASTNode {
 	children := []*ASTNode{}
 	for _, entry := range f.Children {

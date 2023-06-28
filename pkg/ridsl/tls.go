@@ -34,9 +34,9 @@ func TLSHandshakeOptionSkipVerify(v bool) TLSHandshakeOption {
 	}
 }
 
-// TLSHandshake returns a [Func] that performs TLS handshakes.
+// TLSHandshake returns a [*Func] that performs TLS handshakes.
 //
-// The returned [Func] has this type: [TCPConnectionType] -> [TLSConnectionType].
+// The main returned [*Func] type is: [TCPConnectionType] -> [TLSConnectionType].
 func TLSHandshake(options ...TLSHandshakeOption) *Func {
 	args := &riengine.TLSHandshakeArguments{}
 	for _, option := range options {

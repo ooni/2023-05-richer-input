@@ -13,8 +13,8 @@ func doDump(f *Func, indent int) {
 		"%s%s :: %s -> %s\n",
 		dumpIndent(indent),
 		f.Name,
-		CompleteTypeName(f.InputType),
-		CompleteTypeName(f.OutputType),
+		CompleteType(f.InputType),
+		CompleteType(f.OutputType),
 	)
 	for _, child := range f.Children {
 		doDump(child, indent+1)

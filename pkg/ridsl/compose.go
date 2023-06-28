@@ -6,8 +6,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
-// Compose composes a [Func] f0 with a list of [Func] fs. This function PANICS if the output type
-// of any [Func] is not compatible with the input of the subsequent [Func]. Two types A and B
+// Compose composes a [*Func] f0 with a list of [*Func] fs. This function PANICS if the output type
+// of any [*Func] is not compatible with the input of the subsequent [*Func]. Two types A and B
 // are compatible if they are [SimpleType] and A equals B or if they are [SumType] and the types
 // contained in A are a subset of the types contained in B.
 func Compose(f0 *Func, fs ...*Func) *Func {
