@@ -1,5 +1,7 @@
 package ril
 
+import "github.com/ooni/2023-05-richer-input/pkg/ric"
+
 // HTTPTransaction returns a [*Func] that uses a connection to send an HTTP request and
 // read the corresponding HTTP response and its response body.
 //
@@ -7,7 +9,7 @@ package ril
 // of [TCPConnectionType], [TLSConnectionType], [QUICConnectionType].
 func HTTPTransaction() *Func {
 	return &Func{
-		Name:       "http_transaction",
+		Name:       templateName[ric.HTTPTransactionTemplate](),
 		InputType:  SumType(TCPConnectionType, TLSConnectionType, QUICConnectionType),
 		OutputType: VoidType,
 		Arguments:  nil,

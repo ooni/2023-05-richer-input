@@ -1,5 +1,7 @@
 package ril
 
+import "github.com/ooni/2023-05-richer-input/pkg/ric"
+
 // IfFuncExists returns a [*Func] that wraps the given [*Func]. The name of the returned [*Func] is
 // such that the [ric] will replace the wrapped [*Func] with the identity [*Func] at runtime if
 // the wrapped [*Func] does not exist. Otherwise, it will just execute the wrapped [*Func]. This
@@ -8,7 +10,7 @@ package ril
 // returned [*Func] type is the same of the given [*Func] f.
 func IfFuncExists(f *Func) *Func {
 	return &Func{
-		Name:       "if_func_exists",
+		Name:       templateName[ric.IfFuncExistsTemplate](),
 		InputType:  f.InputType,
 		OutputType: f.OutputType,
 		Arguments:  nil,

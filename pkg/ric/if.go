@@ -10,7 +10,7 @@ import (
 type IfFuncExistsTemplate struct{}
 
 // Compile implements FuncTemplate.
-func (t *IfFuncExistsTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+func (IfFuncExistsTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
 	if len(node.Children) != 1 {
 		return nil, errors.New("ric: expected a single children func")
 	}
@@ -23,6 +23,6 @@ func (t *IfFuncExistsTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.F
 }
 
 // TemplateName implements FuncTemplate.
-func (t *IfFuncExistsTemplate) TemplateName() string {
+func (IfFuncExistsTemplate) TemplateName() string {
 	return "if_func_exists"
 }

@@ -8,11 +8,11 @@ import (
 type HTTPTransactionTemplate struct{}
 
 // Compile implements FuncTemplate.
-func (t *HTTPTransactionTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+func (HTTPTransactionTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
 	return rix.HTTPTransaction(), nil
 }
 
 // TemplateName implements FuncTemplate.
-func (t *HTTPTransactionTemplate) TemplateName() string {
+func (HTTPTransactionTemplate) TemplateName() string {
 	return "http_transaction"
 }

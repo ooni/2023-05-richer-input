@@ -2,9 +2,10 @@ package ric
 
 import "github.com/ooni/2023-05-richer-input/pkg/rix"
 
-type composeTemplate struct{}
+// ComposeTemplate is the template for "compose".
+type ComposeTemplate struct{}
 
-func (t *composeTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+func (ComposeTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
 	children, err := compiler.compileNodes(node.Children...)
 	if err != nil {
 		return nil, err
@@ -12,6 +13,6 @@ func (t *composeTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, 
 	return rix.Compose(children...), nil
 }
 
-func (t *composeTemplate) TemplateName() string {
+func (ComposeTemplate) TemplateName() string {
 	return "compose"
 }

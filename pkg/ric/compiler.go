@@ -20,37 +20,37 @@ func NewCompiler() *Compiler {
 	}
 
 	// compose.go
-	c.RegisterFuncTemplate(&composeTemplate{})
+	c.RegisterFuncTemplate(ComposeTemplate{})
 
 	// dnslookup.go
-	c.RegisterFuncTemplate(&DomainNameTemplate{})
-	c.RegisterFuncTemplate(&DNSLookupGetaddrinfoTemplate{})
-	c.RegisterFuncTemplate(&DNSLookupStaticTemplate{})
-	c.RegisterFuncTemplate(&DNSLookupParallelTemplate{})
-	c.RegisterFuncTemplate(&DNSLookupUDPTemplate{})
+	c.RegisterFuncTemplate(DomainNameTemplate{})
+	c.RegisterFuncTemplate(DNSLookupGetaddrinfoTemplate{})
+	c.RegisterFuncTemplate(DNSLookupStaticTemplate{})
+	c.RegisterFuncTemplate(DNSLookupParallelTemplate{})
+	c.RegisterFuncTemplate(DNSLookupUDPTemplate{})
 
 	// endpoints.go
-	c.RegisterFuncTemplate(&MakeEndpointsForPortTemplate{})
-	c.RegisterFuncTemplate(&NewEndpointPipelineTemplate{})
+	c.RegisterFuncTemplate(MakeEndpointsForPortTemplate{})
+	c.RegisterFuncTemplate(NewEndpointPipelineTemplate{})
 
 	// http.go
-	c.RegisterFuncTemplate(&HTTPTransactionTemplate{})
+	c.RegisterFuncTemplate(HTTPTransactionTemplate{})
 
 	// if.go
-	c.RegisterFuncTemplate(&IfFuncExistsTemplate{})
+	c.RegisterFuncTemplate(IfFuncExistsTemplate{})
 
 	// measure.go
-	c.RegisterFuncTemplate(&MeasureMultipleDomainsTemplate{})
-	c.RegisterFuncTemplate(&MeasureMultipleEndpointsTemplate{})
+	c.RegisterFuncTemplate(MeasureMultipleDomainsTemplate{})
+	c.RegisterFuncTemplate(MeasureMultipleEndpointsTemplate{})
 
 	// quic.go
-	c.RegisterFuncTemplate(&QUICHandshakeTemplate{})
+	c.RegisterFuncTemplate(QUICHandshakeTemplate{})
 
 	// tcp.go
-	c.RegisterFuncTemplate(&TCPConnectTemplate{})
+	c.RegisterFuncTemplate(TCPConnectTemplate{})
 
 	// tls.go
-	c.RegisterFuncTemplate(&TLSHandshakeTemplate{})
+	c.RegisterFuncTemplate(TLSHandshakeTemplate{})
 
 	return c
 }

@@ -8,7 +8,7 @@ import (
 type MeasureMultipleDomainsTemplate struct{}
 
 // Compile implements FuncTemplate.
-func (t *MeasureMultipleDomainsTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+func (MeasureMultipleDomainsTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
 	children, err := compiler.compileNodes(node.Children...)
 	if err != nil {
 		return nil, err
@@ -17,7 +17,7 @@ func (t *MeasureMultipleDomainsTemplate) Compile(compiler *Compiler, node *ASTNo
 }
 
 // TemplateName implements FuncTemplate.
-func (t *MeasureMultipleDomainsTemplate) TemplateName() string {
+func (MeasureMultipleDomainsTemplate) TemplateName() string {
 	return "measure_multiple_domains"
 }
 
@@ -25,7 +25,7 @@ func (t *MeasureMultipleDomainsTemplate) TemplateName() string {
 type MeasureMultipleEndpointsTemplate struct{}
 
 // Compile implements FuncTemplate.
-func (t *MeasureMultipleEndpointsTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+func (MeasureMultipleEndpointsTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
 	children, err := compiler.compileNodes(node.Children...)
 	if err != nil {
 		return nil, err
@@ -34,6 +34,6 @@ func (t *MeasureMultipleEndpointsTemplate) Compile(compiler *Compiler, node *AST
 }
 
 // TemplateName implements FuncTemplate.
-func (t *MeasureMultipleEndpointsTemplate) TemplateName() string {
+func (MeasureMultipleEndpointsTemplate) TemplateName() string {
 	return "measure_multiple_endpoints"
 }

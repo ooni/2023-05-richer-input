@@ -8,7 +8,7 @@ import "github.com/ooni/2023-05-richer-input/pkg/ric"
 // The main returned [*Func] type is: [DNSLookupResultType] -> [ListOfEndpointType].
 func MakeEndpointsForPort(port uint16) *Func {
 	return &Func{
-		Name:       "make_endpoints_for_port",
+		Name:       templateName[ric.MakeEndpointsForPortTemplate](),
 		InputType:  DNSLookupResultType,
 		OutputType: ListOfEndpointType,
 		Arguments: &ric.MakeEndpointsForPortArguments{
@@ -44,7 +44,7 @@ func NewEndpointPipeline(f0 *Func, fs ...*Func) *Func {
 
 	// prepare the [Func] to return
 	return &Func{
-		Name:       "new_endpoint_pipeline",
+		Name:       templateName[ric.NewEndpointPipelineTemplate](),
 		InputType:  ListOfEndpointType,
 		OutputType: VoidType,
 		Arguments:  nil,

@@ -15,7 +15,7 @@ type MakeEndpointsForPortArguments struct {
 type MakeEndpointsForPortTemplate struct{}
 
 // Compile implements FuncTemplate.
-func (t *MakeEndpointsForPortTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+func (MakeEndpointsForPortTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
 	var arguments MakeEndpointsForPortArguments
 	if err := json.Unmarshal(node.Arguments, &arguments); err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (t *MakeEndpointsForPortTemplate) Compile(compiler *Compiler, node *ASTNode
 }
 
 // TemplateName implements FuncTemplate.
-func (t *MakeEndpointsForPortTemplate) TemplateName() string {
+func (MakeEndpointsForPortTemplate) TemplateName() string {
 	return "make_endpoints_for_port"
 }
 
@@ -32,7 +32,7 @@ func (t *MakeEndpointsForPortTemplate) TemplateName() string {
 type NewEndpointPipelineTemplate struct{}
 
 // Compile implements FuncTemplate.
-func (t *NewEndpointPipelineTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+func (NewEndpointPipelineTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
 	children, err := compiler.compileNodes(node.Children...)
 	if err != nil {
 		return nil, err
@@ -41,6 +41,6 @@ func (t *NewEndpointPipelineTemplate) Compile(compiler *Compiler, node *ASTNode)
 }
 
 // TemplateName implements FuncTemplate.
-func (t *NewEndpointPipelineTemplate) TemplateName() string {
+func (NewEndpointPipelineTemplate) TemplateName() string {
 	return "new_endpoint_pipeline"
 }

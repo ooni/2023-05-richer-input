@@ -43,7 +43,7 @@ func QUICHandshake(options ...QUICHandshakeOption) *Func {
 		option(args)
 	}
 	return &Func{
-		Name:       "quic_handshake",
+		Name:       templateName[ric.QUICHandshakeTemplate](),
 		InputType:  EndpointType,
 		OutputType: QUICConnectionType,
 		Arguments:  args,

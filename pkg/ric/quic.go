@@ -18,7 +18,7 @@ type QUICHandshakeArguments struct {
 type QUICHandshakeTemplate struct{}
 
 // Compile implements FuncTemplate.
-func (t *QUICHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+func (QUICHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
 	var (
 		arguments QUICHandshakeArguments
 		options   []rix.QUICHandshakeOption
@@ -44,6 +44,6 @@ func (t *QUICHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.
 }
 
 // TemplateName implements FuncTemplate.
-func (t *QUICHandshakeTemplate) TemplateName() string {
+func (QUICHandshakeTemplate) TemplateName() string {
 	return "quic_handshake"
 }

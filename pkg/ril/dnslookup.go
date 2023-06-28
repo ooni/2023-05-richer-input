@@ -12,7 +12,7 @@ import (
 // The main returned [*Func] type is: [VoidType] -> [DomainNameType].
 func DomainName(domain string) *Func {
 	return &Func{
-		Name:       "dns_lookup_input",
+		Name:       templateName[ric.DomainNameTemplate](),
 		InputType:  VoidType,
 		OutputType: DomainNameType,
 		Arguments: &ric.DomainNameArguments{
@@ -30,7 +30,7 @@ func DomainName(domain string) *Func {
 // The main returned [*Func] type is: [DomainNameType] -> [DNSLookupResultType].
 func DNSLookupGetaddrinfo() *Func {
 	return &Func{
-		Name:       "dns_lookup_getaddrinfo",
+		Name:       templateName[ric.DNSLookupGetaddrinfoTemplate](),
 		InputType:  DomainNameType,
 		OutputType: DNSLookupResultType,
 		Arguments:  nil,
@@ -52,7 +52,7 @@ func DNSLookupStatic(addresses ...string) *Func {
 
 	// build and return a [Func]
 	return &Func{
-		Name:       "dns_lookup_static",
+		Name:       templateName[ric.DNSLookupStaticTemplate](),
 		InputType:  DomainNameType,
 		OutputType: DNSLookupResultType,
 		Arguments: &ric.DNSLookupStaticArguments{
@@ -71,7 +71,7 @@ func DNSLookupStatic(addresses ...string) *Func {
 // The main returned [*Func] type is: [DomainNameType] -> [DNSLookupResultType].
 func DNSLookupParallel(fs ...*Func) *Func {
 	return &Func{
-		Name:       "dns_lookup_parallel",
+		Name:       templateName[ric.DNSLookupParallelTemplate](),
 		InputType:  DomainNameType,
 		OutputType: DNSLookupResultType,
 		Arguments:  nil,
@@ -98,7 +98,7 @@ func DNSLookupUDP(endpoint string) *Func {
 
 	// build and return a [Func]
 	return &Func{
-		Name:       "dns_lookup_udp",
+		Name:       templateName[ric.DNSLookupUDPTemplate](),
 		InputType:  DomainNameType,
 		OutputType: DNSLookupResultType,
 		Arguments: &ric.DNSLookupUDPArguments{

@@ -1,5 +1,7 @@
 package ril
 
+import "github.com/ooni/2023-05-richer-input/pkg/ric"
+
 // MeasureMultipleDomains returns a [*Func] for measuring some domains in parallel.
 //
 // Each fs [*Func] MUST have this main type: [VoidType] -> [VoidType]. If that is not the case,
@@ -8,7 +10,7 @@ package ril
 // The main returned [*Func] type is: [VoidType] -> [VoidType].
 func MeasureMultipleDomains(fs ...*Func) *Func {
 	return &Func{
-		Name:       "measure_multiple_domains",
+		Name:       templateName[ric.MeasureMultipleDomainsTemplate](),
 		InputType:  VoidType,
 		OutputType: VoidType,
 		Arguments:  nil,
@@ -24,7 +26,7 @@ func MeasureMultipleDomains(fs ...*Func) *Func {
 // The main returned [*Func] type is: [DNSLookupResultType] -> [VoidType].
 func MeasureMultipleEndpoints(fs ...*Func) *Func {
 	return &Func{
-		Name:       "measure_multiple_endpoints",
+		Name:       templateName[ric.MeasureMultipleEndpointsTemplate](),
 		InputType:  DNSLookupResultType,
 		OutputType: VoidType,
 		Arguments:  nil,

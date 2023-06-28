@@ -18,7 +18,7 @@ type TLSHandshakeArguments struct {
 type TLSHandshakeTemplate struct{}
 
 // Compile implements FuncTemplate.
-func (t *TLSHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+func (TLSHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
 	var (
 		arguments TLSHandshakeArguments
 		options   []rix.TLSHandshakeOption
@@ -44,6 +44,6 @@ func (t *TLSHandshakeTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.F
 }
 
 // TemplateName implements FuncTemplate.
-func (t *TLSHandshakeTemplate) TemplateName() string {
+func (TLSHandshakeTemplate) TemplateName() string {
 	return "tls_handshake"
 }

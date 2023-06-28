@@ -3,6 +3,7 @@ package ril
 import (
 	"fmt"
 
+	"github.com/ooni/2023-05-richer-input/pkg/ric"
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
@@ -26,7 +27,7 @@ func Compose(f0 *Func, fs ...*Func) *Func {
 	}
 
 	return &Func{
-		Name:       "compose",
+		Name:       templateName[ric.ComposeTemplate](),
 		InputType:  f0.InputType,
 		OutputType: cursor.OutputType,
 		Arguments:  nil,

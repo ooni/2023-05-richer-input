@@ -43,7 +43,7 @@ func TLSHandshake(options ...TLSHandshakeOption) *Func {
 		option(args)
 	}
 	return &Func{
-		Name:       "tls_handshake",
+		Name:       templateName[ric.TLSHandshakeTemplate](),
 		InputType:  TCPConnectionType,
 		OutputType: TLSConnectionType,
 		Arguments:  args,
