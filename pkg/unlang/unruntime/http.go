@@ -45,9 +45,77 @@ type httpTransactionConfig struct {
 }
 
 // HTTPTransactionOption is an option for the [HTTPTransaction].
-type HTTPTransactionOption func(config *httpTransactionConfig)
+type HTTPTransactionOption func(c *httpTransactionConfig)
 
-// TODO(bassosimone): implement options for configuring HTTP
+// HTTPTransactionOptionAccept sets the Accept header.
+func HTTPTransactionOptionAccept(value string) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.acceptHeader = value
+	}
+}
+
+// HTTPTransactionOptionAcceptLanguage sets the Accept-Language header.
+func HTTPTransactionOptionAcceptLanguage(value string) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.acceptLanguageHeader = value
+	}
+}
+
+// HTTPTransactionOptionHost sets the Host header.
+func HTTPTransactionOptionHost(value string) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.hostHeader = value
+	}
+}
+
+// HTTPTransactionOptionMethod sets the method.
+func HTTPTransactionOptionMethod(value string) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.requestMethod = value
+	}
+}
+
+// HTTPTransactionOptionResponseBodySnapshotSize sets the maximum response body snapshot size.
+func HTTPTransactionOptionResponseBodySnapshotSize(value int) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.responseBodySnapshotSize = value
+	}
+}
+
+// HTTPTransactionOptionReferer sets the referer.
+func HTTPTransactionOptionReferer(value string) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.refererHeader = value
+	}
+}
+
+// HTTPTransactionOptionURLHost sets the URL host.
+func HTTPTransactionOptionURLHost(value string) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.urlHost = value
+	}
+}
+
+// HTTPTransactionOptionURLPath sets the URL path.
+func HTTPTransactionOptionURLPath(value string) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.urlPath = value
+	}
+}
+
+// HTTPTransactionOptionURLScheme sets the URL scheme.
+func HTTPTransactionOptionURLScheme(value string) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.urlScheme = value
+	}
+}
+
+// HTTPTransactionOptionUserAgent sets the User-Agent header.
+func HTTPTransactionOptionUserAgent(value string) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.userAgentHeader = value
+	}
+}
 
 // HTTPTransaction returns a [Func] that sends an HTTP request and reads the
 // corresponding HTTP response and its body.
