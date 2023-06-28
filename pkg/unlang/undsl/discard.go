@@ -8,7 +8,7 @@ func Discard(t ComplexType) *Func {
 		Name:       templateName[uncompiler.DiscardTemplate](),
 		InputType:  t,
 		OutputType: VoidType,
-		Arguments:  nil,
+		Arguments:  &Empty{},
 		Children:   []*Func{},
 	}
 }

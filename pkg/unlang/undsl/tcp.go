@@ -10,7 +10,7 @@ func TCPConnect() *Func {
 		Name:       templateName[uncompiler.TCPConnectTemplate](),
 		InputType:  EndpointType,
 		OutputType: TCPConnectionType,
-		Arguments:  nil,
+		Arguments:  &Empty{},
 		Children:   []*Func{},
 	}
 }

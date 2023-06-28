@@ -30,7 +30,7 @@ func Compose(f0 *Func, fs ...*Func) *Func {
 		Name:       templateName[uncompiler.ComposeTemplate](),
 		InputType:  f0.InputType,
 		OutputType: cursor.OutputType,
-		Arguments:  nil,
+		Arguments:  &Empty{},
 		Children:   append([]*Func{f0}, fs...),
 	}
 }

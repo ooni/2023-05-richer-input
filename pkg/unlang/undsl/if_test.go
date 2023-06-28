@@ -28,7 +28,7 @@ func ExampleIfFuncExists() {
 				Name:       "nonexistent_analysis",
 				InputType:  undsl.TCPConnectionType,
 				OutputType: undsl.TCPConnectionType,
-				Arguments:  nil,
+				Arguments:  &undsl.Empty{},
 				Children:   []*undsl.Func{},
 			}),
 

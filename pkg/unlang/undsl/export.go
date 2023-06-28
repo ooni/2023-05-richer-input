@@ -6,9 +6,13 @@ func ExportASTNode(f *Func) *ASTNode {
 	for _, entry := range f.Children {
 		children = append(children, ExportASTNode(entry))
 	}
+	arguments := f.Arguments
+	if arguments == nil {
+		arguments = &Empty{}
+	}
 	return &ASTNode{
 		Func:      f.Name,
-		Arguments: f.Arguments,
+		Arguments: arguments,
 		Children:  children,
 	}
 }

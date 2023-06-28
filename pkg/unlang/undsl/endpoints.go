@@ -47,7 +47,7 @@ func NewEndpointPipeline(f0 *Func, fs ...*Func) *Func {
 		Name:       templateName[uncompiler.NewEndpointPipelineTemplate](),
 		InputType:  ListOfEndpointType,
 		OutputType: VoidType,
-		Arguments:  nil,
+		Arguments:  &Empty{},
 		Children:   append([]*Func{f0}, fs...),
 	}
 }

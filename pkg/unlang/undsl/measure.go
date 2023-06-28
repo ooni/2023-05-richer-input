@@ -1,6 +1,8 @@
 package undsl
 
-import "github.com/ooni/2023-05-richer-input/pkg/unlang/uncompiler"
+import (
+	"github.com/ooni/2023-05-richer-input/pkg/unlang/uncompiler"
+)
 
 // MeasureMultipleDomains returns a [*Func] for measuring some domains in parallel.
 //
@@ -12,7 +14,7 @@ func MeasureMultipleDomains(fs ...*Func) *Func {
 		Name:       templateName[uncompiler.MeasureMultipleDomainsTemplate](),
 		InputType:  VoidType,
 		OutputType: VoidType,
-		Arguments:  nil,
+		Arguments:  &Empty{},
 		Children:   typeCheckFuncList("MeasureMultipleDomains", VoidType, VoidType, fs...),
 	}
 }
@@ -27,7 +29,7 @@ func MeasureMultipleEndpoints(fs ...*Func) *Func {
 		Name:       templateName[uncompiler.MeasureMultipleEndpointsTemplate](),
 		InputType:  DNSLookupOutputType,
 		OutputType: VoidType,
-		Arguments:  nil,
+		Arguments:  &Empty{},
 		Children:   typeCheckFuncList("MeasureMultipleEndpoints", DNSLookupOutputType, VoidType, fs...),
 	}
 }

@@ -36,7 +36,7 @@ func DNSLookupGetaddrinfo() *Func {
 		Name:       templateName[uncompiler.DNSLookupGetaddrinfoTemplate](),
 		InputType:  DNSLookupInputType,
 		OutputType: DNSLookupOutputType,
-		Arguments:  nil,
+		Arguments:  &Empty{},
 		Children:   []*Func{},
 	}
 }
@@ -73,7 +73,7 @@ func DNSLookupParallel(fs ...*Func) *Func {
 		Name:       templateName[uncompiler.DNSLookupParallelTemplate](),
 		InputType:  DNSLookupInputType,
 		OutputType: DNSLookupOutputType,
-		Arguments:  nil,
+		Arguments:  &Empty{},
 		Children: typeCheckFuncList(
 			"DNSLookupParallel",
 			DNSLookupInputType,

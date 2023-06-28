@@ -11,7 +11,7 @@ func IfFuncExists(f *Func) *Func {
 		Name:       templateName[uncompiler.IfFuncExistsTemplate](),
 		InputType:  f.InputType,
 		OutputType: f.OutputType,
-		Arguments:  nil,
+		Arguments:  &Empty{},
 		Children:   []*Func{f},
 	}
 }
