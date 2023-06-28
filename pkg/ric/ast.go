@@ -1,4 +1,4 @@
-package riengine
+package ric
 
 import "encoding/json"
 

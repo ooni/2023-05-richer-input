@@ -1,4 +1,4 @@
-package riengine
+package ric
 
 // TLSHandshakeArguments contains arguments for "tls_handshake".
 type TLSHandshakeArguments struct {

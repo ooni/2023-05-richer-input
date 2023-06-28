@@ -1,4 +1,4 @@
-package riengine
+package ric
 
 // QUICHandshakeArguments contains arguments for "quic_handshake".
 type QUICHandshakeArguments struct {

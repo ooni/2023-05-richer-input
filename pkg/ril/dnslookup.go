@@ -3,7 +3,7 @@ package ril
 import (
 	"net"
 
-	"github.com/ooni/2023-05-richer-input/pkg/riengine"
+	"github.com/ooni/2023-05-richer-input/pkg/ric"
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
@@ -15,7 +15,7 @@ func DomainName(domain string) *Func {
 		Name:       "dns_lookup_input",
 		InputType:  VoidType,
 		OutputType: DomainNameType,
-		Arguments: &riengine.DNSLookupInputArguments{
+		Arguments: &ric.DNSLookupInputArguments{
 			Domain: domain,
 		},
 		Children: []*Func{},
@@ -55,7 +55,7 @@ func DNSLookupStatic(addresses ...string) *Func {
 		Name:       "dns_lookup_static",
 		InputType:  DomainNameType,
 		OutputType: DNSLookupResultType,
-		Arguments: &riengine.DNSLookupStaticArguments{
+		Arguments: &ric.DNSLookupStaticArguments{
 			Addresses: addresses,
 		},
 		Children: []*Func{},
@@ -101,7 +101,7 @@ func DNSLookupUDP(endpoint string) *Func {
 		Name:       "dns_lookup_udp",
 		InputType:  DomainNameType,
 		OutputType: DNSLookupResultType,
-		Arguments: &riengine.DNSLookupUDPArguments{
+		Arguments: &ric.DNSLookupUDPArguments{
 			Endpoint: endpoint,
 		},
 		Children: []*Func{},

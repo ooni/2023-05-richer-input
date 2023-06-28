@@ -1,4 +1,4 @@
-package riengine
+package ric
 
 // MakeEndpointsForPortArguments contains arguments for "make_endpoints_for_port".
 type MakeEndpointsForPortArguments struct {

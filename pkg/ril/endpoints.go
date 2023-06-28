@@ -1,6 +1,6 @@
 package ril
 
-import "github.com/ooni/2023-05-richer-input/pkg/riengine"
+import "github.com/ooni/2023-05-richer-input/pkg/ric"
 
 // MakeEndpointsForPort returns a [*Func] that converts [DNSLookupResultType] to a
 // [ListOfEndpointType] using the given port number as the port.
@@ -11,7 +11,7 @@ func MakeEndpointsForPort(port uint16) *Func {
 		Name:       "make_endpoints_for_port",
 		InputType:  DNSLookupResultType,
 		OutputType: ListOfEndpointType,
-		Arguments: &riengine.MakeEndpointsForPortArguments{
+		Arguments: &ric.MakeEndpointsForPortArguments{
 			Port: port,
 		},
 		Children: []*Func{},

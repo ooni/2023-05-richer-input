@@ -1,4 +1,4 @@
-package riengine
+package ric
 
 // DNSLookupInputArguments contains the arguments for "dns_lookup_input".
 type DNSLookupInputArguments struct {
