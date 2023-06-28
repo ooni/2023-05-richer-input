@@ -91,7 +91,7 @@ func (fx *dnsConsistencyCheckFunc) Apply(ctx context.Context, rtx *unruntime.Run
 		// determine whether this result is consistent
 		result := fx.isConsistent(val.Addresses)
 
-		// TODO(bassosimone): we should not write like this into the TKs
+		// update the test keys
 		fx.tk.setDNSFlag(endpointFlag, result)
 
 		// Implementation note: probably the original implementation stopped here in case
