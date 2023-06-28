@@ -1,7 +1,13 @@
 package ric
 
-// DNSLookupInputArguments contains the arguments for "dns_lookup_input".
-type DNSLookupInputArguments struct {
+import (
+	"encoding/json"
+
+	"github.com/ooni/2023-05-richer-input/pkg/rix"
+)
+
+// DomainNameArguments contains the arguments for "domain_name".
+type DomainNameArguments struct {
 	Domain string `json:"domain"`
 }
 
@@ -13,4 +19,85 @@ type DNSLookupStaticArguments struct {
 // DNSLookupUDPArguments contains the arguments for "dns_lookup_udp".
 type DNSLookupUDPArguments struct {
 	Endpoint string `json:"endpoint"`
+}
+
+// DomainNameTemplate is the template for "domain_name".
+type DomainNameTemplate struct{}
+
+// Compile implements FuncTemplate.
+func (t *DomainNameTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+	var arguments DomainNameArguments
+	if err := json.Unmarshal(node.Arguments, &arguments); err != nil {
+		return nil, err
+	}
+	return rix.DomainName(arguments.Domain), nil
+}
+
+// TemplateName implements FuncTemplate.
+func (t *DomainNameTemplate) TemplateName() string {
+	return "domain_name"
+}
+
+// DNSLookupGetaddrinfoTemplate is the template for "dns_lookup_getaddrinfo".
+type DNSLookupGetaddrinfoTemplate struct{}
+
+// Compile implements FuncTemplate.
+func (t *DNSLookupGetaddrinfoTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+	return rix.DNSLookupGetaddrinfo(), nil
+}
+
+// TemplateName implements FuncTemplate.
+func (t *DNSLookupGetaddrinfoTemplate) TemplateName() string {
+	return "dns_lookup_getaddrinfo"
+}
+
+// DNSLookupStaticTemplate is the template for "dns_lookup_static".
+type DNSLookupStaticTemplate struct{}
+
+// Compile implements FuncTemplate.
+func (t *DNSLookupStaticTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+	var arguments DNSLookupStaticArguments
+	if err := json.Unmarshal(node.Arguments, &arguments); err != nil {
+		return nil, err
+	}
+	return rix.DNSLookupStatic(arguments.Addresses...), nil
+}
+
+// TemplateName implements FuncTemplate.
+func (t *DNSLookupStaticTemplate) TemplateName() string {
+	return "dns_lookup_static"
+}
+
+// DNSLookupParallelTemplate is the template for "dns_lookup_parallel".
+type DNSLookupParallelTemplate struct{}
+
+// Compile implements FuncTemplate.
+func (t *DNSLookupParallelTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+	children, err := compiler.compileNodes(node.Children...)
+	if err != nil {
+		return nil, err
+	}
+	return rix.DNSLookupParallel(children...), nil
+}
+
+// TemplateName implements FuncTemplate.
+func (t *DNSLookupParallelTemplate) TemplateName() string {
+	return "dns_lookup_parallel"
+}
+
+// DNSLookupUDPTemplate is the template for "dns_lookup_udp".
+type DNSLookupUDPTemplate struct{}
+
+// Compile implements FuncTemplate.
+func (t *DNSLookupUDPTemplate) Compile(compiler *Compiler, node *ASTNode) (rix.Func, error) {
+	var arguments DNSLookupUDPArguments
+	if err := json.Unmarshal(node.Arguments, &arguments); err != nil {
+		return nil, err
+	}
+	return rix.DNSLookupUDP(arguments.Endpoint), nil
+}
+
+// TemplateName implements FuncTemplate.
+func (t *DNSLookupUDPTemplate) TemplateName() string {
+	return "dns_lookup_udp"
 }

@@ -15,7 +15,7 @@ func DomainName(domain string) *Func {
 		Name:       "dns_lookup_input",
 		InputType:  VoidType,
 		OutputType: DomainNameType,
-		Arguments: &ric.DNSLookupInputArguments{
+		Arguments: &ric.DomainNameArguments{
 			Domain: domain,
 		},
 		Children: []*Func{},
