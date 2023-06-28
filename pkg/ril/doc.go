@@ -1,12 +1,13 @@
-// Package ridsl contains the richer-input DSL.
+// Package ril contains the richer-input language. This language is an internal DSL for
+// creating a complex [*Func] and exporting it as an [*ASTNode].
 //
 // # Typical Usage
 //
-// When using [ridsl], your objective is to use [*Func] constructors such as [DNSLookupGetaddrinfo]
+// When using [ril], your objective is to use [*Func] constructors such as [DNSLookupGetaddrinfo]
 // and [TCPConnect] and compose them together using [Compose] and other functions to create a
 // [*Func] representing a nettest. When you have created such a [*Func] you can [Dump] it to inspect
 // its types and [Compile] it to obtain an [*ASTNode]. The [*ASTNode] serializes to [encoding/json]
-// using a data format that is compatible with the one expected by the [riengine].
+// using a data format that is compatible with the one expected by the [ric].
 //
 // # Writing Extensions
 //
@@ -16,7 +17,7 @@
 //
 // # Main and Complete Type
 //
-// All the [riengine] functions handle the [SumType] of [ErrorType], [ExceptionType], and
+// All the [rix] functions handle the [SumType] of [ErrorType], [ExceptionType], and
 // [SkipType]. Each of these three types represents a well defined abnormal condition that needs to
 // be handled separately. For brevity, we are not going to document these three types for
 // each function defined by this package. Rather, we will only document the "main" input and
@@ -34,4 +35,4 @@
 //
 // The [CompleteType] function takes in input the main type and returns the complete type. The
 // [MainType] function takes in input the complete type and returns the main type.
-package ridsl
+package ril

@@ -1,4 +1,4 @@
-package ridsl
+package ril
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ type ComplexType interface {
 	String() string
 }
 
-// SimpleType is a simple type in the [ridsl].
+// SimpleType is a simple type in the [ril].
 type SimpleType string
 
 var _ ComplexType = SimpleType("")
@@ -196,14 +196,14 @@ func typeCheckFuncList(context string, inputType, outputType ComplexType, fs ...
 }
 
 // CompleteType ensures that the given complex type includes the [ErrorType], [SkipType],
-// and [ExceptionType] types that any [riengine] function must handle. See also the [ridsl]
-// documentation for a more precise definition of complex and main function type.
+// and [ExceptionType] types that any [rix] function must handle. See also the
+// [ril] documentation for a more precise definition of complex and main function type.
 func CompleteType(t ComplexType) ComplexType {
 	return t.Append(ExceptionType, ErrorType, SkipType)
 }
 
 // MainType removes the [ErrorType], [SkipType], and [ExceptionType] from a complete type. See also
-// the [ridsl] documentation for a more precise definition of complex and main function type.
+// the [ril] documentation for a more precise definition of complex and main function type.
 func MainType(t ComplexType) ComplexType {
 	m := t.AsMap()
 	delete(m, ErrorType)

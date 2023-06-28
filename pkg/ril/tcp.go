@@ -1,4 +1,4 @@
-package ridsl
+package ril
 
 // TCPConnect returns a [Func] that dials TCP connections.
 //

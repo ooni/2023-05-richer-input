@@ -1,4 +1,4 @@
-package ridsl
+package ril
 
 // MeasureMultipleDomains returns a [*Func] for measuring some domains in parallel.
 //

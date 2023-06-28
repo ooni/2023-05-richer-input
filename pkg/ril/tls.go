@@ -1,4 +1,4 @@
-package ridsl
+package ril
 
 import "github.com/ooni/2023-05-richer-input/pkg/riengine"
 

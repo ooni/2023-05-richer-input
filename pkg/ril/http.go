@@ -1,4 +1,4 @@
-package ridsl
+package ril
 
 // HTTPRoundTrip returns a [*Func] that uses a connection to perform an HTTP round trip, i.e., to
 // send a request and receive the response headers.

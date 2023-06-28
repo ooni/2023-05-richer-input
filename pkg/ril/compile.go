@@ -1,10 +1,10 @@
-package ridsl
+package ril
 
-// Compile converts a [*Func] to an [*ASTNode].
-func Compile(f *Func) *ASTNode {
+// ExportASTNode exports a [*Func] as an [*ASTNode].
+func ExportASTNode(f *Func) *ASTNode {
 	children := []*ASTNode{}
 	for _, entry := range f.Children {
-		children = append(children, Compile(entry))
+		children = append(children, ExportASTNode(entry))
 	}
 	return &ASTNode{
 		Func:      f.Name,

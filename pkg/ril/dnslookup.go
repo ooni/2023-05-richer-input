@@ -1,4 +1,4 @@
-package ridsl
+package ril
 
 import (
 	"net"

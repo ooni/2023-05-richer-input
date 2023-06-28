@@ -1,7 +1,7 @@
-package ridsl
+package ril
 
 // IfFuncExists returns a [*Func] that wraps the given [*Func]. The name of the returned [*Func] is
-// such that the [riengine] will replace the wrapped [*Func] with the identity [*Func] at runtime if
+// such that the [ric] will replace the wrapped [*Func] with the identity [*Func] at runtime if
 // the wrapped [*Func] does not exist. Otherwise, it will just execute the wrapped [*Func]. This
 // functionality allows us to gracefully handle the case where an old probe is served code including
 // some features it does not implement. Because this constructor returns a wrapper, the main

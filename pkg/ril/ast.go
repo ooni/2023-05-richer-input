@@ -1,4 +1,4 @@
-package ridsl
+package ril
 
 // ASTNode is a JSON-serializable AST node.
 type ASTNode struct {
