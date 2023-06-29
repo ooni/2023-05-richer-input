@@ -1,0 +1,78 @@
+{
+	"commands": [
+		{
+			"run_command": "nettest/run",
+			"with_arguments": {
+				"experimental_flags": {
+					"dsl": true
+				},
+				// TODO(bassosimone): we're hihacking fbmessenger currently and this feels
+				// quite suboptimal compared to having a dedicated nettest name
+				"nettest_name": "facebook_messenger",
+				"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
+				"suite_name": "im",
+				"targets": {
+					"func": "compose",
+					"arguments": {},
+					"children": [
+						{
+							"func": "domain_name",
+							"arguments": {
+								"domain": "nexa.polito.it"
+							},
+							"children": []
+						},
+						{
+							"func": "dns_lookup_getaddrinfo",
+							"arguments": {},
+							"children": []
+						},
+						{
+							"func": "compose",
+							"arguments": {},
+							"children": [
+								{
+									"func": "make_endpoints_for_port",
+									"arguments": {
+										"port": 443
+									},
+									"children": []
+								},
+								{
+									"func": "new_endpoint_pipeline",
+									"arguments": {},
+									"children": [
+										{
+											"func": "tcp_connect",
+											"arguments": {},
+											"children": []
+										},
+										{
+											"func": "tls_handshake",
+											"arguments": {},
+											"children": []
+										},
+										{
+											"func": "http_transaction",
+											"arguments": {
+												"response_body_snapshot_size": 16777216,
+												"url_path": "/nexacenterfiles/annual_report_2023_1_0.pdf"
+											},
+											"children": []
+										},
+										{
+											"func": "discard",
+											"arguments": {},
+											"children": []
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			}
+		}
+	],
+	"v": 2
+}
