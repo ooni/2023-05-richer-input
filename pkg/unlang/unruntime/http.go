@@ -269,8 +269,9 @@ func (f *httpTransactionFunc) applyTransport(ctx context.Context, rtx *Runtime,
 	// start the operation logger
 	ol := measurexlite.NewOperationLogger(
 		rtx.logger,
-		"[#%d] HTTPTransaction %s with %s/%s host=%s",
+		"[#%d] HTTPTransaction %s %s with %s/%s host=%s",
 		trace.Index,
+		config.requestMethod,
 		req.URL.String(),
 		conn.address(),
 		conn.network(),
@@ -290,7 +291,7 @@ func (f *httpTransactionFunc) applyTransport(ctx context.Context, rtx *Runtime,
 
 	// perform round trip
 	resp, err := txp.RoundTrip(req)
-	if err != nil {
+	if err == nil {
 		// make sure we eventually close the response body (note that closing
 		// at the end of this function with `defer` would prevent the caller from
 		// continuing to read the body, which isn't optimal...)
