@@ -4,19 +4,16 @@ import (
 	"context"
 )
 
-// Filter is a [Stage] whose input and output types are equal.
-type Filter[T any] Stage[T, T]
-
 // IfFilterExists wraps a [Filter] such that probes interpreting the AST can compile the filter
 // to an identity function if a filter with the given name does not exist. This functionality
 // allows us to support old probes that do not support specific filters. They will compile and
 // execute the AST and run identity functions in place of the unsupported filters.
-func IfFilterExists[T any](fx Filter[T]) Filter[T] {
+func IfFilterExists[T any](fx Stage[T, T]) Stage[T, T] {
 	return &ifFilterExistsStage[T]{fx}
 }
 
 type ifFilterExistsStage[T any] struct {
-	fx Filter[T]
+	fx Stage[T, T]
 }
 
 const ifFilterExistsStageName = "if_filter_exists"
@@ -33,10 +30,10 @@ type ifFilterExistsLoader struct{}
 
 // Load implements ASTLoaderRule.
 func (*ifFilterExistsLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
-	if err := loader.loadEmptyArguments(node); err != nil {
+	if err := loader.LoadEmptyArguments(node); err != nil {
 		return nil, err
 	}
-	if err := loader.requireExactlyNumChildren(node, 1); err != nil {
+	if err := loader.RequireExactlyNumChildren(node, 1); err != nil {
 		return nil, err
 	}
 	runnable, err := loader.Load(node.Children[0])

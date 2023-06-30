@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"sync"
 
-	"github.com/ooni/2023-05-richer-input/pkg/unlang/unruntime"
+	"github.com/ooni/2023-05-richer-input/pkg/dsl"
 	"github.com/ooni/probe-engine/pkg/optional"
 )
 
@@ -17,7 +17,7 @@ type TestKeys struct {
 	mu sync.Mutex
 
 	// observations contains the observations we collected.
-	observations *unruntime.Observations
+	observations *dsl.Observations
 
 	// overallFlags contains the overall flags.
 	overallFlags map[string]optional.Value[bool]
@@ -26,12 +26,12 @@ type TestKeys struct {
 	tcpCounters map[string]int
 }
 
-// newTestKeys creates a new test keys instance.
-func newTestKeys() *TestKeys {
+// NewTestKeys creates a new test keys instance.
+func NewTestKeys() *TestKeys {
 	return &TestKeys{
 		dnsFlags:     map[string]optional.Value[bool]{},
 		mu:           sync.Mutex{},
-		observations: unruntime.NewObservations(),
+		observations: dsl.NewObservations(),
 		overallFlags: map[string]optional.Value[bool]{},
 		tcpCounters:  map[string]int{},
 	}

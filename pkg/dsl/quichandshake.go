@@ -40,11 +40,11 @@ func (*quicHandshakeLoader) Load(loader *ASTLoader, node *LoadableASTNode) (Runn
 	if err := json.Unmarshal(node.Arguments, &config); err != nil {
 		return nil, err
 	}
-	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+	if err := loader.RequireExactlyNumChildren(node, 0); err != nil {
 		return nil, err
 	}
 	stage := QUICHandshake(config.options()...)
-	return &stageRunnableASTNode[*Endpoint, *QUICConnection]{stage}, nil
+	return &StageRunnableASTNode[*Endpoint, *QUICConnection]{stage}, nil
 }
 
 // StageName implements ASTLoaderRule.

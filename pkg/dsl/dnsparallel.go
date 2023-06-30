@@ -33,16 +33,16 @@ type dnsLookupParallelLoader struct{}
 
 // Load implements ASTLoaderRule.
 func (*dnsLookupParallelLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
-	if err := loader.loadEmptyArguments(node); err != nil {
+	if err := loader.LoadEmptyArguments(node); err != nil {
 		return nil, err
 	}
-	runnables, err := loader.loadChildren(node)
+	runnables, err := loader.LoadChildren(node)
 	if err != nil {
 		return nil, err
 	}
-	children := runnableASTNodeListToStageList[string, *DNSLookupResult](runnables...)
+	children := RunnableASTNodeListToStageList[string, *DNSLookupResult](runnables...)
 	stage := DNSLookupParallel(children...)
-	return &stageRunnableASTNode[string, *DNSLookupResult]{stage}, nil
+	return &StageRunnableASTNode[string, *DNSLookupResult]{stage}, nil
 }
 
 // StageName implements ASTLoaderRule.

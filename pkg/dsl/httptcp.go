@@ -27,14 +27,14 @@ type httpConnectionTCPLoader struct{}
 
 // Load implements ASTLoaderRule.
 func (*httpConnectionTCPLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
-	if err := loader.loadEmptyArguments(node); err != nil {
+	if err := loader.LoadEmptyArguments(node); err != nil {
 		return nil, err
 	}
-	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+	if err := loader.RequireExactlyNumChildren(node, 0); err != nil {
 		return nil, err
 	}
 	stage := HTTPConnectionTCP()
-	return &stageRunnableASTNode[*TCPConnection, *HTTPConnection]{stage}, nil
+	return &StageRunnableASTNode[*TCPConnection, *HTTPConnection]{stage}, nil
 }
 
 // StageName implements ASTLoaderRule.

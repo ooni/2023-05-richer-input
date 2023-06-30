@@ -26,14 +26,14 @@ type discardLoader struct{}
 
 // Load implements ASTLoaderRule.
 func (*discardLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
-	if err := loader.loadEmptyArguments(node); err != nil {
+	if err := loader.LoadEmptyArguments(node); err != nil {
 		return nil, err
 	}
-	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+	if err := loader.RequireExactlyNumChildren(node, 0); err != nil {
 		return nil, err
 	}
 	stage := Discard[any]()
-	return &stageRunnableASTNode[any, *Void]{stage}, nil
+	return &StageRunnableASTNode[any, *Void]{stage}, nil
 }
 
 // StageName implements ASTLoaderRule.

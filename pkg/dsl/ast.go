@@ -137,20 +137,23 @@ func (al *ASTLoader) Load(node *LoadableASTNode) (RunnableASTNode, error) {
 	return rule.Load(al, node)
 }
 
-func (al *ASTLoader) loadEmptyArguments(node *LoadableASTNode) error {
+// LoadEmptyArguments is a convenience function for loading empty arguments when parsing.
+func (al *ASTLoader) LoadEmptyArguments(node *LoadableASTNode) error {
 	type Empty struct{}
 	var empty Empty
 	return json.Unmarshal(node.Arguments, &empty)
 }
 
-func (al *ASTLoader) requireExactlyNumChildren(node *LoadableASTNode, num int) error {
+// RequireExactlyNumChildren is a convenience function to validate the number of children.
+func (al *ASTLoader) RequireExactlyNumChildren(node *LoadableASTNode, num int) error {
 	if len(node.Children) != num {
 		return ErrInvalidNumberOfChildren
 	}
 	return nil
 }
 
-func (al *ASTLoader) loadChildren(node *LoadableASTNode) (out []RunnableASTNode, err error) {
+// LoadChildren is a convenience function to load all the node's children.
+func (al *ASTLoader) LoadChildren(node *LoadableASTNode) (out []RunnableASTNode, err error) {
 	for _, node := range node.Children {
 		runnable, err := al.Load(node)
 		if err != nil {
@@ -161,18 +164,18 @@ func (al *ASTLoader) loadChildren(node *LoadableASTNode) (out []RunnableASTNode,
 	return out, nil
 }
 
-// stageRunnableASTNode adapts a [Stage] to become a [RunnableASTNode].
-type stageRunnableASTNode[A, B any] struct {
-	s Stage[A, B]
+// StageRunnableASTNode adapts a [Stage] to become a [RunnableASTNode].
+type StageRunnableASTNode[A, B any] struct {
+	S Stage[A, B]
 }
 
 // ASTNode implements RunnableASTNode.
-func (n *stageRunnableASTNode[A, B]) ASTNode() *SerializableASTNode {
-	return n.s.ASTNode()
+func (n *StageRunnableASTNode[A, B]) ASTNode() *SerializableASTNode {
+	return n.S.ASTNode()
 }
 
 // Run implements RunnableASTNode.
-func (n *stageRunnableASTNode[A, B]) Run(ctx context.Context, rtx Runtime, input Maybe[any]) Maybe[any] {
+func (n *StageRunnableASTNode[A, B]) Run(ctx context.Context, rtx Runtime, input Maybe[any]) Maybe[any] {
 	// convert generic to specific input
 	xinput, except := AsSpecificMaybe[A](input)
 	if except != nil {
@@ -180,26 +183,26 @@ func (n *stageRunnableASTNode[A, B]) Run(ctx context.Context, rtx Runtime, input
 	}
 
 	// call the underlying stage
-	output := n.s.Run(ctx, rtx, xinput)
+	output := n.S.Run(ctx, rtx, xinput)
 
 	// return a generic maybe to the caller
 	return output.AsGeneric()
 }
 
-// runnableASTNodeStage adapts a [RunnableASTNode] to be a [Stage].
-type runnableASTNodeStage[A, B any] struct {
-	n RunnableASTNode
+// RunnableASTNodeStage adapts a [RunnableASTNode] to be a [Stage].
+type RunnableASTNodeStage[A, B any] struct {
+	N RunnableASTNode
 }
 
 // ASTNode implements Stage.
-func (sx *runnableASTNodeStage[A, B]) ASTNode() *SerializableASTNode {
-	return sx.n.ASTNode()
+func (sx *RunnableASTNodeStage[A, B]) ASTNode() *SerializableASTNode {
+	return sx.N.ASTNode()
 }
 
 // Run implements Stage.
-func (sx *runnableASTNodeStage[A, B]) Run(ctx context.Context, rtx Runtime, input Maybe[A]) Maybe[B] {
+func (sx *RunnableASTNodeStage[A, B]) Run(ctx context.Context, rtx Runtime, input Maybe[A]) Maybe[B] {
 	// invoke the underlying node with a generic input
-	output := sx.n.Run(ctx, rtx, input.AsGeneric())
+	output := sx.N.Run(ctx, rtx, input.AsGeneric())
 
 	// convert generic to specific output
 	xoutput, except := AsSpecificMaybe[B](output)
@@ -209,10 +212,10 @@ func (sx *runnableASTNodeStage[A, B]) Run(ctx context.Context, rtx Runtime, inpu
 	return xoutput
 }
 
-// runnableASTNodeListToStageList converts a list of [RunnableASTNode] to be [Stage].
-func runnableASTNodeListToStageList[A, B any](inputs ...RunnableASTNode) (outputs []Stage[A, B]) {
+// RunnableASTNodeListToStageList converts a list of [RunnableASTNode] to be [Stage].
+func RunnableASTNodeListToStageList[A, B any](inputs ...RunnableASTNode) (outputs []Stage[A, B]) {
 	for _, input := range inputs {
-		outputs = append(outputs, &runnableASTNodeStage[A, B]{input})
+		outputs = append(outputs, &RunnableASTNodeStage[A, B]{input})
 	}
 	return
 }

@@ -31,20 +31,20 @@ type newEndpointPipelineLoader struct{}
 
 // Load implements ASTLoaderRule.
 func (*newEndpointPipelineLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
-	if err := loader.loadEmptyArguments(node); err != nil {
+	if err := loader.LoadEmptyArguments(node); err != nil {
 		return nil, err
 	}
-	runnables, err := loader.loadChildren(node)
+	runnables, err := loader.LoadChildren(node)
 	if err != nil {
 		return nil, err
 	}
 	if len(runnables) != 1 {
 		return nil, ErrInvalidNumberOfChildren
 	}
-	children := runnableASTNodeListToStageList[*Endpoint, *Void](runnables[0])
+	children := RunnableASTNodeListToStageList[*Endpoint, *Void](runnables[0])
 	runtimex.Assert(len(children) == 1, "unexpected number of children")
 	stage := NewEndpointPipeline(children[0])
-	return &stageRunnableASTNode[[]*Endpoint, *Void]{stage}, nil
+	return &StageRunnableASTNode[[]*Endpoint, *Void]{stage}, nil
 }
 
 // StageName implements ASTLoaderRule.

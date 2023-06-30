@@ -40,11 +40,11 @@ func (*tlsHandshakeLoader) Load(loader *ASTLoader, node *LoadableASTNode) (Runna
 	if err := json.Unmarshal(node.Arguments, &config); err != nil {
 		return nil, err
 	}
-	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+	if err := loader.RequireExactlyNumChildren(node, 0); err != nil {
 		return nil, err
 	}
 	stage := TLSHandshake(config.options()...)
-	return &stageRunnableASTNode[*TCPConnection, *TLSConnection]{stage}, nil
+	return &StageRunnableASTNode[*TCPConnection, *TLSConnection]{stage}, nil
 }
 
 // StageName implements ASTLoaderRule.

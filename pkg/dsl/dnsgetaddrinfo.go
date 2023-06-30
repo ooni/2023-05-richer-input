@@ -28,14 +28,14 @@ type dnsLookupGetaddrinfoLoader struct{}
 
 // Load implements ASTLoaderRule.
 func (*dnsLookupGetaddrinfoLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
-	if err := loader.loadEmptyArguments(node); err != nil {
+	if err := loader.LoadEmptyArguments(node); err != nil {
 		return nil, err
 	}
-	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+	if err := loader.RequireExactlyNumChildren(node, 0); err != nil {
 		return nil, err
 	}
 	stage := DNSLookupGetaddrinfo()
-	return &stageRunnableASTNode[string, *DNSLookupResult]{stage}, nil
+	return &StageRunnableASTNode[string, *DNSLookupResult]{stage}, nil
 }
 
 // StageName implements ASTLoaderRule.

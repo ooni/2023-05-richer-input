@@ -31,10 +31,10 @@ type composeLoader struct{}
 
 // Load implements ASTLoaderRule.
 func (*composeLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
-	if err := loader.loadEmptyArguments(node); err != nil {
+	if err := loader.LoadEmptyArguments(node); err != nil {
 		return nil, err
 	}
-	runnables, err := loader.loadChildren(node)
+	runnables, err := loader.LoadChildren(node)
 	if err != nil {
 		return nil, err
 	}

@@ -4,8 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/ooni/2023-05-richer-input/pkg/unlang/uncompiler"
-	"github.com/ooni/2023-05-richer-input/pkg/unlang/unruntime"
+	"github.com/ooni/2023-05-richer-input/pkg/dsl"
 	"github.com/ooni/probe-engine/pkg/model"
 )
 
@@ -37,41 +36,39 @@ func (m *Measurer) ExperimentVersion() string {
 // Run implements model.ExperimentMeasurer
 func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 	// parse the targets
-	var astRoot uncompiler.ASTNode
+	var astRoot dsl.LoadableASTNode
 	if err := json.Unmarshal(m.RawOptions, &astRoot); err != nil {
 		return err
 	}
 
-	// create a compiler
-	compiler := uncompiler.NewCompiler()
+	// create an AST loader
+	loader := dsl.NewASTLoader()
 
 	// create the testkeys
-	tk := newTestKeys()
+	tk := NewTestKeys()
 
 	// register local function templates
-	compiler.RegisterFuncTemplate(&dnsConsistencyCheckTemplate{tk})
-	compiler.RegisterFuncTemplate(&tcpReachabilityCheckTemplate{tk})
+	loader.RegisterCustomLoaderRule(&dnsConsistencyCheckLoader{tk})
+	loader.RegisterCustomLoaderRule(&tcpReachabilityCheckLoader{tk})
 
-	// compile the AST to a function
-	f0, err := compiler.Compile(&astRoot)
+	// load and make the AST runnable
+	pipeline, err := loader.Load(&astRoot)
 	if err != nil {
 		return err
 	}
 
 	// create the DSL runtime
-	rtx := unruntime.NewRuntime(
-		unruntime.RuntimeOptionLogger(args.Session.Logger()),
-		unruntime.RuntimeOptionZeroTime(args.Measurement.MeasurementStartTimeSaved),
-	)
+	rtx := dsl.NewMinimalRuntime(args.Session.Logger())
 	defer rtx.Close()
 
 	// evaluate the function and handle exceptions
-	if err := unruntime.Try(f0.Apply(ctx, rtx, &unruntime.Void{})); err != nil {
+	argument0 := dsl.NewValue(&dsl.Void{})
+	if err := dsl.Try(pipeline.Run(ctx, rtx, argument0.AsGeneric())); err != nil {
 		return err
 	}
 
 	// obtain the observations
-	tk.observations = unruntime.ReduceObservations(rtx.ExtractObservations()...)
+	tk.observations = dsl.ReduceObservations(rtx.ExtractObservations()...)
 
 	// finally, compute the overall test keys
 	tk.computeOverallKeys()

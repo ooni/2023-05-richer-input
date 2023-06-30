@@ -44,12 +44,12 @@ func (*httpTransactionLoader) Load(loader *ASTLoader, node *LoadableASTNode) (Ru
 	if err := json.Unmarshal(node.Arguments, &config); err != nil {
 		return nil, err
 	}
-	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+	if err := loader.RequireExactlyNumChildren(node, 0); err != nil {
 		return nil, err
 	}
 	options := config.options()
 	stage := HTTPTransaction(options...)
-	return &stageRunnableASTNode[*HTTPConnection, *HTTPResponse]{stage}, nil
+	return &StageRunnableASTNode[*HTTPConnection, *HTTPResponse]{stage}, nil
 }
 
 // StageName implements ASTLoaderRule.

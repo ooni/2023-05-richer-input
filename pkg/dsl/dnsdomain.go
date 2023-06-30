@@ -33,10 +33,10 @@ func (*domainNameLoader) Load(loader *ASTLoader, node *LoadableASTNode) (Runnabl
 	if err := json.Unmarshal(node.Arguments, &stage); err != nil {
 		return nil, err
 	}
-	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+	if err := loader.RequireExactlyNumChildren(node, 0); err != nil {
 		return nil, err
 	}
-	return &stageRunnableASTNode[*Void, string]{&stage}, nil
+	return &StageRunnableASTNode[*Void, string]{&stage}, nil
 }
 
 // StageName implements ASTLoaderRule.

@@ -28,14 +28,14 @@ type tcpConnectLoader struct{}
 
 // Load implements ASTLoaderRule.
 func (*tcpConnectLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
-	if err := loader.loadEmptyArguments(node); err != nil {
+	if err := loader.LoadEmptyArguments(node); err != nil {
 		return nil, err
 	}
-	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+	if err := loader.RequireExactlyNumChildren(node, 0); err != nil {
 		return nil, err
 	}
 	stage := TCPConnect()
-	return &stageRunnableASTNode[*Endpoint, *TCPConnection]{stage}, nil
+	return &StageRunnableASTNode[*Endpoint, *TCPConnection]{stage}, nil
 }
 
 // StageName implements ASTLoaderRule.
