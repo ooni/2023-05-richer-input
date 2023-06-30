@@ -2,6 +2,8 @@ package minilang
 
 import (
 	"crypto/tls"
+	"crypto/x509"
+	"errors"
 
 	"github.com/quic-go/quic-go"
 )
@@ -31,8 +33,63 @@ type QUICConnection struct {
 type QUICHandshakeOption func(config *quicHandshakeConfig)
 
 type quicHandshakeConfig struct {
-	alpn       []string
-	skipVerify bool
-	sni        string
-	x509Certs  []string
+	ALPN       []string `json:"alpn"`
+	SkipVerify bool     `json:"skip_verify"`
+	SNI        string   `json:"sni"`
+	X509Certs  []string `json:"x509_certs"`
+}
+
+// ErrInvalidCert is returned when we encounter an invalid PEM-encoded certificate.
+var ErrInvalidCert = errors.New("minilang: invalid PEM-encoded certificate")
+
+func (config *quicHandshakeConfig) TLSConfig() (*tls.Config, error) {
+	// See https://github.com/ooni/probe/issues/2413 to understand
+	// why we're using nil to force netxlite to use the cached default
+	// Mozilla cert pool by default.
+	out := &tls.Config{
+		InsecureSkipVerify: config.SkipVerify,
+		NextProtos:         config.ALPN,
+		RootCAs:            nil,
+		ServerName:         config.SNI,
+	}
+
+	if len(config.X509Certs) > 0 {
+		certPool := x509.NewCertPool()
+		for _, entry := range config.X509Certs {
+			if !certPool.AppendCertsFromPEM([]byte(entry)) {
+				return nil, ErrInvalidCert
+			}
+		}
+		out.RootCAs = certPool
+	}
+
+	return out, nil
+}
+
+// QUICHandshakeOptionALPN configures the ALPN.
+func QUICHandshakeOptionALPN(value ...string) QUICHandshakeOption {
+	return func(config *quicHandshakeConfig) {
+		config.ALPN = value
+	}
+}
+
+// QUICHandshakeOptionSkipVerify allows to disable certificate verification.
+func QUICHandshakeOptionSkipVerify(value bool) QUICHandshakeOption {
+	return func(config *quicHandshakeConfig) {
+		config.SkipVerify = value
+	}
+}
+
+// QUICHandshakeOptionX509Certs allows to configure a custom root CA.
+func QUICHandshakeOptionX509Certs(value ...string) QUICHandshakeOption {
+	return func(config *quicHandshakeConfig) {
+		config.X509Certs = value
+	}
+}
+
+// QUICHandshakeOptionSNI allows to configure the SNI.
+func QUICHandshakeOptionSNI(value string) QUICHandshakeOption {
+	return func(config *quicHandshakeConfig) {
+		config.SNI = value
+	}
 }

@@ -71,3 +71,11 @@ type DSL interface {
 	// TLSHandshake returns a stage that performs a TLS handshake.
 	TLSHandshake(options ...TLSHandshakeOption) Stage[*TCPConnection, *TLSConnection]
 }
+
+// NewInternalDSL returns a [DSL] implementation generating [Stage] runnable from Go code.
+func NewInternalDSL() DSL {
+	return &idsl{}
+}
+
+// idsl implements the internal [DSL].
+type idsl struct{}
