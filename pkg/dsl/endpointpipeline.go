@@ -65,7 +65,12 @@ func (sx *newEndpointPipelineStage) Run(ctx context.Context, rtx Runtime, input 
 
 	// perform the measurement in parallel
 	const parallelism = 2
-	_ = parallelRun(ctx, parallelism, workers...)
+	results := parallelRun(ctx, parallelism, workers...)
+
+	// route exceptions
+	if err := catch(results...); err != nil {
+		return NewError[*Void](err)
+	}
 
 	return NewValue(&Void{})
 }

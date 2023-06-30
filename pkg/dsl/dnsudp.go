@@ -50,6 +50,11 @@ func (*dnsLookupUDPLoader) StageName() string {
 }
 
 func (sx *dnsLookupUDPOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
+	// make sure the target endpoint is valid
+	if !ValidEndpoints(sx.Endpoint) {
+		return nil, &ErrException{&ErrInvalidEndpoint{sx.Endpoint}}
+	}
+
 	// create trace
 	trace := rtx.NewTrace()
 

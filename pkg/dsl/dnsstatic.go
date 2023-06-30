@@ -23,6 +23,9 @@ func (sx *dnsLookupStaticOp) ASTNode() *SerializableASTNode {
 }
 
 func (sx *dnsLookupStaticOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
+	if !ValidIPAddrs(sx.Addresses...) {
+		return nil, &ErrException{&ErrInvalidAddressList{sx.Addresses}}
+	}
 	output := &DNSLookupResult{
 		Domain:    domain,
 		Addresses: sx.Addresses,

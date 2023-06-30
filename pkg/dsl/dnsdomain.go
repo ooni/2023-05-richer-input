@@ -48,5 +48,8 @@ func (sx *domainNameStage) Run(ctx context.Context, rtx Runtime, input Maybe[*Vo
 	if input.Error != nil {
 		return NewError[string](input.Error)
 	}
+	if !ValidDomainNames(sx.Domain) {
+		return NewError[string](&ErrException{&ErrInvalidDomain{sx.Domain}})
+	}
 	return NewValue(sx.Domain)
 }

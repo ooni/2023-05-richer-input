@@ -110,10 +110,12 @@ func (sx *runStagesInParallelStage) Run(ctx context.Context, rtx Runtime, input 
 
 	// parallel run
 	const parallelism = 2
-	_ = parallelRun(ctx, parallelism, workers...)
+	results := parallelRun(ctx, parallelism, workers...)
 
-	// TODO(bassosimone): we need to introduce filtering to detect Exceptions here
-	// and in other places otherwise we'd just swallow exceptions
+	// route exceptions
+	if err := catch(results...); err != nil {
+		return NewError[*Void](err)
+	}
 
 	return NewValue(&Void{})
 }

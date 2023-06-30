@@ -65,6 +65,11 @@ func (sx *dnsLookupParallelStage) Run(ctx context.Context, rtx Runtime, input Ma
 	const parallelism = 5
 	results := parallelRun(ctx, parallelism, workers...)
 
+	// route exceptions
+	if err := catch(results...); err != nil {
+		return NewError[*DNSLookupResult](err)
+	}
+
 	// make sure we remove duplicate entries
 	uniq := make(map[string]int)
 	for _, result := range results {
