@@ -4,8 +4,9 @@ import (
 	"context"
 )
 
-// NewEndpointPipeline implements [DSL].
-func (*idsl) NewEndpointPipeline(stage Stage[*Endpoint, *Void]) Stage[[]*Endpoint, *Void] {
+// NewEndpointPipeline returns a stage that measures each endpoint given in input in
+// parallel using a pool of background goroutines.
+func NewEndpointPipeline(stage Stage[*Endpoint, *Void]) Stage[[]*Endpoint, *Void] {
 	return &newEndpointPipelineStage{stage}
 }
 

@@ -11,8 +11,9 @@ import (
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
-// HTTPTransaction implements DSL.
-func (*idsl) HTTPTransaction(options ...HTTPTransactionOption) Stage[*HTTPConnection, *HTTPResponse] {
+// HTTPTransaction returns a stage that uses an HTTP connection to send an HTTP request and
+// reads the response headers as well as a snapshot of the response body.
+func HTTPTransaction(options ...HTTPTransactionOption) Stage[*HTTPConnection, *HTTPResponse] {
 	return wrapOperation[*HTTPConnection, *HTTPResponse](&httpTransactionOp{options})
 }
 

@@ -2,8 +2,8 @@ package dsl
 
 import "context"
 
-// DomainName implements DSL.
-func (*idsl) DomainName(value string) Stage[*Void, string] {
+// DomainName returns a stage that returns the given domain name.
+func DomainName(value string) Stage[*Void, string] {
 	return &domainNameStage{value}
 }
 

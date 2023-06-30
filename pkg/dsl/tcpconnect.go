@@ -7,8 +7,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/measurexlite"
 )
 
-// TCPConnect implements DSL.
-func (*idsl) TCPConnect() Stage[*Endpoint, *TCPConnection] {
+// TCPConnect returns a stage that performs a TCP connect.
+func TCPConnect() Stage[*Endpoint, *TCPConnection] {
 	return wrapOperation[*Endpoint, *TCPConnection](&tcpConnectOp{})
 }
 

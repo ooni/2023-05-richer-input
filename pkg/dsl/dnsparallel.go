@@ -2,8 +2,10 @@ package dsl
 
 import "context"
 
-// DNSLookupParallel implements DSL.
-func (*idsl) DNSLookupParallel(stages ...Stage[string, *DNSLookupResult]) Stage[string, *DNSLookupResult] {
+// DNSLookupParallel returns a stage that runs several DNS lookup stages in parallel using a
+// pool of background goroutines. Note that this stage disregards the result of substages and
+// returns an empty list of addresses when all the substages have failed.
+func DNSLookupParallel(stages ...Stage[string, *DNSLookupResult]) Stage[string, *DNSLookupResult] {
 	return &dnsLookupParallelStage{stages}
 }
 

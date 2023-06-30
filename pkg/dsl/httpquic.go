@@ -6,8 +6,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/netxlite"
 )
 
-// HTTPConnectionQUIC implements DSL.
-func (*idsl) HTTPConnectionQUIC() Stage[*QUICConnection, *HTTPConnection] {
+// HTTPConnectionQUIC returns a stage that converts a QUIC connection to an HTTP connection.
+func HTTPConnectionQUIC() Stage[*QUICConnection, *HTTPConnection] {
 	return &httpConnectionQUICStage{}
 }
 

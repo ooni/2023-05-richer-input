@@ -8,8 +8,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/netxlite"
 )
 
-// TLSHandshake implements DSL.
-func (*idsl) TLSHandshake(options ...TLSHandshakeOption) Stage[*TCPConnection, *TLSConnection] {
+// TLSHandshake returns a stage that performs a TLS handshake.
+func TLSHandshake(options ...TLSHandshakeOption) Stage[*TCPConnection, *TLSConnection] {
 	return wrapOperation[*TCPConnection, *TLSConnection](&tlsHandshakeOp{options})
 }
 

@@ -7,8 +7,9 @@ import (
 	"github.com/ooni/probe-engine/pkg/measurexlite"
 )
 
-// DNSLookupUDP implements DSL.
-func (*idsl) DNSLookupUDP(endpoint string) Stage[string, *DNSLookupResult] {
+// DNSLookupUDP returns a stage that performs a DNS lookup using the given UDP resolver
+// endpoint; use "ADDRESS:PORT" for IPv4 and "[ADDRESS]:PORT" for IPv6 endpoints.
+func DNSLookupUDP(endpoint string) Stage[string, *DNSLookupResult] {
 	return wrapOperation[string, *DNSLookupResult](&dnsLookupUDPOp{endpoint})
 }
 

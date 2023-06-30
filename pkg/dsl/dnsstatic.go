@@ -2,8 +2,8 @@ package dsl
 
 import "context"
 
-// DNSLookupStatic implements DSL.
-func (*idsl) DNSLookupStatic(addresses ...string) Stage[string, *DNSLookupResult] {
+// DNSLookupStatic returns a stage that always returns the given IP addresses.
+func DNSLookupStatic(addresses ...string) Stage[string, *DNSLookupResult] {
 	return wrapOperation[string, *DNSLookupResult](&dnsLookupStaticOp{addresses})
 }
 

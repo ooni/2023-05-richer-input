@@ -2,8 +2,9 @@ package dsl
 
 import "context"
 
-// MeasureMultipleEndpoints implements [DSL].
-func (*idsl) MeasureMultipleEndpoints(stages ...Stage[*DNSLookupResult, *Void]) Stage[*DNSLookupResult, *Void] {
+// MeasureMultipleEndpoints returns a stage that runs several endpoint measurement
+// pipelines in parallel using a pool of background goroutines.
+func MeasureMultipleEndpoints(stages ...Stage[*DNSLookupResult, *Void]) Stage[*DNSLookupResult, *Void] {
 	return &measureMultipleEndpointsStage{stages}
 }
 

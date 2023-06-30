@@ -8,8 +8,8 @@ import (
 	"github.com/quic-go/quic-go"
 )
 
-// QUICHandshake implements DSL.
-func (*idsl) QUICHandshake(options ...QUICHandshakeOption) Stage[*Endpoint, *QUICConnection] {
+// QUICHandshake returns a stage that performs a QUIC handshake.
+func QUICHandshake(options ...QUICHandshakeOption) Stage[*Endpoint, *QUICConnection] {
 	return wrapOperation[*Endpoint, *QUICConnection](&quicHandshakeOp{options})
 }
 

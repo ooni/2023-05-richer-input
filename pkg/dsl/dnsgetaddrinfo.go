@@ -7,8 +7,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/measurexlite"
 )
 
-// DNSLookupGetaddrinfo implements DSL.
-func (*idsl) DNSLookupGetaddrinfo() Stage[string, *DNSLookupResult] {
+// DNSLookupGetaddrinfo returns a stage that performs DNS lookups using getaddrinfo.
+func DNSLookupGetaddrinfo() Stage[string, *DNSLookupResult] {
 	return wrapOperation[string, *DNSLookupResult](&dnsLookupGetaddrinfoOp{})
 }
 

@@ -6,8 +6,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/netxlite"
 )
 
-// HTTPConnectionTCP implements DSL.
-func (*idsl) HTTPConnectionTCP() Stage[*TCPConnection, *HTTPConnection] {
+// HTTPConnectionTCP returns a stage that converts a TCP connection to an HTTP connection.
+func HTTPConnectionTCP() Stage[*TCPConnection, *HTTPConnection] {
 	return &httpConnectionTCPStage{}
 }
 

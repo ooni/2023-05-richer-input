@@ -52,8 +52,9 @@ func parallelRun[T any](ctx context.Context, parallelism int, workers ...worker[
 	return results
 }
 
-// RunStagesInParallel implements DSL.
-func (*idsl) RunStagesInParallel(stages ...Stage[*Void, *Void]) Stage[*Void, *Void] {
+// RunStagesInParallel returns a stage that runs the given stages in parallel using
+// a pool of background goroutines.
+func RunStagesInParallel(stages ...Stage[*Void, *Void]) Stage[*Void, *Void] {
 	return &runStagesInParallelStage{stages}
 }
 
