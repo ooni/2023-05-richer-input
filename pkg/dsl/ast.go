@@ -71,6 +71,9 @@ func NewASTLoader() *ASTLoader {
 	// dnsparallel.go
 	al.RegisterCustomLoaderRule(&dnsLookupParallelLoader{})
 
+	// dnsstatic.go
+	al.RegisterCustomLoaderRule(&dnsLookupStaticLoader{})
+
 	// dnsudp.go
 	al.RegisterCustomLoaderRule(&dnsLookupUDPLoader{})
 

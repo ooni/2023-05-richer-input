@@ -1,6 +1,9 @@
 package dsl
 
-import "context"
+import (
+	"context"
+	"encoding/json"
+)
 
 // DNSLookupStatic returns a stage that always returns the given IP addresses.
 func DNSLookupStatic(addresses ...string) Stage[string, *DNSLookupResult] {
@@ -20,6 +23,26 @@ func (sx *dnsLookupStaticOp) ASTNode() *SerializableASTNode {
 		Arguments: sx,
 		Children:  []*SerializableASTNode{},
 	}
+}
+
+type dnsLookupStaticLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*dnsLookupStaticLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	var op dnsLookupStaticOp
+	if err := json.Unmarshal(node.Arguments, &op); err != nil {
+		return nil, err
+	}
+	if err := loader.RequireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	stage := wrapOperation[string, *DNSLookupResult](&op)
+	return &StageRunnableASTNode[string, *DNSLookupResult]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*dnsLookupStaticLoader) StageName() string {
+	return dnsLookupStaticStageName
 }
 
 func (sx *dnsLookupStaticOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
