@@ -14,7 +14,17 @@ func DNSLookupGetaddrinfo() Stage[string, *DNSLookupResult] {
 
 type dnsLookupGetaddrinfoOp struct{}
 
-func (*dnsLookupGetaddrinfoOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
+const dnsLookupGetaddrinfoFunc = "dns_lookup_getaddrinfo"
+
+func (op *dnsLookupGetaddrinfoOp) ASTNode() *ASTNode {
+	return &ASTNode{
+		Func:      dnsLookupGetaddrinfoFunc,
+		Arguments: nil,
+		Children:  []*ASTNode{},
+	}
+}
+
+func (op *dnsLookupGetaddrinfoOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
 	// create trace
 	trace := rtx.NewTrace()
 

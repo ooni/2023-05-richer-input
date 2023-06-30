@@ -16,6 +16,17 @@ type composeStage[A, B, C any] struct {
 	s2 Stage[B, C]
 }
 
+const composeFunc = "compose"
+
+func (sx *composeStage[A, B, C]) ASTNode() *ASTNode {
+	n1, n2 := sx.s1.ASTNode(), sx.s2.ASTNode()
+	return &ASTNode{
+		Func:      composeFunc,
+		Arguments: nil,
+		Children:  []*ASTNode{n1, n2},
+	}
+}
+
 func (sx *composeStage[A, B, C]) Run(ctx context.Context, rtx Runtime, input Maybe[A]) Maybe[C] {
 	result := sx.s1.Run(ctx, rtx, input)
 	if result.Error != nil {

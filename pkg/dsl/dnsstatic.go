@@ -11,6 +11,16 @@ type dnsLookupStaticOp struct {
 	addresses []string
 }
 
+const dnsLookupStaticFunc = "dns_lookup_static"
+
+func (sx *dnsLookupStaticOp) ASTNode() *ASTNode {
+	return &ASTNode{
+		Func:      dnsLookupStaticFunc,
+		Arguments: sx.addresses,
+		Children:  []*ASTNode{},
+	}
+}
+
 func (sx *dnsLookupStaticOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
 	output := &DNSLookupResult{
 		Domain:    domain,

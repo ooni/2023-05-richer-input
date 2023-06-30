@@ -14,6 +14,16 @@ func TCPConnect() Stage[*Endpoint, *TCPConnection] {
 
 type tcpConnectOp struct{}
 
+const tcpConnectFunc = "tcp_connect"
+
+func (op *tcpConnectOp) ASTNode() *ASTNode {
+	return &ASTNode{
+		Func:      tcpConnectFunc,
+		Arguments: nil,
+		Children:  []*ASTNode{},
+	}
+}
+
 func (op *tcpConnectOp) Run(ctx context.Context, rtx Runtime, endpoint *Endpoint) (*TCPConnection, error) {
 	// create trace
 	trace := rtx.NewTrace()

@@ -17,6 +17,20 @@ type tlsHandshakeOp struct {
 	options []TLSHandshakeOption
 }
 
+const tlsHandshakeFunc = "tls_handshake"
+
+func (op *tlsHandshakeOp) ASTNode() *ASTNode {
+	var config tlsHandshakeConfig
+	for _, option := range op.options {
+		option(&config)
+	}
+	return &ASTNode{
+		Func:      tlsHandshakeFunc,
+		Arguments: &config,
+		Children:  []*ASTNode{},
+	}
+}
+
 func (op *tlsHandshakeOp) Run(ctx context.Context, rtx Runtime, tcpConn *TCPConnection) (*TLSConnection, error) {
 	// initialize config
 	config := &tlsHandshakeConfig{

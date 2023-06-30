@@ -13,7 +13,17 @@ func HTTPConnectionTCP() Stage[*TCPConnection, *HTTPConnection] {
 
 type httpConnectionTCPStage struct{}
 
-func (*httpConnectionTCPStage) Run(ctx context.Context, rtx Runtime, input Maybe[*TCPConnection]) Maybe[*HTTPConnection] {
+const httpConnectionTCPFunc = "http_connection_tcp"
+
+func (sx *httpConnectionTCPStage) ASTNode() *ASTNode {
+	return &ASTNode{
+		Func:      httpConnectionTCPFunc,
+		Arguments: nil,
+		Children:  []*ASTNode{},
+	}
+}
+
+func (sx *httpConnectionTCPStage) Run(ctx context.Context, rtx Runtime, input Maybe[*TCPConnection]) Maybe[*HTTPConnection] {
 	if input.Error != nil {
 		return NewError[*HTTPConnection](input.Error)
 	}

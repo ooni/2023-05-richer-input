@@ -105,34 +105,34 @@ func HTTPTransactionOptionUserAgent(value string) HTTPTransactionOption {
 
 type httpTransactionConfig struct {
 	// AcceptHeader is the accept header to use.
-	AcceptHeader string `json:"accept_header"`
+	AcceptHeader string `json:"accept_header,omitempty"`
 
 	// AcceptLanguageHeader is the accept-language header to use.
-	AcceptLanguageHeader string `json:"accept_language_header"`
+	AcceptLanguageHeader string `json:"accept_language_header,omitempty"`
 
 	// HostHeader is the host header to use.
-	HostHeader string `json:"host_header"`
+	HostHeader string `json:"host_header,omitempty"`
 
 	// RefererHeader is the referer header to use.
-	RefererHeader string `json:"referer_header"`
+	RefererHeader string `json:"referer_header,omitempty"`
 
 	// RequestMethod is the request method to use
-	RequestMethod string `json:"request_method"`
+	RequestMethod string `json:"request_method,omitempty"`
 
 	// ResponseBodySnapshotSize is the size of the response body snapshot to read.
-	ResponseBodySnapshotSize int `json:"response_body_snapshot_size"`
+	ResponseBodySnapshotSize int `json:"response_body_snapshot_size,omitempty"`
 
 	// URLHost is the host for the URL
-	URLHost string `json:"url_host"`
+	URLHost string `json:"url_host,omitempty"`
 
 	// URLPath is the path for the URL
-	URLPath string `json:"url_path"`
+	URLPath string `json:"url_path,omitempty"`
 
 	// URLScheme is the scheme for the URL
-	URLScheme string `json:"url_scheme"`
+	URLScheme string `json:"url_scheme,omitempty"`
 
 	// UserAgentHeader is the user-agent header to use.
-	UserAgentHeader string `json:"user_agent_header"`
+	UserAgentHeader string `json:"user_agent_header,omitempty"`
 }
 
 // HTTPResponse is the result of performing an HTTP transaction.

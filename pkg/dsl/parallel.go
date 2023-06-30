@@ -62,6 +62,20 @@ type runStagesInParallelStage struct {
 	stages []Stage[*Void, *Void]
 }
 
+const runStagesInParallelFunc = "run_stages_in_parallel"
+
+func (sx *runStagesInParallelStage) ASTNode() *ASTNode {
+	var nodes []*ASTNode
+	for _, stage := range sx.stages {
+		nodes = append(nodes, stage.ASTNode())
+	}
+	return &ASTNode{
+		Func:      runStagesInParallelFunc,
+		Arguments: nil,
+		Children:  nodes,
+	}
+}
+
 func (sx *runStagesInParallelStage) Run(ctx context.Context, rtx Runtime, input Maybe[*Void]) Maybe[*Void] {
 	if input.Error != nil {
 		return NewError[*Void](input.Error)

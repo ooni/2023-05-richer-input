@@ -29,10 +29,10 @@ type TLSConnection struct {
 type TLSHandshakeOption func(config *tlsHandshakeConfig)
 
 type tlsHandshakeConfig struct {
-	ALPN       []string `json:"alpn"`
-	SkipVerify bool     `json:"skip_verify"`
-	SNI        string   `json:"sni"`
-	X509Certs  []string `json:"x509_certs"`
+	ALPN       []string `json:"alpn,omitempty"`
+	SkipVerify bool     `json:"skip_verify,omitempty"`
+	SNI        string   `json:"sni,omitempty"`
+	X509Certs  []string `json:"x509_certs,omitempty"`
 }
 
 func (config *tlsHandshakeConfig) TLSConfig() (*tls.Config, error) {

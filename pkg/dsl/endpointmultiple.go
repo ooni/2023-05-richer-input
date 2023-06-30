@@ -12,6 +12,20 @@ type measureMultipleEndpointsStage struct {
 	stages []Stage[*DNSLookupResult, *Void]
 }
 
+const measureMultipleEndpointsFunc = "measure_multiple_endpoints"
+
+func (sx *measureMultipleEndpointsStage) ASTNode() *ASTNode {
+	var nodes []*ASTNode
+	for _, stage := range sx.stages {
+		nodes = append(nodes, stage.ASTNode())
+	}
+	return &ASTNode{
+		Func:      measureMultipleEndpointsFunc,
+		Arguments: nil,
+		Children:  nodes,
+	}
+}
+
 func (sx *measureMultipleEndpointsStage) Run(ctx context.Context, rtx Runtime, input Maybe[*DNSLookupResult]) Maybe[*Void] {
 	if input.Error != nil {
 		return NewError[*Void](input.Error)

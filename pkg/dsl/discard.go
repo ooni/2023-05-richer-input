@@ -31,7 +31,17 @@ func DiscardTLSConnection() Stage[*TLSConnection, *Void] {
 
 type discardStage[T any] struct{}
 
-func (*discardStage[T]) Run(ctx context.Context, rtx Runtime, input Maybe[T]) Maybe[*Void] {
+const discardFunc = "discard"
+
+func (sx *discardStage[T]) ASTNode() *ASTNode {
+	return &ASTNode{
+		Func:      discardFunc,
+		Arguments: nil,
+		Children:  []*ASTNode{},
+	}
+}
+
+func (sx *discardStage[T]) Run(ctx context.Context, rtx Runtime, input Maybe[T]) Maybe[*Void] {
 	if input.Error != nil {
 		return NewError[*Void](input.Error)
 	}

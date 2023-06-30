@@ -21,6 +21,20 @@ type httpTransactionOp struct {
 	options []HTTPTransactionOption
 }
 
+const httpTransactionFunc string = "http_transaction"
+
+func (op *httpTransactionOp) ASTNode() *ASTNode {
+	var config httpTransactionConfig
+	for _, option := range op.options {
+		option(&config)
+	}
+	return &ASTNode{
+		Func:      httpTransactionFunc,
+		Arguments: &config,
+		Children:  []*ASTNode{},
+	}
+}
+
 func (op *httpTransactionOp) Run(ctx context.Context, rtx Runtime, conn *HTTPConnection) (*HTTPResponse, error) {
 	// setup
 	const timeout = 10 * time.Second

@@ -14,6 +14,17 @@ type newEndpointPipelineStage struct {
 	sx Stage[*Endpoint, *Void]
 }
 
+const newEndpointPipelineFunc = "new_endpoint_pipeline"
+
+func (sx *newEndpointPipelineStage) ASTNode() *ASTNode {
+	node := sx.sx.ASTNode()
+	return &ASTNode{
+		Func:      newEndpointPipelineFunc,
+		Arguments: nil,
+		Children:  []*ASTNode{node},
+	}
+}
+
 func (sx *newEndpointPipelineStage) Run(ctx context.Context, rtx Runtime, input Maybe[[]*Endpoint]) Maybe[*Void] {
 	if input.Error != nil {
 		return NewError[*Void](input.Error)

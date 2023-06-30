@@ -16,6 +16,16 @@ type makeEndpointsForPortStage struct {
 	port uint16
 }
 
+const makeEndpointsForPortFunc = "make_endpoints_for_port"
+
+func (sx *makeEndpointsForPortStage) ASTNode() *ASTNode {
+	return &ASTNode{
+		Func:      makeEndpointsForPortFunc,
+		Arguments: sx.port,
+		Children:  []*ASTNode{},
+	}
+}
+
 func (sx *makeEndpointsForPortStage) Run(ctx context.Context, rtx Runtime, input Maybe[*DNSLookupResult]) Maybe[[]*Endpoint] {
 	if input.Error != nil {
 		return NewError[[]*Endpoint](input.Error)

@@ -13,7 +13,17 @@ func HTTPConnectionQUIC() Stage[*QUICConnection, *HTTPConnection] {
 
 type httpConnectionQUICStage struct{}
 
-func (*httpConnectionQUICStage) Run(ctx context.Context, rtx Runtime, input Maybe[*QUICConnection]) Maybe[*HTTPConnection] {
+const httpConnectionQUICFunc = "http_connection_quic"
+
+func (sx *httpConnectionQUICStage) ASTNode() *ASTNode {
+	return &ASTNode{
+		Func:      httpConnectionQUICFunc,
+		Arguments: nil,
+		Children:  []*ASTNode{},
+	}
+}
+
+func (sx *httpConnectionQUICStage) Run(ctx context.Context, rtx Runtime, input Maybe[*QUICConnection]) Maybe[*HTTPConnection] {
 	if input.Error != nil {
 		return NewError[*HTTPConnection](input.Error)
 	}

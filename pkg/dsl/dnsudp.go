@@ -17,6 +17,16 @@ type dnsLookupUDPOp struct {
 	endpoint string
 }
 
+const dnsLookupUDPFunc = "dns_lookup_udp"
+
+func (sx *dnsLookupUDPOp) ASTNode() *ASTNode {
+	return &ASTNode{
+		Func:      dnsLookupUDPFunc,
+		Arguments: sx.endpoint,
+		Children:  []*ASTNode{},
+	}
+}
+
 func (sx *dnsLookupUDPOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
 	// create trace
 	trace := rtx.NewTrace()

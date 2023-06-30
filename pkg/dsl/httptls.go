@@ -13,7 +13,17 @@ func HTTPConnectionTLS() Stage[*TLSConnection, *HTTPConnection] {
 
 type httpConnectionTLSStage struct{}
 
-func (*httpConnectionTLSStage) Run(ctx context.Context, rtx Runtime, input Maybe[*TLSConnection]) Maybe[*HTTPConnection] {
+const httpConnectionTLSFunc = "http_connection_tls"
+
+func (sx *httpConnectionTLSStage) ASTNode() *ASTNode {
+	return &ASTNode{
+		Func:      httpConnectionTLSFunc,
+		Arguments: nil,
+		Children:  []*ASTNode{},
+	}
+}
+
+func (sx *httpConnectionTLSStage) Run(ctx context.Context, rtx Runtime, input Maybe[*TLSConnection]) Maybe[*HTTPConnection] {
 	if input.Error != nil {
 		return NewError[*HTTPConnection](input.Error)
 	}

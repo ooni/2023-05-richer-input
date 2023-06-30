@@ -17,6 +17,20 @@ type quicHandshakeOp struct {
 	options []QUICHandshakeOption
 }
 
+const quicHandshakeFunc = "quic_handshake"
+
+func (sx *quicHandshakeOp) ASTNode() *ASTNode {
+	var config quicHandshakeConfig
+	for _, option := range sx.options {
+		option(&config)
+	}
+	return &ASTNode{
+		Func:      quicHandshakeFunc,
+		Arguments: &config,
+		Children:  []*ASTNode{},
+	}
+}
+
 func (sx *quicHandshakeOp) Run(ctx context.Context, rtx Runtime, endpoint *Endpoint) (*QUICConnection, error) {
 	// initialize config
 	config := &quicHandshakeConfig{

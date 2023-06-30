@@ -33,10 +33,10 @@ type QUICConnection struct {
 type QUICHandshakeOption func(config *quicHandshakeConfig)
 
 type quicHandshakeConfig struct {
-	ALPN       []string `json:"alpn"`
-	SkipVerify bool     `json:"skip_verify"`
-	SNI        string   `json:"sni"`
-	X509Certs  []string `json:"x509_certs"`
+	ALPN       []string `json:"alpn,omitempty"`
+	SkipVerify bool     `json:"skip_verify,omitempty"`
+	SNI        string   `json:"sni,omitempty"`
+	X509Certs  []string `json:"x509_certs,omitempty"`
 }
 
 // ErrInvalidCert is returned when we encounter an invalid PEM-encoded certificate.

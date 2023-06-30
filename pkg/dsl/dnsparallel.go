@@ -13,6 +13,20 @@ type dnsLookupParallelStage struct {
 	stages []Stage[string, *DNSLookupResult]
 }
 
+const dnsLookupParallelFunc = "dns_lookup_parallel"
+
+func (sx *dnsLookupParallelStage) ASTNode() *ASTNode {
+	var nodes []*ASTNode
+	for _, stage := range sx.stages {
+		nodes = append(nodes, stage.ASTNode())
+	}
+	return &ASTNode{
+		Func:      dnsLookupParallelFunc,
+		Arguments: nil,
+		Children:  nodes,
+	}
+}
+
 func (sx *dnsLookupParallelStage) Run(ctx context.Context, rtx Runtime, input Maybe[string]) Maybe[*DNSLookupResult] {
 	if input.Error != nil {
 		return NewError[*DNSLookupResult](input.Error)
