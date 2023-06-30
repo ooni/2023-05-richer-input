@@ -8,15 +8,16 @@ func DNSLookupStatic(addresses ...string) Stage[string, *DNSLookupResult] {
 }
 
 type dnsLookupStaticOp struct {
-	addresses []string
+	Addresses []string `json:"addresses"`
 }
 
 const dnsLookupStaticFunc = "dns_lookup_static"
 
 func (sx *dnsLookupStaticOp) ASTNode() *ASTNode {
+	// Note: we serialize the structure because this gives us forward compatibility
 	return &ASTNode{
 		Func:      dnsLookupStaticFunc,
-		Arguments: sx.addresses,
+		Arguments: sx,
 		Children:  []*ASTNode{},
 	}
 }
@@ -24,7 +25,7 @@ func (sx *dnsLookupStaticOp) ASTNode() *ASTNode {
 func (sx *dnsLookupStaticOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
 	output := &DNSLookupResult{
 		Domain:    domain,
-		Addresses: sx.addresses,
+		Addresses: sx.Addresses,
 	}
 	return output, nil
 }

@@ -14,15 +14,16 @@ func DNSLookupUDP(endpoint string) Stage[string, *DNSLookupResult] {
 }
 
 type dnsLookupUDPOp struct {
-	endpoint string
+	Endpoint string `json:"endpoint"`
 }
 
 const dnsLookupUDPFunc = "dns_lookup_udp"
 
 func (sx *dnsLookupUDPOp) ASTNode() *ASTNode {
+	// Note: we serialize the structure because this gives us forward compatibility
 	return &ASTNode{
 		Func:      dnsLookupUDPFunc,
-		Arguments: sx.endpoint,
+		Arguments: sx,
 		Children:  []*ASTNode{},
 	}
 }
@@ -36,7 +37,7 @@ func (sx *dnsLookupUDPOp) Run(ctx context.Context, rtx Runtime, domain string) (
 		rtx.Logger(),
 		"[#%d] DNSLookupUDP endpoint=%s domain=%s",
 		trace.Index(),
-		sx.endpoint,
+		sx.Endpoint,
 		domain,
 	)
 
@@ -45,7 +46,7 @@ func (sx *dnsLookupUDPOp) Run(ctx context.Context, rtx Runtime, domain string) (
 	defer cancel()
 
 	// instantiate resolver
-	resolver := trace.NewParallelUDPResolver(sx.endpoint)
+	resolver := trace.NewParallelUDPResolver(sx.Endpoint)
 
 	// do the lookup
 	addrs, err := resolver.LookupHost(ctx, domain)

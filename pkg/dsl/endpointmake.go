@@ -13,15 +13,16 @@ func MakeEndpointsForPort(port uint16) Stage[*DNSLookupResult, []*Endpoint] {
 }
 
 type makeEndpointsForPortStage struct {
-	port uint16
+	Port uint16 `json:"port"`
 }
 
 const makeEndpointsForPortFunc = "make_endpoints_for_port"
 
 func (sx *makeEndpointsForPortStage) ASTNode() *ASTNode {
+	// Note: we serialize the structure because this gives us forward compatibility
 	return &ASTNode{
 		Func:      makeEndpointsForPortFunc,
-		Arguments: sx.port,
+		Arguments: sx,
 		Children:  []*ASTNode{},
 	}
 }
@@ -40,7 +41,7 @@ func (sx *makeEndpointsForPortStage) Run(ctx context.Context, rtx Runtime, input
 	var out []*Endpoint
 	for addr := range uniq {
 		out = append(out, &Endpoint{
-			Address: net.JoinHostPort(addr, strconv.Itoa(int(sx.port))),
+			Address: net.JoinHostPort(addr, strconv.Itoa(int(sx.Port))),
 			Domain:  input.Value.Domain})
 	}
 	return NewValue(out)
