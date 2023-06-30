@@ -35,3 +35,21 @@ var ErrSkip = errors.New("minilang: skip this stage")
 func IsErrSkip(err error) bool {
 	return errors.Is(err, ErrSkip)
 }
+
+// NewErrException creates a new exception with a formatted string as value.
+func NewErrException(format string, v ...any) *ErrException {
+	return &ErrException{fmt.Errorf(format, v...)}
+}
+
+// NewTypeErrException creates a new exception for the given types.
+func NewTypeErrException[Expected any](got any) *ErrException {
+	var expected Expected
+	return NewErrException("type error: expected %T; got %T", expected, got)
+}
+
+// ErrInvalidNumberOfChildren indicates that the AST contains an invalid number of children.
+var ErrInvalidNumberOfChildren = errors.New("dsl: invalid number of children")
+
+// ErrUnwrap indicates that we cannot unwrap a [RunnableASTNode] to a [Stage] because
+// there is a mismatch of the underlying [Stage] type.
+var ErrUnwrap = errors.New("dsl: cannot unwrap RunnableASTNode to Stage")

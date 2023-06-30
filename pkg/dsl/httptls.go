@@ -13,14 +13,33 @@ func HTTPConnectionTLS() Stage[*TLSConnection, *HTTPConnection] {
 
 type httpConnectionTLSStage struct{}
 
-const httpConnectionTLSFunc = "http_connection_tls"
+const httpConnectionTLSStageName = "http_connection_tls"
 
-func (sx *httpConnectionTLSStage) ASTNode() *ASTNode {
-	return &ASTNode{
-		Func:      httpConnectionTLSFunc,
+func (sx *httpConnectionTLSStage) ASTNode() *SerializableASTNode {
+	return &SerializableASTNode{
+		StageName: httpConnectionTLSStageName,
 		Arguments: nil,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
+}
+
+type httpConnectionTLSLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*httpConnectionTLSLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	stage := HTTPConnectionTLS()
+	return &stageRunnableASTNode[*TLSConnection, *HTTPConnection]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*httpConnectionTLSLoader) StageName() string {
+	return httpConnectionTLSStageName
 }
 
 func (sx *httpConnectionTLSStage) Run(ctx context.Context, rtx Runtime, input Maybe[*TLSConnection]) Maybe[*HTTPConnection] {

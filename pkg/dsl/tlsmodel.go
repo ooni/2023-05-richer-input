@@ -35,6 +35,22 @@ type tlsHandshakeConfig struct {
 	X509Certs  []string `json:"x509_certs,omitempty"`
 }
 
+func (c *tlsHandshakeConfig) options() (options []TLSHandshakeOption) {
+	if len(c.ALPN) > 0 {
+		options = append(options, TLSHandshakeOptionALPN(c.ALPN...))
+	}
+	if c.SkipVerify {
+		options = append(options, TLSHandshakeOptionSkipVerify(c.SkipVerify))
+	}
+	if c.SNI != "" {
+		options = append(options, TLSHandshakeOptionSNI(c.SNI))
+	}
+	if len(c.X509Certs) > 0 {
+		options = append(options, TLSHandshakeOptionX509Certs(c.X509Certs...))
+	}
+	return
+}
+
 func (config *tlsHandshakeConfig) TLSConfig() (*tls.Config, error) {
 	// See https://github.com/ooni/probe/issues/2413 to understand
 	// why we're using nil to force netxlite to use the cached default

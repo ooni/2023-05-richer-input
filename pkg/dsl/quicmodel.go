@@ -39,6 +39,22 @@ type quicHandshakeConfig struct {
 	X509Certs  []string `json:"x509_certs,omitempty"`
 }
 
+func (c *quicHandshakeConfig) options() (options []QUICHandshakeOption) {
+	if len(c.ALPN) > 0 {
+		options = append(options, QUICHandshakeOptionALPN(c.ALPN...))
+	}
+	if c.SkipVerify {
+		options = append(options, QUICHandshakeOptionSkipVerify(c.SkipVerify))
+	}
+	if c.SNI != "" {
+		options = append(options, QUICHandshakeOptionSNI(c.SNI))
+	}
+	if len(c.X509Certs) > 0 {
+		options = append(options, QUICHandshakeOptionX509Certs(c.X509Certs...))
+	}
+	return
+}
+
 // ErrInvalidCert is returned when we encounter an invalid PEM-encoded certificate.
 var ErrInvalidCert = errors.New("minilang: invalid PEM-encoded certificate")
 

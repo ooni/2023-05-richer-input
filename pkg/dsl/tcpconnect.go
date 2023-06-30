@@ -14,14 +14,33 @@ func TCPConnect() Stage[*Endpoint, *TCPConnection] {
 
 type tcpConnectOp struct{}
 
-const tcpConnectFunc = "tcp_connect"
+const tcpConnectStageName = "tcp_connect"
 
-func (op *tcpConnectOp) ASTNode() *ASTNode {
-	return &ASTNode{
-		Func:      tcpConnectFunc,
+func (op *tcpConnectOp) ASTNode() *SerializableASTNode {
+	return &SerializableASTNode{
+		StageName: tcpConnectStageName,
 		Arguments: nil,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
+}
+
+type tcpConnectLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*tcpConnectLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	stage := TCPConnect()
+	return &stageRunnableASTNode[*Endpoint, *TCPConnection]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*tcpConnectLoader) StageName() string {
+	return tcpConnectStageName
 }
 
 func (op *tcpConnectOp) Run(ctx context.Context, rtx Runtime, endpoint *Endpoint) (*TCPConnection, error) {

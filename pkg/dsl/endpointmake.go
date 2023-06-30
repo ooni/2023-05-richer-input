@@ -2,6 +2,7 @@ package dsl
 
 import (
 	"context"
+	"encoding/json"
 	"net"
 	"strconv"
 )
@@ -16,15 +17,34 @@ type makeEndpointsForPortStage struct {
 	Port uint16 `json:"port"`
 }
 
-const makeEndpointsForPortFunc = "make_endpoints_for_port"
+const makeEndpointsForPortStageName = "make_endpoints_for_port"
 
-func (sx *makeEndpointsForPortStage) ASTNode() *ASTNode {
+func (sx *makeEndpointsForPortStage) ASTNode() *SerializableASTNode {
 	// Note: we serialize the structure because this gives us forward compatibility
-	return &ASTNode{
-		Func:      makeEndpointsForPortFunc,
+	return &SerializableASTNode{
+		StageName: makeEndpointsForPortStageName,
 		Arguments: sx,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
+}
+
+type makeEndpointForPortLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*makeEndpointForPortLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	var stage makeEndpointsForPortStage
+	if err := json.Unmarshal(node.Arguments, &stage); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	return &stageRunnableASTNode[*DNSLookupResult, []*Endpoint]{&stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*makeEndpointForPortLoader) StageName() string {
+	return makeEndpointsForPortStageName
 }
 
 func (sx *makeEndpointsForPortStage) Run(ctx context.Context, rtx Runtime, input Maybe[*DNSLookupResult]) Maybe[[]*Endpoint] {

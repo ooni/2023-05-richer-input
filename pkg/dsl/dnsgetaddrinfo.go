@@ -14,14 +14,33 @@ func DNSLookupGetaddrinfo() Stage[string, *DNSLookupResult] {
 
 type dnsLookupGetaddrinfoOp struct{}
 
-const dnsLookupGetaddrinfoFunc = "dns_lookup_getaddrinfo"
+const dnsLookupGetaddrinfoStageName = "dns_lookup_getaddrinfo"
 
-func (op *dnsLookupGetaddrinfoOp) ASTNode() *ASTNode {
-	return &ASTNode{
-		Func:      dnsLookupGetaddrinfoFunc,
+func (op *dnsLookupGetaddrinfoOp) ASTNode() *SerializableASTNode {
+	return &SerializableASTNode{
+		StageName: dnsLookupGetaddrinfoStageName,
 		Arguments: nil,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
+}
+
+type dnsLookupGetaddrinfoLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*dnsLookupGetaddrinfoLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	stage := DNSLookupGetaddrinfo()
+	return &stageRunnableASTNode[string, *DNSLookupResult]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*dnsLookupGetaddrinfoLoader) StageName() string {
+	return dnsLookupGetaddrinfoStageName
 }
 
 func (op *dnsLookupGetaddrinfoOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {

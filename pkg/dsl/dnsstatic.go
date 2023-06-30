@@ -11,14 +11,14 @@ type dnsLookupStaticOp struct {
 	Addresses []string `json:"addresses"`
 }
 
-const dnsLookupStaticFunc = "dns_lookup_static"
+const dnsLookupStaticStageName = "dns_lookup_static"
 
-func (sx *dnsLookupStaticOp) ASTNode() *ASTNode {
+func (sx *dnsLookupStaticOp) ASTNode() *SerializableASTNode {
 	// Note: we serialize the structure because this gives us forward compatibility
-	return &ASTNode{
-		Func:      dnsLookupStaticFunc,
+	return &SerializableASTNode{
+		StageName: dnsLookupStaticStageName,
 		Arguments: sx,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
 }
 

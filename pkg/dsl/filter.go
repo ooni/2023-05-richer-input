@@ -1,6 +1,8 @@
 package dsl
 
-import "context"
+import (
+	"context"
+)
 
 // Filter is a [Stage] whose input and output types are equal.
 type Filter[T any] Stage[T, T]
@@ -17,14 +19,36 @@ type ifFilterExistsStage[T any] struct {
 	fx Filter[T]
 }
 
-const ifFilterExistsFunc = "if_filter_exists"
+const ifFilterExistsStageName = "if_filter_exists"
 
-func (fx *ifFilterExistsStage[T]) ASTNode() *ASTNode {
-	return &ASTNode{
-		Func:      ifFilterExistsFunc,
+func (fx *ifFilterExistsStage[T]) ASTNode() *SerializableASTNode {
+	return &SerializableASTNode{
+		StageName: ifFilterExistsStageName,
 		Arguments: nil,
-		Children:  []*ASTNode{fx.fx.ASTNode()},
+		Children:  []*SerializableASTNode{fx.fx.ASTNode()},
 	}
+}
+
+type ifFilterExistsLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*ifFilterExistsLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 1); err != nil {
+		return nil, err
+	}
+	runnable, err := loader.Load(node.Children[0])
+	if err != nil {
+		return &Identity[any]{}, nil
+	}
+	return runnable, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*ifFilterExistsLoader) StageName() string {
+	return ifFilterExistsStageName
 }
 
 func (fx *ifFilterExistsStage[T]) Run(ctx context.Context, rtx Runtime, input Maybe[T]) Maybe[T] {

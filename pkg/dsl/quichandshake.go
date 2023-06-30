@@ -2,6 +2,7 @@ package dsl
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/ooni/probe-engine/pkg/measurexlite"
@@ -17,18 +18,38 @@ type quicHandshakeOp struct {
 	options []QUICHandshakeOption
 }
 
-const quicHandshakeFunc = "quic_handshake"
+const quicHandshakeStageName = "quic_handshake"
 
-func (sx *quicHandshakeOp) ASTNode() *ASTNode {
+func (sx *quicHandshakeOp) ASTNode() *SerializableASTNode {
 	var config quicHandshakeConfig
 	for _, option := range sx.options {
 		option(&config)
 	}
-	return &ASTNode{
-		Func:      quicHandshakeFunc,
+	return &SerializableASTNode{
+		StageName: quicHandshakeStageName,
 		Arguments: &config,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
+}
+
+type quicHandshakeLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*quicHandshakeLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	var config quicHandshakeConfig
+	if err := json.Unmarshal(node.Arguments, &config); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	stage := QUICHandshake(config.options()...)
+	return &stageRunnableASTNode[*Endpoint, *QUICConnection]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*quicHandshakeLoader) StageName() string {
+	return quicHandshakeStageName
 }
 
 func (sx *quicHandshakeOp) Run(ctx context.Context, rtx Runtime, endpoint *Endpoint) (*QUICConnection, error) {

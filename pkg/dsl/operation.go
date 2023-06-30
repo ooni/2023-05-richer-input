@@ -5,7 +5,7 @@ import "context"
 // operation is an internal definition used to characterize the internal implementation
 // of network operations such as [dnsLookupGetaddrinfoStage] and [tcpConnectStage].
 type operation[A, B any] interface {
-	ASTNode() *ASTNode
+	ASTNode() *SerializableASTNode
 	Run(ctx context.Context, rtx Runtime, input A) (B, error)
 }
 
@@ -18,7 +18,7 @@ type wrapOperationStage[A, B any] struct {
 	op operation[A, B]
 }
 
-func (sx *wrapOperationStage[A, B]) ASTNode() *ASTNode {
+func (sx *wrapOperationStage[A, B]) ASTNode() *SerializableASTNode {
 	return sx.op.ASTNode()
 }
 

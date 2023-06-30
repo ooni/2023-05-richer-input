@@ -62,18 +62,39 @@ type runStagesInParallelStage struct {
 	stages []Stage[*Void, *Void]
 }
 
-const runStagesInParallelFunc = "run_stages_in_parallel"
+const runStagesInParallelStageName = "run_stages_in_parallel"
 
-func (sx *runStagesInParallelStage) ASTNode() *ASTNode {
-	var nodes []*ASTNode
+func (sx *runStagesInParallelStage) ASTNode() *SerializableASTNode {
+	var nodes []*SerializableASTNode
 	for _, stage := range sx.stages {
 		nodes = append(nodes, stage.ASTNode())
 	}
-	return &ASTNode{
-		Func:      runStagesInParallelFunc,
+	return &SerializableASTNode{
+		StageName: runStagesInParallelStageName,
 		Arguments: nil,
 		Children:  nodes,
 	}
+}
+
+type runStagesInParallelLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*runStagesInParallelLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
+	}
+	runnables, err := loader.loadChildren(node)
+	if err != nil {
+		return nil, err
+	}
+	children := runnableASTNodeListToStageList[*Void, *Void](runnables...)
+	stage := RunStagesInParallel(children...)
+	return &stageRunnableASTNode[*Void, *Void]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*runStagesInParallelLoader) StageName() string {
+	return runStagesInParallelStageName
 }
 
 func (sx *runStagesInParallelStage) Run(ctx context.Context, rtx Runtime, input Maybe[*Void]) Maybe[*Void] {

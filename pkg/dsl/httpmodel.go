@@ -135,6 +135,40 @@ type httpTransactionConfig struct {
 	UserAgentHeader string `json:"user_agent_header,omitempty"`
 }
 
+func (c *httpTransactionConfig) options() (options []HTTPTransactionOption) {
+	if value := c.AcceptHeader; value != "" {
+		options = append(options, HTTPTransactionOptionAccept(value))
+	}
+	if value := c.AcceptLanguageHeader; value != "" {
+		options = append(options, HTTPTransactionOptionAcceptLanguage(value))
+	}
+	if value := c.HostHeader; value != "" {
+		options = append(options, HTTPTransactionOptionHost(value))
+	}
+	if value := c.RefererHeader; value != "" {
+		options = append(options, HTTPTransactionOptionReferer(value))
+	}
+	if value := c.RequestMethod; value != "" {
+		options = append(options, HTTPTransactionOptionMethod(value))
+	}
+	if value := c.ResponseBodySnapshotSize; value > 0 {
+		options = append(options, HTTPTransactionOptionResponseBodySnapshotSize(value))
+	}
+	if value := c.URLHost; value != "" {
+		options = append(options, HTTPTransactionOptionURLHost(value))
+	}
+	if value := c.URLPath; value != "" {
+		options = append(options, HTTPTransactionOptionURLPath(value))
+	}
+	if value := c.URLScheme; value != "" {
+		options = append(options, HTTPTransactionOptionURLScheme(value))
+	}
+	if value := c.UserAgentHeader; value != "" {
+		options = append(options, HTTPTransactionOptionUserAgent(value))
+	}
+	return
+}
+
 // HTTPResponse is the result of performing an HTTP transaction.
 type HTTPResponse struct {
 	// Address is the original endpoint address.

@@ -13,14 +13,33 @@ func HTTPConnectionQUIC() Stage[*QUICConnection, *HTTPConnection] {
 
 type httpConnectionQUICStage struct{}
 
-const httpConnectionQUICFunc = "http_connection_quic"
+const httpConnectionQUICStageName = "http_connection_quic"
 
-func (sx *httpConnectionQUICStage) ASTNode() *ASTNode {
-	return &ASTNode{
-		Func:      httpConnectionQUICFunc,
+func (sx *httpConnectionQUICStage) ASTNode() *SerializableASTNode {
+	return &SerializableASTNode{
+		StageName: httpConnectionQUICStageName,
 		Arguments: nil,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
+}
+
+type httpConnectionQUICLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*httpConnectionQUICLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	stage := HTTPConnectionQUIC()
+	return &stageRunnableASTNode[*QUICConnection, *HTTPConnection]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*httpConnectionQUICLoader) StageName() string {
+	return httpConnectionQUICStageName
 }
 
 func (sx *httpConnectionQUICStage) Run(ctx context.Context, rtx Runtime, input Maybe[*QUICConnection]) Maybe[*HTTPConnection] {

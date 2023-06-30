@@ -13,14 +13,33 @@ func HTTPConnectionTCP() Stage[*TCPConnection, *HTTPConnection] {
 
 type httpConnectionTCPStage struct{}
 
-const httpConnectionTCPFunc = "http_connection_tcp"
+const httpConnectionTCPStageName = "http_connection_tcp"
 
-func (sx *httpConnectionTCPStage) ASTNode() *ASTNode {
-	return &ASTNode{
-		Func:      httpConnectionTCPFunc,
+func (sx *httpConnectionTCPStage) ASTNode() *SerializableASTNode {
+	return &SerializableASTNode{
+		StageName: httpConnectionTCPStageName,
 		Arguments: nil,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
+}
+
+type httpConnectionTCPLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*httpConnectionTCPLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	stage := HTTPConnectionTCP()
+	return &stageRunnableASTNode[*TCPConnection, *HTTPConnection]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*httpConnectionTCPLoader) StageName() string {
+	return httpConnectionTCPStageName
 }
 
 func (sx *httpConnectionTCPStage) Run(ctx context.Context, rtx Runtime, input Maybe[*TCPConnection]) Maybe[*HTTPConnection] {

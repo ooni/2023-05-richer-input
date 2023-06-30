@@ -2,6 +2,7 @@ package dsl
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"time"
@@ -21,18 +22,39 @@ type httpTransactionOp struct {
 	options []HTTPTransactionOption
 }
 
-const httpTransactionFunc string = "http_transaction"
+const httpTransactionStageName = "http_transaction"
 
-func (op *httpTransactionOp) ASTNode() *ASTNode {
+func (op *httpTransactionOp) ASTNode() *SerializableASTNode {
 	var config httpTransactionConfig
 	for _, option := range op.options {
 		option(&config)
 	}
-	return &ASTNode{
-		Func:      httpTransactionFunc,
+	return &SerializableASTNode{
+		StageName: httpTransactionStageName,
 		Arguments: &config,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
+}
+
+type httpTransactionLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*httpTransactionLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	var config httpTransactionConfig
+	if err := json.Unmarshal(node.Arguments, &config); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	options := config.options()
+	stage := HTTPTransaction(options...)
+	return &stageRunnableASTNode[*HTTPConnection, *HTTPResponse]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*httpTransactionLoader) StageName() string {
+	return httpTransactionStageName
 }
 
 func (op *httpTransactionOp) Run(ctx context.Context, rtx Runtime, conn *HTTPConnection) (*HTTPResponse, error) {

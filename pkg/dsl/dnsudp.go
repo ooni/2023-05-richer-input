@@ -2,6 +2,7 @@ package dsl
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/ooni/probe-engine/pkg/measurexlite"
@@ -17,15 +18,35 @@ type dnsLookupUDPOp struct {
 	Endpoint string `json:"endpoint"`
 }
 
-const dnsLookupUDPFunc = "dns_lookup_udp"
+const dnsLookupUDPStageName = "dns_lookup_udp"
 
-func (sx *dnsLookupUDPOp) ASTNode() *ASTNode {
+func (sx *dnsLookupUDPOp) ASTNode() *SerializableASTNode {
 	// Note: we serialize the structure because this gives us forward compatibility
-	return &ASTNode{
-		Func:      dnsLookupUDPFunc,
+	return &SerializableASTNode{
+		StageName: dnsLookupUDPStageName,
 		Arguments: sx,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
+}
+
+type dnsLookupUDPLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*dnsLookupUDPLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	var op dnsLookupUDPOp
+	if err := json.Unmarshal(node.Arguments, &op); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	stage := wrapOperation[string, *DNSLookupResult](&op)
+	return &stageRunnableASTNode[string, *DNSLookupResult]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*dnsLookupUDPLoader) StageName() string {
+	return dnsLookupUDPStageName
 }
 
 func (sx *dnsLookupUDPOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {

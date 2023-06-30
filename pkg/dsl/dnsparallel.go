@@ -1,6 +1,8 @@
 package dsl
 
-import "context"
+import (
+	"context"
+)
 
 // DNSLookupParallel returns a stage that runs several DNS lookup stages in parallel using a
 // pool of background goroutines. Note that this stage disregards the result of substages and
@@ -13,18 +15,39 @@ type dnsLookupParallelStage struct {
 	stages []Stage[string, *DNSLookupResult]
 }
 
-const dnsLookupParallelFunc = "dns_lookup_parallel"
+const dnsLookupParallelStageName = "dns_lookup_parallel"
 
-func (sx *dnsLookupParallelStage) ASTNode() *ASTNode {
-	var nodes []*ASTNode
+func (sx *dnsLookupParallelStage) ASTNode() *SerializableASTNode {
+	var nodes []*SerializableASTNode
 	for _, stage := range sx.stages {
 		nodes = append(nodes, stage.ASTNode())
 	}
-	return &ASTNode{
-		Func:      dnsLookupParallelFunc,
+	return &SerializableASTNode{
+		StageName: dnsLookupParallelStageName,
 		Arguments: nil,
 		Children:  nodes,
 	}
+}
+
+type dnsLookupParallelLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*dnsLookupParallelLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
+	}
+	runnables, err := loader.loadChildren(node)
+	if err != nil {
+		return nil, err
+	}
+	children := runnableASTNodeListToStageList[string, *DNSLookupResult](runnables...)
+	stage := DNSLookupParallel(children...)
+	return &stageRunnableASTNode[string, *DNSLookupResult]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*dnsLookupParallelLoader) StageName() string {
+	return dnsLookupParallelStageName
 }
 
 func (sx *dnsLookupParallelStage) Run(ctx context.Context, rtx Runtime, input Maybe[string]) Maybe[*DNSLookupResult] {

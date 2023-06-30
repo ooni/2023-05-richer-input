@@ -1,6 +1,8 @@
 package dsl
 
-import "context"
+import (
+	"context"
+)
 
 // MeasureMultipleEndpoints returns a stage that runs several endpoint measurement
 // pipelines in parallel using a pool of background goroutines.
@@ -12,18 +14,39 @@ type measureMultipleEndpointsStage struct {
 	stages []Stage[*DNSLookupResult, *Void]
 }
 
-const measureMultipleEndpointsFunc = "measure_multiple_endpoints"
+const measureMultipleEndpointsStageName = "measure_multiple_endpoints"
 
-func (sx *measureMultipleEndpointsStage) ASTNode() *ASTNode {
-	var nodes []*ASTNode
+func (sx *measureMultipleEndpointsStage) ASTNode() *SerializableASTNode {
+	var nodes []*SerializableASTNode
 	for _, stage := range sx.stages {
 		nodes = append(nodes, stage.ASTNode())
 	}
-	return &ASTNode{
-		Func:      measureMultipleEndpointsFunc,
+	return &SerializableASTNode{
+		StageName: measureMultipleEndpointsStageName,
 		Arguments: nil,
 		Children:  nodes,
 	}
+}
+
+type measureMultipleEndpointsLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*measureMultipleEndpointsLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
+	}
+	runnables, err := loader.loadChildren(node)
+	if err != nil {
+		return nil, err
+	}
+	children := runnableASTNodeListToStageList[*DNSLookupResult, *Void](runnables...)
+	stage := MeasureMultipleEndpoints(children...)
+	return &stageRunnableASTNode[*DNSLookupResult, *Void]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*measureMultipleEndpointsLoader) StageName() string {
+	return measureMultipleEndpointsStageName
 }
 
 func (sx *measureMultipleEndpointsStage) Run(ctx context.Context, rtx Runtime, input Maybe[*DNSLookupResult]) Maybe[*Void] {

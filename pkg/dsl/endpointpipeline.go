@@ -2,6 +2,8 @@ package dsl
 
 import (
 	"context"
+
+	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
 // NewEndpointPipeline returns a stage that measures each endpoint given in input in
@@ -14,15 +16,40 @@ type newEndpointPipelineStage struct {
 	sx Stage[*Endpoint, *Void]
 }
 
-const newEndpointPipelineFunc = "new_endpoint_pipeline"
+const newEndpointPipelineStageName = "new_endpoint_pipeline"
 
-func (sx *newEndpointPipelineStage) ASTNode() *ASTNode {
+func (sx *newEndpointPipelineStage) ASTNode() *SerializableASTNode {
 	node := sx.sx.ASTNode()
-	return &ASTNode{
-		Func:      newEndpointPipelineFunc,
+	return &SerializableASTNode{
+		StageName: newEndpointPipelineStageName,
 		Arguments: nil,
-		Children:  []*ASTNode{node},
+		Children:  []*SerializableASTNode{node},
 	}
+}
+
+type newEndpointPipelineLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*newEndpointPipelineLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
+	}
+	runnables, err := loader.loadChildren(node)
+	if err != nil {
+		return nil, err
+	}
+	if len(runnables) != 1 {
+		return nil, ErrInvalidNumberOfChildren
+	}
+	children := runnableASTNodeListToStageList[*Endpoint, *Void](runnables[0])
+	runtimex.Assert(len(children) == 1, "unexpected number of children")
+	stage := NewEndpointPipeline(children[0])
+	return &stageRunnableASTNode[[]*Endpoint, *Void]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*newEndpointPipelineLoader) StageName() string {
+	return newEndpointPipelineStageName
 }
 
 func (sx *newEndpointPipelineStage) Run(ctx context.Context, rtx Runtime, input Maybe[[]*Endpoint]) Maybe[*Void] {

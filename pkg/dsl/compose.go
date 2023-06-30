@@ -16,23 +16,42 @@ type composeStage[A, B, C any] struct {
 	s2 Stage[B, C]
 }
 
-const composeFunc = "compose"
+const composeStageName = "compose"
 
-func (sx *composeStage[A, B, C]) ASTNode() *ASTNode {
+func (sx *composeStage[A, B, C]) ASTNode() *SerializableASTNode {
 	n1, n2 := sx.s1.ASTNode(), sx.s2.ASTNode()
-	return &ASTNode{
-		Func:      composeFunc,
+	return &SerializableASTNode{
+		StageName: composeStageName,
 		Arguments: nil,
-		Children:  []*ASTNode{n1, n2},
+		Children:  []*SerializableASTNode{n1, n2},
 	}
 }
 
-func (sx *composeStage[A, B, C]) Run(ctx context.Context, rtx Runtime, input Maybe[A]) Maybe[C] {
-	result := sx.s1.Run(ctx, rtx, input)
-	if result.Error != nil {
-		return NewError[C](result.Error)
+type composeLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*composeLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	if err := loader.loadEmptyArguments(node); err != nil {
+		return nil, err
 	}
-	return sx.s2.Run(ctx, rtx, result)
+	runnables, err := loader.loadChildren(node)
+	if err != nil {
+		return nil, err
+	}
+	if len(runnables) != 2 {
+		return nil, ErrInvalidNumberOfChildren
+	}
+	stage := Compose[any, any, any](runnables[0], runnables[1])
+	return stage, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*composeLoader) StageName() string {
+	return composeStageName
+}
+
+func (sx *composeStage[A, B, C]) Run(ctx context.Context, rtx Runtime, input Maybe[A]) Maybe[C] {
+	return sx.s2.Run(ctx, rtx, sx.s1.Run(ctx, rtx, input))
 }
 
 // Compose3 composes 3 [Stage] together.

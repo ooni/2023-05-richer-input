@@ -2,6 +2,7 @@ package dsl
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/ooni/probe-engine/pkg/measurexlite"
@@ -17,18 +18,38 @@ type tlsHandshakeOp struct {
 	options []TLSHandshakeOption
 }
 
-const tlsHandshakeFunc = "tls_handshake"
+const tlsHandshakeStageName = "tls_handshake"
 
-func (op *tlsHandshakeOp) ASTNode() *ASTNode {
+func (op *tlsHandshakeOp) ASTNode() *SerializableASTNode {
 	var config tlsHandshakeConfig
 	for _, option := range op.options {
 		option(&config)
 	}
-	return &ASTNode{
-		Func:      tlsHandshakeFunc,
+	return &SerializableASTNode{
+		StageName: tlsHandshakeStageName,
 		Arguments: &config,
-		Children:  []*ASTNode{},
+		Children:  []*SerializableASTNode{},
 	}
+}
+
+type tlsHandshakeLoader struct{}
+
+// Load implements ASTLoaderRule.
+func (*tlsHandshakeLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
+	var config tlsHandshakeConfig
+	if err := json.Unmarshal(node.Arguments, &config); err != nil {
+		return nil, err
+	}
+	if err := loader.requireExactlyNumChildren(node, 0); err != nil {
+		return nil, err
+	}
+	stage := TLSHandshake(config.options()...)
+	return &stageRunnableASTNode[*TCPConnection, *TLSConnection]{stage}, nil
+}
+
+// StageName implements ASTLoaderRule.
+func (*tlsHandshakeLoader) StageName() string {
+	return tlsHandshakeStageName
 }
 
 func (op *tlsHandshakeOp) Run(ctx context.Context, rtx Runtime, tcpConn *TCPConnection) (*TLSConnection, error) {
