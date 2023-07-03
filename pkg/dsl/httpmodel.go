@@ -1,6 +1,7 @@
 package dsl
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/ooni/probe-engine/pkg/model"
@@ -191,4 +192,25 @@ type HTTPResponse struct {
 
 	// ResponseBodySnapshot is the body snapshot.
 	ResponseBodySnapshot []byte
+}
+
+// ErrHTTPTransaction wraps errors occurred during an HTTP transaction operation.
+type ErrHTTPTransaction struct {
+	Err error
+}
+
+// Unwrap supports [errors.Unwrap].
+func (exc *ErrHTTPTransaction) Unwrap() error {
+	return exc.Err
+}
+
+// Error implements error.
+func (exc *ErrHTTPTransaction) Error() string {
+	return exc.Err.Error()
+}
+
+// IsErrHTTPTransaction returns true when an error is an [ErrHTTPTransaction].
+func IsErrHTTPTransaction(err error) bool {
+	var exc *ErrHTTPTransaction
+	return errors.As(err, &exc)
 }

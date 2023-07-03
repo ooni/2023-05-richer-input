@@ -10,6 +10,9 @@ import (
 )
 
 // QUICHandshake returns a stage that performs a QUIC handshake.
+//
+// This function returns an [ErrQUICHandshake] if the error is a QUIC handshake error. Remember to
+// use the [IsErrQUICHandshake] predicate when setting an experiment test keys.
 func QUICHandshake(options ...QUICHandshakeOption) Stage[*Endpoint, *QUICConnection] {
 	return wrapOperation[*Endpoint, *QUICConnection](&quicHandshakeOperation{options})
 }
@@ -102,7 +105,7 @@ func (sx *quicHandshakeOperation) Run(ctx context.Context, rtx Runtime, endpoint
 
 	// handle the error case
 	if err != nil {
-		return nil, err
+		return nil, &ErrQUICHandshake{err}
 	}
 
 	// make sure we will close this conn

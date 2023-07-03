@@ -81,6 +81,12 @@ func (fx *tcpReachabilityCheckFilter) Run(ctx context.Context, rtx dsl.Runtime,
 
 	// handle the case where TCP connect failed
 	if input.Error != nil {
+		// make sure the error was indeed caused by TCP connect
+		if !dsl.IsErrTCPConnect(input.Error) {
+			return input
+		}
+
+		// notify the test keys about TCP connect errors
 		fx.tk.onFailedTCPConn(endpointFlag)
 
 		// make sure subsequent steps do not process this error again

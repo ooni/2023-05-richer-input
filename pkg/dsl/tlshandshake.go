@@ -10,6 +10,9 @@ import (
 )
 
 // TLSHandshake returns a stage that performs a TLS handshake.
+//
+// This function returns an [ErrTLSHandshake] if the error is a TLS handshake error. Remember to
+// use the [IsErrTLSHandshake] predicate when setting an experiment test keys.
 func TLSHandshake(options ...TLSHandshakeOption) Stage[*TCPConnection, *TLSConnection] {
 	return wrapOperation[*TCPConnection, *TLSConnection](&tlsHandshakeOperation{options})
 }
@@ -95,7 +98,7 @@ func (op *tlsHandshakeOperation) Run(ctx context.Context, rtx Runtime, tcpConn *
 
 	// handle the error case
 	if err != nil {
-		return nil, err
+		return nil, &ErrTLSHandshake{err}
 	}
 
 	// make sure we close this conn

@@ -78,6 +78,11 @@ func (fx *dnsConsistencyCheckFilter) Run(ctx context.Context,
 	rtx dsl.Runtime, input dsl.Maybe[*dsl.DNSLookupResult]) dsl.Maybe[*dsl.DNSLookupResult] {
 	// handle the case where the DNS lookup failed
 	if input.Error != nil {
+		// exclude the case where the error is not caused by a DNS lookup
+		if !dsl.IsErrDNSLookup(input.Error) {
+			return input
+		}
+		// handle a DNS lookup error
 		// TODO(bassosimone): do we need to flip the test keys here?
 		return input
 	}

@@ -1,5 +1,7 @@
 // Package dsl contains a DSL for defining network experiments.
 //
+// # Design
+//
 // The DSL is both internal and external. When you write code in terms of its
 // primitives, such as [TCPConnect] and [TLSHandshake], you compose a measurement
 // pipeline consisting of multiple pipeline [Stage]. The composed pipeline is a
@@ -19,6 +21,8 @@
 // type checking at runtime. By calling a [RunnableASTNode] Run method, you run the
 // generic pipeline and obtain the same results you would have obtained had you called
 // the original composed pipeline [Stage] Run method.
+//
+// # Design Goals
 //
 // We designed this DSL for three reasons:
 //
@@ -50,6 +54,8 @@
 // you can build with the DSL is a tree that you can visit to measure the internet. There
 // are no loops and there are no conditional statements.
 //
+// # Writing filters
+//
 // We additionally include functionality to register filtering functions in the
 // implementation of experiments, to compute the test keys. The key feature enabling
 // us to register filters is [ASTLoader.RegisterCustomLoaderRule]. Also, the
@@ -59,6 +65,31 @@
 // the [IfFilterExists] [Stage] and replace unknow filters with the [Identity] [Stage]. This
 // means that older probe would not compute some new top-level test keys but would
 // otherwise collect the same [Observations] collected by new probes.
+//
+// When writing filters you MUST remember the following:
+//
+// 1. [ErrException] indicates that something went very wrong (you can test for this
+// class of errors using the [IsErrException] predicate);
+//
+// 2. [ErrSkip] indicates that a previous stage determined that subsequent stages should
+// not run (you can use [IsErrSkip] for this class of errors);
+//
+// 3. [ErrDNSLookup] means a DNS lookup failed (you can use [IsErrDNSLookup]);
+//
+// 4. [ErrTCPConnect] indicates that TCP connect failed (you can use [IsErrTCPConnect]);
+//
+// 5. [ErrTLSHandshake] indicates a TLS handshake failure  (use [IsErrTLSHandshake]);
+//
+// 6. [ErrQUICHandshake] relates to QUIC handhsake failures (use [IsErrQUICHandshake]);
+//
+// 7. [ErrHTTPTransaction] is an HTTP transaction error (use [IsErrHTTPTransaction]).
+//
+// You SHOULD only flip test keys when the error you set corresponds to the operation for
+// which you are filtering errors. For example, if you filter the results of a TLS handshake,
+// your code SHOULD use [IsErrTLSHandshake] to ensure that the error you are witnessing has
+// indeed been caused by a TLS handshake.
+//
+// # History
 //
 // This package is an incremental evolution of the [dslx design document] where we
 // added code to express the whole measurement pipeline using the DSL, rather

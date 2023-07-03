@@ -10,6 +10,9 @@ import (
 
 // DNSLookupUDP returns a stage that performs a DNS lookup using the given UDP resolver
 // endpoint; use "ADDRESS:PORT" for IPv4 and "[ADDRESS]:PORT" for IPv6 endpoints.
+//
+// This function returns an [ErrDNSLookup] if the error is a DNS lookup error. Remember to
+// use the [IsErrDNSLookup] predicate when setting an experiment test keys.
 func DNSLookupUDP(endpoint string) Stage[string, *DNSLookupResult] {
 	return wrapOperation[string, *DNSLookupResult](&dnsLookupUDPOperation{endpoint})
 }
@@ -89,7 +92,7 @@ func (sx *dnsLookupUDPOperation) Run(ctx context.Context, rtx Runtime, domain st
 
 	// handle the error case
 	if err != nil {
-		return nil, err
+		return nil, &ErrDNSLookup{err}
 	}
 
 	// handle the successful case

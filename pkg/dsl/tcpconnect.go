@@ -8,6 +8,9 @@ import (
 )
 
 // TCPConnect returns a stage that performs a TCP connect.
+//
+// This function returns an [ErrTCPConnect] if the error is a TCP connect error. Remember to
+// use the [IsErrTCPConnect] predicate when setting an experiment test keys.
 func TCPConnect() Stage[*Endpoint, *TCPConnection] {
 	return wrapOperation[*Endpoint, *TCPConnection](&tcpConnectOperation{})
 }
@@ -76,7 +79,7 @@ func (op *tcpConnectOperation) Run(ctx context.Context, rtx Runtime, endpoint *E
 
 	// handle the error case
 	if err != nil {
-		return nil, err
+		return nil, &ErrTCPConnect{err}
 	}
 
 	// make sure we close the conn when done
