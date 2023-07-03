@@ -425,154 +425,154 @@ Facebook Messenger nettest, for example, looks like this:
 ```JSONC
 // This file shows how to define Facebook Messenger in terms of the DSL.
 {
-	"commands": [
-		{
-			"run_command": "nettest/run",
-			"with_arguments": {
-				"experimental_flags": {
-					"dsl": true
-				},
-				"nettest_name": "facebook_messenger",
-				"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
-				"suite_name": "im",
+  "commands": [
+    {
+      "run_command": "nettest/run",
+      "with_arguments": {
+        "experimental_flags": {
+          "dsl": true
+        },
+        "nettest_name": "facebook_messenger",
+        "report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
+        "suite_name": "im",
 
-                // the toplevel stage of the DSL tree consists of running several
-                // stages in parallel, but here we show just one stage
-				"targets": {
-					"stage_name": "run_stages_in_parallel",
-					"arguments": null,
-					"children": [
-						{
+        // the toplevel stage of the DSL tree consists of running several
+        // stages in parallel, but here we show just one stage
+        "targets": {
+          "stage_name": "run_stages_in_parallel",
+          "arguments": null,
+          "children": [
+            {
 
-                            // this stage composes two operations A->B and B->C to
-                            // obtain a new operation A->C
-							"stage_name": "compose",
-							"arguments": null,
-							"children": [
-								{
-                                    // this stage takes in input void and returns a string
-                                    // representing a domain name to resolve
-									"stage_name": "domain_name",
-									"arguments": {
-										"domain": "b-api.facebook.com"
-									},
-									"children": []
-								},
-								{
-									"stage_name": "compose",
-									"arguments": null,
-									"children": [
-										{
+              // this stage composes two operations A->B and B->C to
+              // obtain a new operation A->C
+              "stage_name": "compose",
+              "arguments": null,
+              "children": [
+                {
+                  // this stage takes in input void and returns a string
+                  // representing a domain name to resolve
+                  "stage_name": "domain_name",
+                  "arguments": {
+                    "domain": "b-api.facebook.com"
+                  },
+                  "children": []
+                },
+                {
+                  "stage_name": "compose",
+                  "arguments": null,
+                  "children": [
+                    {
 
-                                            // this stage takes in input a domain name to resolve
-                                            // and returns in output resolved IP adresses, on
-                                            // success, or an error on failure
-											"stage_name": "dns_lookup_getaddrinfo",
-											"arguments": null,
-											"children": []
-										},
-										{
-											"stage_name": "compose",
-											"arguments": null,
-											"children": [
-												{
+                      // this stage takes in input a domain name to resolve
+                      // and returns in output resolved IP adresses, on
+                      // success, or an error on failure
+                      "stage_name": "dns_lookup_getaddrinfo",
+                      "arguments": null,
+                      "children": []
+                    },
+                    {
+                      "stage_name": "compose",
+                      "arguments": null,
+                      "children": [
+                        {
 
-                                                    // this stage conditionally run its child stage
-                                                    // if its name exists for this probe
-													"stage_name": "if_filter_exists",
-													"arguments": null,
-													"children": [
-														{
+                          // this stage conditionally run its child stage
+                          // if its name exists for this probe
+                          "stage_name": "if_filter_exists",
+                          "arguments": null,
+                          "children": [
+                            {
 
-                                                            // this stage checks the DNS lookup results
-                                                            // and sets the related test keys
-															"stage_name": "fbmessenger_dns_consistency_check",
-															"arguments": {
-																"endpoint_name": "b_api"
-															},
-															"children": []
-														}
-													]
-												},
-												{
-													"stage_name": "compose",
-													"arguments": null,
-													"children": [
-														{
+                              // this stage checks the DNS lookup results
+                              // and sets the related test keys
+                              "stage_name": "fbmessenger_dns_consistency_check",
+                              "arguments": {
+                                "endpoint_name": "b_api"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "stage_name": "compose",
+                          "arguments": null,
+                          "children": [
+                            {
 
-                                                            // this stage converts the DNS lookup results
-                                                            // into a list of endpoints using port 443
-															"stage_name": "make_endpoints_for_port",
-															"arguments": {
-																"port": 443
-															},
-															"children": []
-														},
-														{
-                                                            // this stage schedules each endpoint belonging
-                                                            // to a list of endpoints to run on a specific
-                                                            // endpoint measurement pipeline provided as its
-                                                            // sub-stage
-															"stage_name": "new_endpoint_pipeline",
-															"arguments": null,
-															"children": [
-																{
-																	"stage_name": "compose",
-																	"arguments": null,
-																	"children": [
-																		{
-                                                                            // this stage performs a TCP connect
-																			"stage_name": "tcp_connect",
-																			"arguments": null,
-																			"children": []
-																		},
-																		{
-																			"stage_name": "compose",
-																			"arguments": null,
-																			"children": [
-																				{
-                                                                                    // this stage conditionally sets the test keys
-                                                                                    // based on the TCP connect results
-																					"stage_name": "if_filter_exists",
-																					"arguments": null,
-																					"children": [
-																						{
-																							"stage_name": "fbmessenger_tcp_reachability_check",
-																							"arguments": {
-																								"endpoint_name": "b_api"
-																							},
-																							"children": []
-																						}
-																					]
-																				},
-																				{
-                                                                                    // this stage sets the result to void, this
-                                                                                    // making the whole pipline void->void
-																					"stage_name": "discard",
-																					"arguments": null,
-																					"children": []
-																				}
-																			]
-																		}
-																	]
-																}
-															]
-														}
-													]
-												}
-											]
-										}
-									]
-								}
-							]
-						}
-                        // [snip]
-					]
-				}
-			}
-		}
-	],
-	"v": 2
+                              // this stage converts the DNS lookup results
+                              // into a list of endpoints using port 443
+                              "stage_name": "make_endpoints_for_port",
+                              "arguments": {
+                                "port": 443
+                              },
+                              "children": []
+                            },
+                            {
+                              // this stage schedules each endpoint belonging
+                              // to a list of endpoints to run on a specific
+                              // endpoint measurement pipeline provided as its
+                              // sub-stage
+                              "stage_name": "new_endpoint_pipeline",
+                              "arguments": null,
+                              "children": [
+                                {
+                                  "stage_name": "compose",
+                                  "arguments": null,
+                                  "children": [
+                                    {
+                                      // this stage performs a TCP connect
+                                      "stage_name": "tcp_connect",
+                                      "arguments": null,
+                                      "children": []
+                                    },
+                                    {
+                                      "stage_name": "compose",
+                                      "arguments": null,
+                                      "children": [
+                                        {
+                                          // this stage conditionally sets the test keys
+                                          // based on the TCP connect results
+                                          "stage_name": "if_filter_exists",
+                                          "arguments": null,
+                                          "children": [
+                                            {
+                                              "stage_name": "fbmessenger_tcp_reachability_check",
+                                              "arguments": {
+                                                "endpoint_name": "b_api"
+                                              },
+                                              "children": []
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          // this stage sets the result to void, this
+                                          // making the whole pipline void->void
+                                          "stage_name": "discard",
+                                          "arguments": null,
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+            // [snip]
+          ]
+        }
+      }
+    }
+  ],
+  "v": 2
 }
 ```
 
