@@ -1,121 +1,132 @@
 package fbmessenger
 
-import "github.com/ooni/2023-05-richer-input/pkg/unlang/undsl"
+import "github.com/ooni/2023-05-richer-input/pkg/dsl"
 
-// DSLToplevelFunc generates the [*undsl.Func] representing the Facebook Messenger
-// measurement to perform or PANICS in case of failure.
-func DSLToplevelFunc() *undsl.Func {
-	return undsl.MeasureMultipleDomains(
+// DSLToplevelFunc generates the Facebook Messenger measurement pipeline.
+func DSLToplevelFunc(tk *TestKeys) dsl.Stage[*dsl.Void, *dsl.Void] {
+	return dsl.RunStagesInParallel(
 
 		// stun
-		undsl.Compose(
-			undsl.DomainName("stun.fbsbx.com"),
-			undsl.DNSLookupGetaddrinfo(),
-			undsl.IfFuncExists(
-				dnsConsistencyCheck("stun"),
+		dsl.Compose4(
+			dsl.DomainName("stun.fbsbx.com"),
+			dsl.DNSLookupGetaddrinfo(),
+			dsl.IfFilterExists(
+				dnsConsistencyCheck(tk, "stun"),
 			),
-			undsl.Discard(undsl.DNSLookupOutputType),
+			dsl.Discard[*dsl.DNSLookupResult](),
 		),
 
 		// b_api
-		undsl.Compose(
-			undsl.DomainName("b-api.facebook.com"),
-			undsl.DNSLookupGetaddrinfo(),
-			undsl.IfFuncExists(
-				dnsConsistencyCheck("b_api"),
+		dsl.Compose5(
+			dsl.DomainName("b-api.facebook.com"),
+			dsl.DNSLookupGetaddrinfo(),
+			dsl.IfFilterExists(
+				dnsConsistencyCheck(tk, "b_api"),
 			),
-			undsl.MakeEndpointsForPort(443),
-			undsl.NewEndpointPipeline(
-				undsl.TCPConnect(),
-				undsl.IfFuncExists(
-					tcpReachabilityCheck("b_api"),
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.Compose3(
+					dsl.TCPConnect(),
+					dsl.IfFilterExists(
+						tcpReachabilityCheck(tk, "b_api"),
+					),
+					dsl.Discard[*dsl.TCPConnection](),
 				),
-				undsl.Discard(undsl.TCPConnectionType),
 			),
 		),
 
 		// b_graph
-		undsl.Compose(
-			undsl.DomainName("b-graph.facebook.com"),
-			undsl.DNSLookupGetaddrinfo(),
-			undsl.IfFuncExists(
-				dnsConsistencyCheck("b_graph"),
+		dsl.Compose5(
+			dsl.DomainName("b-graph.facebook.com"),
+			dsl.DNSLookupGetaddrinfo(),
+			dsl.IfFilterExists(
+				dnsConsistencyCheck(tk, "b_graph"),
 			),
-			undsl.MakeEndpointsForPort(443),
-			undsl.NewEndpointPipeline(
-				undsl.TCPConnect(),
-				undsl.IfFuncExists(
-					tcpReachabilityCheck("b_graph"),
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.Compose3(
+					dsl.TCPConnect(),
+					dsl.IfFilterExists(
+						tcpReachabilityCheck(tk, "b_graph"),
+					),
+					dsl.Discard[*dsl.TCPConnection](),
 				),
-				undsl.Discard(undsl.TCPConnectionType),
 			),
 		),
 
 		// edge
-		undsl.Compose(
-			undsl.DomainName("edge-mqtt.facebook.com"),
-			undsl.DNSLookupGetaddrinfo(),
-			undsl.IfFuncExists(
-				dnsConsistencyCheck("edge"),
+		dsl.Compose5(
+			dsl.DomainName("edge-mqtt.facebook.com"),
+			dsl.DNSLookupGetaddrinfo(),
+			dsl.IfFilterExists(
+				dnsConsistencyCheck(tk, "edge"),
 			),
-			undsl.MakeEndpointsForPort(443),
-			undsl.NewEndpointPipeline(
-				undsl.TCPConnect(),
-				undsl.IfFuncExists(
-					tcpReachabilityCheck("edge"),
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.Compose3(
+					dsl.TCPConnect(),
+					dsl.IfFilterExists(
+						tcpReachabilityCheck(tk, "edge"),
+					),
+					dsl.Discard[*dsl.TCPConnection](),
 				),
-				undsl.Discard(undsl.TCPConnectionType),
 			),
 		),
 
 		// external_cdn
-		undsl.Compose(
-			undsl.DomainName("external.xx.fbcdn.net"),
-			undsl.DNSLookupGetaddrinfo(),
-			undsl.IfFuncExists(
-				dnsConsistencyCheck("external_cdn"),
+		dsl.Compose5(
+			dsl.DomainName("external.xx.fbcdn.net"),
+			dsl.DNSLookupGetaddrinfo(),
+			dsl.IfFilterExists(
+				dnsConsistencyCheck(tk, "external_cdn"),
 			),
-			undsl.MakeEndpointsForPort(443),
-			undsl.NewEndpointPipeline(
-				undsl.TCPConnect(),
-				undsl.IfFuncExists(
-					tcpReachabilityCheck("external_cdn"),
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.Compose3(
+					dsl.TCPConnect(),
+					dsl.IfFilterExists(
+						tcpReachabilityCheck(tk, "external_cdn"),
+					),
+					dsl.Discard[*dsl.TCPConnection](),
 				),
-				undsl.Discard(undsl.TCPConnectionType),
 			),
 		),
 
 		// scontent_cdn
-		undsl.Compose(
-			undsl.DomainName("scontent.xx.fbcdn.net"),
-			undsl.DNSLookupGetaddrinfo(),
-			undsl.IfFuncExists(
-				dnsConsistencyCheck("scontent_cdn"),
+		dsl.Compose5(
+			dsl.DomainName("scontent.xx.fbcdn.net"),
+			dsl.DNSLookupGetaddrinfo(),
+			dsl.IfFilterExists(
+				dnsConsistencyCheck(tk, "scontent_cdn"),
 			),
-			undsl.MakeEndpointsForPort(443),
-			undsl.NewEndpointPipeline(
-				undsl.TCPConnect(),
-				undsl.IfFuncExists(
-					tcpReachabilityCheck("scontent_cdn"),
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.Compose3(
+					dsl.TCPConnect(),
+					dsl.IfFilterExists(
+						tcpReachabilityCheck(tk, "scontent_cdn"),
+					),
+					dsl.Discard[*dsl.TCPConnection](),
 				),
-				undsl.Discard(undsl.TCPConnectionType),
 			),
 		),
 
 		// star
-		undsl.Compose(
-			undsl.DomainName("star.c10r.facebook.com"),
-			undsl.DNSLookupGetaddrinfo(),
-			undsl.IfFuncExists(
-				dnsConsistencyCheck("star"),
+		dsl.Compose5(
+			dsl.DomainName("star.c10r.facebook.com"),
+			dsl.DNSLookupGetaddrinfo(),
+			dsl.IfFilterExists(
+				dnsConsistencyCheck(tk, "star"),
 			),
-			undsl.MakeEndpointsForPort(443),
-			undsl.NewEndpointPipeline(
-				undsl.TCPConnect(),
-				undsl.IfFuncExists(
-					tcpReachabilityCheck("star"),
+			dsl.MakeEndpointsForPort(443),
+			dsl.NewEndpointPipeline(
+				dsl.Compose3(
+					dsl.TCPConnect(),
+					dsl.IfFilterExists(
+						tcpReachabilityCheck(tk, "star"),
+					),
+					dsl.Discard[*dsl.TCPConnection](),
 				),
-				undsl.Discard(undsl.TCPConnectionType),
 			),
 		),
 	)

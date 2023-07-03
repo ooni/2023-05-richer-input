@@ -1,3 +1,4 @@
+// This file contains the static probe location.
 {
 	// This section contains the results of the probe IPv4 lookup
 	"ipv4": {

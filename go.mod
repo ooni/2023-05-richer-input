@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/apex/log v1.9.0
 	github.com/fatih/color v1.15.0
-	github.com/ooni/probe-engine v0.25.0
+	github.com/ooni/probe-engine v0.25.1-0.20230703115655-5f380d36daf4
 	github.com/quic-go/quic-go v0.33.0
 )
 
@@ -15,10 +15,14 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/gaukas/godicttls v0.0.3 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
+	github.com/google/btree v1.1.2 // indirect
+	github.com/google/gopacket v1.1.19
+	github.com/google/martian/v3 v3.3.2 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mroth/weightedrand v1.0.0 // indirect
+	github.com/ooni/netem v0.0.0-20230703161932-f920565ac5f0
 	github.com/pebbe/zmq4 v1.2.10 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -28,8 +32,9 @@ require (
 	github.com/refraction-networking/conjure v0.4.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
-	golang.org/x/term v0.9.0 // indirect
+	golang.org/x/time v0.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gvisor.dev/gvisor v0.0.0-20230603040744-5c9219dedd33 // indirect
 )
 
 require (
@@ -69,7 +74,7 @@ require (
 	github.com/klauspost/compress v1.16.6 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/klauspost/reedsolomon v1.11.7 // indirect
-	github.com/miekg/dns v1.1.54 // indirect
+	github.com/miekg/dns v1.1.55 // indirect
 	github.com/onsi/ginkgo/v2 v2.10.0 // indirect
 	github.com/ooni/go-libtor v1.1.8 // indirect
 	github.com/ooni/oocrypto v0.5.2 // indirect
@@ -111,12 +116,12 @@ require (
 	gitlab.com/yawning/edwards25519-extra.git v0.0.0-20220726154925-def713fd18e4 // indirect
 	gitlab.com/yawning/obfs4.git v0.0.0-20230519154740-645026c2ada4 // indirect
 	gitlab.com/yawning/utls.git v0.0.12-1 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
+	golang.org/x/crypto v0.10.0 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
-	golang.org/x/mod v0.10.0 // indirect
-	golang.org/x/net v0.10.0 // indirect
+	golang.org/x/mod v0.11.0 // indirect
+	golang.org/x/net v0.11.0 // indirect
 	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/text v0.10.0 // indirect
-	golang.org/x/tools v0.9.3 // indirect
+	golang.org/x/tools v0.10.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 )
