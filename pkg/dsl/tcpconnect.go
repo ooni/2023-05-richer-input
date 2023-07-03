@@ -9,7 +9,7 @@ import (
 
 // TCPConnect returns a stage that performs a TCP connect.
 //
-// This function returns an [ErrTCPConnect] if the error is a DNS lookup error. Remember to
+// This function returns an [ErrTCPConnect] if the error is a TCP connect error. Remember to
 // use the [IsErrTCPConnect] predicate when setting an experiment test keys.
 func TCPConnect() Stage[*Endpoint, *TCPConnection] {
 	return wrapOperation[*Endpoint, *TCPConnection](&tcpConnectOperation{})

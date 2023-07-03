@@ -17,7 +17,8 @@ func TestDNSLookupUDP(t *testing.T) {
 			"10.0.0.99", "10.0.0.1", log.Log, &netem.LinkConfig{}))
 		defer topology.Close()
 
-		// create DNS server with empty DNS configuration
+		// create DNS server with empty DNS configuration such that a DNS lookup
+		// for any domain will always return NXDOMAIN
 		dnsServer := runtimex.Try1(netem.NewDNSServer(
 			log.Log, topology.Server, "10.0.0.1", netem.NewDNSConfig()))
 		defer dnsServer.Close()

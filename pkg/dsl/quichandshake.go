@@ -11,7 +11,7 @@ import (
 
 // QUICHandshake returns a stage that performs a QUIC handshake.
 //
-// This function returns an [ErrQUICHandshake] if the error is a DNS lookup error. Remember to
+// This function returns an [ErrQUICHandshake] if the error is a QUIC handshake error. Remember to
 // use the [IsErrQUICHandshake] predicate when setting an experiment test keys.
 func QUICHandshake(options ...QUICHandshakeOption) Stage[*Endpoint, *QUICConnection] {
 	return wrapOperation[*Endpoint, *QUICConnection](&quicHandshakeOperation{options})
