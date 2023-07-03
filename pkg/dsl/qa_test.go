@@ -167,8 +167,8 @@ func qaRunNode(runnable dsl.RunnableASTNode) (*dsl.Observations, error) {
 
 func TestQASuccess(t *testing.T) {
 	dnsConfig := netem.NewDNSConfig()
-	dnsConfig.AddRecord("www.example.com", "www.example.com", "93.184.216.34")
-	dnsConfig.AddRecord("www.example.org", "www.example.org", "93.184.216.34")
+	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
+	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
 
 	env := qaNewEnvironment(dnsConfig)
 	defer env.Close()
@@ -216,8 +216,8 @@ func TestQADNSLookupGetaddrinfoFailure(t *testing.T) {
 
 func TestQADNSLookupUDPFailure(t *testing.T) {
 	dnsConfig := netem.NewDNSConfig()
-	dnsConfig.AddRecord("www.example.com", "www.example.com", "93.184.216.34")
-	dnsConfig.AddRecord("www.example.org", "www.example.org", "93.184.216.34")
+	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
+	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
 
 	env := qaNewEnvironment(dnsConfig)
 	defer env.Close()
@@ -247,6 +247,47 @@ func TestQADNSLookupUDPFailure(t *testing.T) {
 	_ = observations
 }
 
+func TestQAFullDNSSpoofing(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skip test in short mode")
+	}
+
+	dnsConfig := netem.NewDNSConfig()
+	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
+	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
+
+	env := qaNewEnvironment(dnsConfig)
+	defer env.Close()
+
+	// Note: this rule should spoof the responses
+	env.DPIEngine().AddRule(&netem.DPISpoofDNSResponse{
+		Addresses: []string{"10.10.34.35"},
+		Logger:    log.Log,
+		Domain:    "www.example.com",
+	})
+	env.DPIEngine().AddRule(&netem.DPISpoofDNSResponse{
+		Addresses: []string{"10.10.34.35"},
+		Logger:    log.Log,
+		Domain:    "www.example.org",
+	})
+
+	var (
+		observations *dsl.Observations
+		err          error
+	)
+
+	env.Do(func() {
+		observations, err = qaRunNode(qaNewRunnableASTNode())
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// TODO(bassosimone): check the observations
+	_ = observations
+}
+
 func TestQATCPConnectFailure(t *testing.T) {
 	t.Run("in case of failure connecting on 443/tcp", func(t *testing.T) {
 		if testing.Short() {
@@ -254,8 +295,8 @@ func TestQATCPConnectFailure(t *testing.T) {
 		}
 
 		dnsConfig := netem.NewDNSConfig()
-		dnsConfig.AddRecord("www.example.com", "www.example.com", "93.184.216.34")
-		dnsConfig.AddRecord("www.example.org", "www.example.org", "93.184.216.34")
+		dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
+		dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
 
 		env := qaNewEnvironment(dnsConfig)
 		defer env.Close()
@@ -291,8 +332,8 @@ func TestQATCPConnectFailure(t *testing.T) {
 		}
 
 		dnsConfig := netem.NewDNSConfig()
-		dnsConfig.AddRecord("www.example.com", "www.example.com", "93.184.216.34")
-		dnsConfig.AddRecord("www.example.org", "www.example.org", "93.184.216.34")
+		dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
+		dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
 
 		env := qaNewEnvironment(dnsConfig)
 		defer env.Close()
@@ -325,8 +366,8 @@ func TestQATCPConnectFailure(t *testing.T) {
 
 func TestQATLSHandshakeFailure(t *testing.T) {
 	dnsConfig := netem.NewDNSConfig()
-	dnsConfig.AddRecord("www.example.com", "www.example.com", "93.184.216.34")
-	dnsConfig.AddRecord("www.example.org", "www.example.org", "93.184.216.34")
+	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
+	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
 
 	env := qaNewEnvironment(dnsConfig)
 	defer env.Close()
@@ -360,8 +401,8 @@ func TestQAQUICHandshakeFailure(t *testing.T) {
 	}
 
 	dnsConfig := netem.NewDNSConfig()
-	dnsConfig.AddRecord("www.example.com", "www.example.com", "93.184.216.34")
-	dnsConfig.AddRecord("www.example.org", "www.example.org", "93.184.216.34")
+	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
+	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
 
 	env := qaNewEnvironment(dnsConfig)
 	defer env.Close()
