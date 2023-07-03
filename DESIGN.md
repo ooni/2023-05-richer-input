@@ -651,7 +651,7 @@ Additionally, with the DSL and because the stages are monadic, we can implement
 writing test keys by implementing the proper filter after each operation. Writing
 code to write test keys seems much more complex with "mini nettests".
 
-Also, note how the DSL is **not Turing complete** and only allows one
+Also, note how the DSL is not Turing complete and only allows one
 to compose network measurement primitives together.
 
 ## Minor idea: A/B testing
