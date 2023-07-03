@@ -8,6 +8,7 @@ import (
 	"github.com/ooni/probe-engine/pkg/measurexlite"
 	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/ooni/probe-engine/pkg/netxlite"
+	"github.com/ooni/probe-engine/pkg/throttling"
 	"github.com/quic-go/quic-go"
 )
 
@@ -96,6 +97,10 @@ func (t *measurexliteTrace) HTTPTransaction(
 		"http_transaction_start",
 	))
 
+	// create speed sampler
+	sampler := throttling.NewSampler(t.trace)
+	defer sampler.Close()
+
 	// make sure we'll know the body later on
 	var body []byte
 
@@ -114,6 +119,10 @@ func (t *measurexliteTrace) HTTPTransaction(
 		reader := io.LimitReader(resp.Body, int64(maxBodySnapshotSize))
 		body, err = netxlite.ReadAllContext(req.Context(), reader)
 	}
+
+	// save download speed samples before recording the end of the transaction
+	// so that the last sample falls within the transaction boundaries
+	t.runtime.saveNetworkEvents(sampler.ExtractSamples()...)
 
 	// record the finish time
 	finished := t.trace.TimeSince(t.trace.ZeroTime)

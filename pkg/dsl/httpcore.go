@@ -91,13 +91,14 @@ func (op *httpTransactionOperation) Run(ctx context.Context, rtx Runtime, conn *
 	// start the operation logger
 	ol := measurexlite.NewOperationLogger(
 		rtx.Logger(),
-		"[#%d] HTTPTransaction %s %s with %s/%s host=%s",
+		"[#%d] HTTPTransaction %s %s with %s/%s host=%s snapshotSize=%d",
 		conn.Trace.Index(),
 		config.RequestMethod,
 		req.URL.String(),
 		conn.Address,
 		conn.Network,
 		req.Host,
+		config.ResponseBodySnapshotSize,
 	)
 
 	// mediate the transaction execution via the trace, which gets a chance

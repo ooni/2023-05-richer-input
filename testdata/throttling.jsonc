@@ -12,58 +12,93 @@
 				"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
 				"suite_name": "im",
 				"targets": {
-					"func": "compose",
-					"arguments": {},
+					"stage_name": "compose",
+					"arguments": null,
 					"children": [
 						{
-							"func": "domain_name",
-							"arguments": {
-								"domain": "nexa.polito.it"
-							},
-							"children": []
-						},
-						{
-							"func": "dns_lookup_getaddrinfo",
-							"arguments": {},
-							"children": []
-						},
-						{
-							"func": "compose",
-							"arguments": {},
+							"stage_name": "compose",
+							"arguments": null,
 							"children": [
 								{
-									"func": "make_endpoints_for_port",
+									"stage_name": "domain_name",
+									"arguments": {
+										"domain": "nexa.polito.it"
+									},
+									"children": []
+								},
+								{
+									"stage_name": "dns_lookup_getaddrinfo",
+									"arguments": null,
+									"children": []
+								}
+							]
+						},
+						{
+							"stage_name": "compose",
+							"arguments": null,
+							"children": [
+								{
+									"stage_name": "make_endpoints_for_port",
 									"arguments": {
 										"port": 443
 									},
 									"children": []
 								},
 								{
-									"func": "new_endpoint_pipeline",
-									"arguments": {},
+									"stage_name": "new_endpoint_pipeline",
+									"arguments": null,
 									"children": [
 										{
-											"func": "tcp_connect",
-											"arguments": {},
-											"children": []
-										},
-										{
-											"func": "tls_handshake",
-											"arguments": {},
-											"children": []
-										},
-										{
-											"func": "http_transaction",
-											"arguments": {
-												"response_body_snapshot_size": 16777216,
-												"url_path": "/nexacenterfiles/annual_report_2023_1_0.pdf"
-											},
-											"children": []
-										},
-										{
-											"func": "discard",
-											"arguments": {},
-											"children": []
+											"stage_name": "compose",
+											"arguments": null,
+											"children": [
+												{
+													"stage_name": "tcp_connect",
+													"arguments": null,
+													"children": []
+												},
+												{
+													"stage_name": "compose",
+													"arguments": null,
+													"children": [
+														{
+															"stage_name": "tls_handshake",
+															"arguments": {},
+															"children": []
+														},
+														{
+															"stage_name": "compose",
+															"arguments": null,
+															"children": [
+																{
+																	"stage_name": "http_connection_tls",
+																	"arguments": null,
+																	"children": []
+																},
+																{
+																	"stage_name": "compose",
+																	"arguments": null,
+																	"children": [
+																		{
+																			"stage_name": "http_transaction",
+																			"arguments": {
+																				"response_body_snapshot_size": 16777216,
+																				"url_path": "/nexacenterfiles/annual_report_2023_1_0.pdf"
+																			},
+																			"children": []
+																		},
+																		{
+																			"stage_name": "discard",
+																			"arguments": null,
+																			"children": []
+																		}
+																	]
+																}
+															]
+														}
+													]
+												}
+											]
 										}
 									]
 								}
