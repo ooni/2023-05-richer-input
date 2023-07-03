@@ -51,16 +51,20 @@ type MinimalRuntime struct {
 
 	// mu protects accesses to the closers field.
 	mu sync.Mutex
+
+	// observations contains the collected observations.
+	observations []*Observations
 }
 
 // NewMinimalRuntime creates a minimal [Runtime] that increments
 // [Trace] indexes and tracks connections.
 func NewMinimalRuntime(logger model.Logger) *MinimalRuntime {
 	return &MinimalRuntime{
-		closers:     []io.Closer{},
-		idGenerator: &atomic.Int64{},
-		logger:      logger,
-		mu:          sync.Mutex{},
+		closers:      []io.Closer{},
+		idGenerator:  &atomic.Int64{},
+		logger:       logger,
+		mu:           sync.Mutex{},
+		observations: []*Observations{},
 	}
 }
 
@@ -77,12 +81,18 @@ func (r *MinimalRuntime) Close() error {
 
 // ExtractObservations implements Trace.
 func (r *MinimalRuntime) ExtractObservations() []*Observations {
-	return []*Observations{}
+	defer r.mu.Unlock()
+	r.mu.Lock()
+	out := r.observations
+	r.observations = []*Observations{}
+	return out
 }
 
 // SaveObservations implements Runtime.
-func (r *MinimalRuntime) SaveObservations(...*Observations) {
-	// nothing
+func (r *MinimalRuntime) SaveObservations(observations ...*Observations) {
+	r.mu.Lock()
+	r.observations = append(r.observations, observations...)
+	r.mu.Unlock()
 }
 
 // Logger implements Runtime.

@@ -3,8 +3,6 @@ package dsl
 import (
 	"io"
 	"net/http"
-	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/ooni/probe-engine/pkg/measurexlite"
@@ -15,15 +13,6 @@ import (
 
 // MeasurexliteRuntime is a [Runtime] using [measurexlite] to collect [Observations].
 type MeasurexliteRuntime struct {
-	// idGenerator generates atomic incremental IDs for traces.
-	idGenerator *atomic.Int64
-
-	// observations contains the collected observations.
-	observations []*Observations
-
-	// mu provides mutual exclusion.
-	mu sync.Mutex
-
 	// runtime is the MinimalRuntime we compose with.
 	runtime *MinimalRuntime
 
@@ -31,17 +20,11 @@ type MeasurexliteRuntime struct {
 	zeroTime time.Time
 }
 
-// TODO(bassosimone): we can save some code by making the MinimalRuntime more ergonomic to
-// use as the basic building block of this runtime.
-
 // NewMeasurexliteRuntime creates a new [MeasurexliteRuntime].
 func NewMeasurexliteRuntime(logger model.Logger, zeroTime time.Time) *MeasurexliteRuntime {
 	return &MeasurexliteRuntime{
-		idGenerator:  &atomic.Int64{},
-		observations: []*Observations{},
-		mu:           sync.Mutex{},
-		runtime:      NewMinimalRuntime(logger),
-		zeroTime:     zeroTime,
+		runtime:  NewMinimalRuntime(logger),
+		zeroTime: zeroTime,
 	}
 }
 
@@ -54,19 +37,13 @@ func (r *MeasurexliteRuntime) Close() error {
 
 // SaveObservations implements Runtime.
 func (r *MeasurexliteRuntime) SaveObservations(observations ...*Observations) {
-	r.mu.Lock()
-	r.observations = append(r.observations, observations...)
-	r.mu.Unlock()
+	r.runtime.SaveObservations(observations...)
 }
 
 // ExtractObservations removes the observations from the runtime and returns them. This method
 // is safe to call from multiple goroutine contexts because locks a mutex.
 func (r *MeasurexliteRuntime) ExtractObservations() []*Observations {
-	defer r.mu.Unlock()
-	r.mu.Lock()
-	out := r.observations
-	r.observations = []*Observations{}
-	return out
+	return r.runtime.ExtractObservations()
 }
 
 // Logger implements Runtime.
@@ -88,7 +65,7 @@ func (r *MeasurexliteRuntime) TrackQUICConn(conn quic.EarlyConnection) {
 func (r *MeasurexliteRuntime) NewTrace() Trace {
 	return &measurexliteTrace{
 		runtime: r,
-		trace:   measurexlite.NewTrace(r.idGenerator.Add(1), r.zeroTime),
+		trace:   measurexlite.NewTrace(r.runtime.idGenerator.Add(1), r.zeroTime),
 	}
 }
 
