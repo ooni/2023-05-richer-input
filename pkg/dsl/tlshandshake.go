@@ -95,7 +95,7 @@ func (op *tlsHandshakeOperation) Run(ctx context.Context, rtx Runtime, tcpConn *
 
 	// handle the error case
 	if err != nil {
-		return nil, err
+		return nil, &ErrTLSHandshake{err}
 	}
 
 	// make sure we close this conn

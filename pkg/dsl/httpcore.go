@@ -113,7 +113,7 @@ func (op *httpTransactionOperation) Run(ctx context.Context, rtx Runtime, conn *
 
 	// handle the case where we failed
 	if err != nil {
-		return nil, err
+		return nil, &ErrHTTPTransaction{err}
 	}
 
 	// prepare the value to return

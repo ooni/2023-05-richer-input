@@ -3,6 +3,7 @@ package dsl
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
 
 	"github.com/ooni/probe-engine/pkg/netxlite"
 )
@@ -104,4 +105,25 @@ func TLSHandshakeOptionSNI(value string) TLSHandshakeOption {
 	return func(config *tlsHandshakeConfig) {
 		config.SNI = value
 	}
+}
+
+// ErrTLSHandshake wraps errors occurred during a TLS handshake operation.
+type ErrTLSHandshake struct {
+	Err error
+}
+
+// Unwrap supports [errors.Unwrap].
+func (exc *ErrTLSHandshake) Unwrap() error {
+	return exc.Err
+}
+
+// Error implements error.
+func (exc *ErrTLSHandshake) Error() string {
+	return exc.Err.Error()
+}
+
+// IsErrTLSHandshake returns true when an error is an [ErrTLSHandshake].
+func IsErrTLSHandshake(err error) bool {
+	var exc *ErrTLSHandshake
+	return errors.As(err, &exc)
 }

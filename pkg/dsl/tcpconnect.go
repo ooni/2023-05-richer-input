@@ -76,7 +76,7 @@ func (op *tcpConnectOperation) Run(ctx context.Context, rtx Runtime, endpoint *E
 
 	// handle the error case
 	if err != nil {
-		return nil, err
+		return nil, &ErrTCPConnect{err}
 	}
 
 	// make sure we close the conn when done

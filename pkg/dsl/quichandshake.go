@@ -102,7 +102,7 @@ func (sx *quicHandshakeOperation) Run(ctx context.Context, rtx Runtime, endpoint
 
 	// handle the error case
 	if err != nil {
-		return nil, err
+		return nil, &ErrQUICHandshake{err}
 	}
 
 	// make sure we will close this conn

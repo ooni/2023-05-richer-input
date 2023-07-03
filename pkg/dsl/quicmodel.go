@@ -112,3 +112,24 @@ func QUICHandshakeOptionSNI(value string) QUICHandshakeOption {
 		config.SNI = value
 	}
 }
+
+// ErrQUICHandshake wraps errors occurred during a QUIC handshake operation.
+type ErrQUICHandshake struct {
+	Err error
+}
+
+// Unwrap supports [errors.Unwrap].
+func (exc *ErrQUICHandshake) Unwrap() error {
+	return exc.Err
+}
+
+// Error implements error.
+func (exc *ErrQUICHandshake) Error() string {
+	return exc.Err.Error()
+}
+
+// IsErrQUICHandshake returns true when an error is an [ErrQUICHandshake].
+func IsErrQUICHandshake(err error) bool {
+	var exc *ErrQUICHandshake
+	return errors.As(err, &exc)
+}

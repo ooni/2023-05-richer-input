@@ -8,6 +8,9 @@ import (
 )
 
 // DNSLookupGetaddrinfo returns a stage that performs DNS lookups using getaddrinfo.
+//
+// This function returns an [ErrDNSLookup] if the error is a DNS lookup error. Remember to
+// use the [IsErrDNSLookup] predicate when setting an experiment test keys.
 func DNSLookupGetaddrinfo() Stage[string, *DNSLookupResult] {
 	return wrapOperation[string, *DNSLookupResult](&dnsLookupGetaddrinfoOperation{})
 }
@@ -75,7 +78,7 @@ func (op *dnsLookupGetaddrinfoOperation) Run(ctx context.Context, rtx Runtime, d
 
 	// handle the error case
 	if err != nil {
-		return nil, err
+		return nil, &ErrDNSLookup{err}
 	}
 
 	// handle the successful case
