@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-// MakeEndpointsforPort returns a stage that converts the results of a DNS lookup to a list
+// MakeEndpointsForPort returns a stage that converts the results of a DNS lookup to a list
 // of transport layer endpoints ready to be measured using a dedicated pipeline.
 func MakeEndpointsForPort(port uint16) Stage[*DNSLookupResult, []*Endpoint] {
 	return &makeEndpointsForPortStage{port}
