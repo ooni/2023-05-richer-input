@@ -11,17 +11,20 @@ import (
 // DNSLookupUDP returns a stage that performs a DNS lookup using the given UDP resolver
 // endpoint; use "ADDRESS:PORT" for IPv4 and "[ADDRESS]:PORT" for IPv6 endpoints.
 func DNSLookupUDP(endpoint string) Stage[string, *DNSLookupResult] {
-	return wrapOperation[string, *DNSLookupResult](&dnsLookupUDPOp{endpoint})
+	return wrapOperation[string, *DNSLookupResult](&dnsLookupUDPOperation{endpoint})
 }
 
-type dnsLookupUDPOp struct {
+type dnsLookupUDPOperation struct {
 	Endpoint string `json:"endpoint"`
 }
 
 const dnsLookupUDPStageName = "dns_lookup_udp"
 
-func (sx *dnsLookupUDPOp) ASTNode() *SerializableASTNode {
-	// Note: we serialize the structure because this gives us forward compatibility
+// ASTNode implements operation.
+func (sx *dnsLookupUDPOperation) ASTNode() *SerializableASTNode {
+	// Note: we serialize the structure because this gives us forward compatibility (i.e., we
+	// may add a field to a future version without breaking the AST structure and old probes will
+	// be fine as long as the zero value of the new field is the default)
 	return &SerializableASTNode{
 		StageName: dnsLookupUDPStageName,
 		Arguments: sx,
@@ -33,7 +36,7 @@ type dnsLookupUDPLoader struct{}
 
 // Load implements ASTLoaderRule.
 func (*dnsLookupUDPLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error) {
-	var op dnsLookupUDPOp
+	var op dnsLookupUDPOperation
 	if err := json.Unmarshal(node.Arguments, &op); err != nil {
 		return nil, err
 	}
@@ -49,7 +52,8 @@ func (*dnsLookupUDPLoader) StageName() string {
 	return dnsLookupUDPStageName
 }
 
-func (sx *dnsLookupUDPOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
+// Run implements operation.
+func (sx *dnsLookupUDPOperation) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
 	// make sure the target endpoint is valid
 	if !ValidEndpoints(sx.Endpoint) {
 		return nil, &ErrException{&ErrInvalidEndpoint{sx.Endpoint}}

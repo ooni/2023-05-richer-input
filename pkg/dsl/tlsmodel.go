@@ -28,6 +28,9 @@ type TLSConnection struct {
 // TLSHandshakeOption is an option for configuring the TLS handshake.
 type TLSHandshakeOption func(config *tlsHandshakeConfig)
 
+// TODO(bassosimone): we should probably autogenerate the config, the functional optionl
+// setters, and the conversion from config to list of options.
+
 type tlsHandshakeConfig struct {
 	ALPN       []string `json:"alpn,omitempty"`
 	SkipVerify bool     `json:"skip_verify,omitempty"`

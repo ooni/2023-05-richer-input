@@ -32,6 +32,9 @@ type QUICConnection struct {
 // QUICHandshakeOption is an option for configuring the QUIC handshake.
 type QUICHandshakeOption func(config *quicHandshakeConfig)
 
+// TODO(bassosimone): we should probably autogenerate the config, the functional optionl
+// setters, and the conversion from config to list of options.
+
 type quicHandshakeConfig struct {
 	ALPN       []string `json:"alpn,omitempty"`
 	SkipVerify bool     `json:"skip_verify,omitempty"`
@@ -56,7 +59,7 @@ func (c *quicHandshakeConfig) options() (options []QUICHandshakeOption) {
 }
 
 // ErrInvalidCert is returned when we encounter an invalid PEM-encoded certificate.
-var ErrInvalidCert = errors.New("minilang: invalid PEM-encoded certificate")
+var ErrInvalidCert = errors.New("dsl: invalid PEM-encoded certificate")
 
 func (config *quicHandshakeConfig) TLSConfig() (*tls.Config, error) {
 	// See https://github.com/ooni/probe/issues/2413 to understand

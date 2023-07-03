@@ -35,11 +35,11 @@ type Runtime interface {
 	TrackQUICConn(quic.EarlyConnection)
 }
 
-// minimalRuntime is a minimal [Runtime]. This [Runtime] mostly does not do anything
+// MinimalRuntime is a minimal [Runtime]. This [Runtime] mostly does not do anything
 // but incrementing the [Trace] index and tracking connections so that they're closed by
 // [MinimalRuntime.Close]. The zero value of this struct is not ready to use; construct
 // using the [NewMinimalRuntime] factory function.
-type minimalRuntime struct {
+type MinimalRuntime struct {
 	// closers contains the closers to close.
 	closers []io.Closer
 
@@ -55,8 +55,8 @@ type minimalRuntime struct {
 
 // NewMinimalRuntime creates a minimal [Runtime] that increments
 // [Trace] indexes and tracks connections.
-func NewMinimalRuntime(logger model.Logger) Runtime {
-	return &minimalRuntime{
+func NewMinimalRuntime(logger model.Logger) *MinimalRuntime {
+	return &MinimalRuntime{
 		closers:     []io.Closer{},
 		idGenerator: &atomic.Int64{},
 		logger:      logger,
@@ -65,7 +65,7 @@ func NewMinimalRuntime(logger model.Logger) Runtime {
 }
 
 // Close implements Runtime.
-func (r *minimalRuntime) Close() error {
+func (r *MinimalRuntime) Close() error {
 	defer r.mu.Unlock()
 	r.mu.Lock()
 	for _, closer := range r.closers {
@@ -76,22 +76,22 @@ func (r *minimalRuntime) Close() error {
 }
 
 // ExtractObservations implements Trace.
-func (r *minimalRuntime) ExtractObservations() []*Observations {
+func (r *MinimalRuntime) ExtractObservations() []*Observations {
 	return []*Observations{}
 }
 
 // SaveObservations implements Runtime.
-func (r *minimalRuntime) SaveObservations(...*Observations) {
+func (r *MinimalRuntime) SaveObservations(...*Observations) {
 	// nothing
 }
 
 // Logger implements Runtime.
-func (r *minimalRuntime) Logger() model.Logger {
+func (r *MinimalRuntime) Logger() model.Logger {
 	return r.logger
 }
 
 // TrackCloser implements Runtime.
-func (r *minimalRuntime) TrackCloser(conn io.Closer) {
+func (r *MinimalRuntime) TrackCloser(conn io.Closer) {
 	r.mu.Lock()
 	r.closers = append(r.closers, conn)
 	r.mu.Unlock()
@@ -108,12 +108,12 @@ func (c *quicCloserConn) Close() error {
 }
 
 // TrackQUICConn implements Runtime.
-func (r *minimalRuntime) TrackQUICConn(conn quic.EarlyConnection) {
+func (r *MinimalRuntime) TrackQUICConn(conn quic.EarlyConnection) {
 	r.TrackCloser(&quicCloserConn{conn})
 }
 
 // NewTrace implements Runtime.
-func (r *minimalRuntime) NewTrace() Trace {
+func (r *MinimalRuntime) NewTrace() Trace {
 	return &minimalTrace{
 		idx: r.idGenerator.Add(1),
 		r:   r,
@@ -126,7 +126,7 @@ type minimalTrace struct {
 	idx int64
 
 	// r is the runtime that created us
-	r *minimalRuntime
+	r *MinimalRuntime
 }
 
 var _ Trace = &minimalTrace{}

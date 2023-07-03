@@ -15,12 +15,24 @@ import (
 
 // MeasurexliteRuntime is a [Runtime] using [measurexlite] to collect [Observations].
 type MeasurexliteRuntime struct {
-	idGenerator  *atomic.Int64
+	// idGenerator generates atomic incremental IDs for traces.
+	idGenerator *atomic.Int64
+
+	// observations contains the collected observations.
 	observations []*Observations
-	mu           sync.Mutex
-	runtime      Runtime
-	zeroTime     time.Time
+
+	// mu provides mutual exclusion.
+	mu sync.Mutex
+
+	// runtime is the MinimalRuntime we compose with.
+	runtime *MinimalRuntime
+
+	// zeroTime is the zero time for observations.
+	zeroTime time.Time
 }
+
+// TODO(bassosimone): we can save some code by making the MinimalRuntime more ergonomic to
+// use as the basic building block of this runtime.
 
 // NewMeasurexliteRuntime creates a new [MeasurexliteRuntime].
 func NewMeasurexliteRuntime(logger model.Logger, zeroTime time.Time) *MeasurexliteRuntime {

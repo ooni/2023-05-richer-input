@@ -16,7 +16,7 @@ func AsSpecificMaybe[T any](v Maybe[any]) (Maybe[T], *ErrException) {
 	}
 }
 
-// AsGeneric converts the specific Maybe[T] to a generic Maybe[any].
+// AsGeneric converts a specific Maybe[T] to a generic Maybe[any].
 func (m Maybe[T]) AsGeneric() Maybe[any] {
 	return Maybe[any]{
 		Error: m.Error,

@@ -15,6 +15,7 @@ type httpConnectionTLSStage struct{}
 
 const httpConnectionTLSStageName = "http_connection_tls"
 
+// ASTNode implements Stage.
 func (sx *httpConnectionTLSStage) ASTNode() *SerializableASTNode {
 	return &SerializableASTNode{
 		StageName: httpConnectionTLSStageName,
@@ -42,6 +43,7 @@ func (*httpConnectionTLSLoader) StageName() string {
 	return httpConnectionTLSStageName
 }
 
+// Run implements Stage.
 func (sx *httpConnectionTLSStage) Run(ctx context.Context, rtx Runtime, input Maybe[*TLSConnection]) Maybe[*HTTPConnection] {
 	if input.Error != nil {
 		return NewError[*HTTPConnection](input.Error)

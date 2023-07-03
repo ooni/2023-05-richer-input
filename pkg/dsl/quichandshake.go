@@ -11,16 +11,17 @@ import (
 
 // QUICHandshake returns a stage that performs a QUIC handshake.
 func QUICHandshake(options ...QUICHandshakeOption) Stage[*Endpoint, *QUICConnection] {
-	return wrapOperation[*Endpoint, *QUICConnection](&quicHandshakeOp{options})
+	return wrapOperation[*Endpoint, *QUICConnection](&quicHandshakeOperation{options})
 }
 
-type quicHandshakeOp struct {
+type quicHandshakeOperation struct {
 	options []QUICHandshakeOption
 }
 
 const quicHandshakeStageName = "quic_handshake"
 
-func (sx *quicHandshakeOp) ASTNode() *SerializableASTNode {
+// ASTNode implements operation.
+func (sx *quicHandshakeOperation) ASTNode() *SerializableASTNode {
 	var config quicHandshakeConfig
 	for _, option := range sx.options {
 		option(&config)
@@ -52,7 +53,8 @@ func (*quicHandshakeLoader) StageName() string {
 	return quicHandshakeStageName
 }
 
-func (sx *quicHandshakeOp) Run(ctx context.Context, rtx Runtime, endpoint *Endpoint) (*QUICConnection, error) {
+// Run implements operation.
+func (sx *quicHandshakeOperation) Run(ctx context.Context, rtx Runtime, endpoint *Endpoint) (*QUICConnection, error) {
 	// initialize config
 	config := &quicHandshakeConfig{
 		ALPN:       []string{"h3"},

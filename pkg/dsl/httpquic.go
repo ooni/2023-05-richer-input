@@ -15,6 +15,7 @@ type httpConnectionQUICStage struct{}
 
 const httpConnectionQUICStageName = "http_connection_quic"
 
+// ASTNode implements Stage.
 func (sx *httpConnectionQUICStage) ASTNode() *SerializableASTNode {
 	return &SerializableASTNode{
 		StageName: httpConnectionQUICStageName,
@@ -42,6 +43,7 @@ func (*httpConnectionQUICLoader) StageName() string {
 	return httpConnectionQUICStageName
 }
 
+// Run implements Stage.
 func (sx *httpConnectionQUICStage) Run(ctx context.Context, rtx Runtime, input Maybe[*QUICConnection]) Maybe[*HTTPConnection] {
 	if input.Error != nil {
 		return NewError[*HTTPConnection](input.Error)

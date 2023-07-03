@@ -58,14 +58,14 @@ func (sx *newEndpointPipelineStage) Run(ctx context.Context, rtx Runtime, input 
 	}
 
 	// create list of workers
-	var workers []worker[Maybe[*Void]]
+	var workers []Worker[Maybe[*Void]]
 	for _, endpoint := range input.Value {
 		workers = append(workers, &newEndpointPipelineWorker{rtx: rtx, sx: sx.sx, input: endpoint})
 	}
 
 	// perform the measurement in parallel
 	const parallelism = 2
-	results := parallelRun(ctx, parallelism, workers...)
+	results := ParallelRun(ctx, parallelism, workers...)
 
 	// route exceptions
 	if err := catch(results...); err != nil {

@@ -9,14 +9,15 @@ import (
 
 // DNSLookupGetaddrinfo returns a stage that performs DNS lookups using getaddrinfo.
 func DNSLookupGetaddrinfo() Stage[string, *DNSLookupResult] {
-	return wrapOperation[string, *DNSLookupResult](&dnsLookupGetaddrinfoOp{})
+	return wrapOperation[string, *DNSLookupResult](&dnsLookupGetaddrinfoOperation{})
 }
 
-type dnsLookupGetaddrinfoOp struct{}
+type dnsLookupGetaddrinfoOperation struct{}
 
 const dnsLookupGetaddrinfoStageName = "dns_lookup_getaddrinfo"
 
-func (op *dnsLookupGetaddrinfoOp) ASTNode() *SerializableASTNode {
+// ASTNode implements operation.
+func (op *dnsLookupGetaddrinfoOperation) ASTNode() *SerializableASTNode {
 	return &SerializableASTNode{
 		StageName: dnsLookupGetaddrinfoStageName,
 		Arguments: nil,
@@ -43,7 +44,8 @@ func (*dnsLookupGetaddrinfoLoader) StageName() string {
 	return dnsLookupGetaddrinfoStageName
 }
 
-func (op *dnsLookupGetaddrinfoOp) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
+// Run implements operation.
+func (op *dnsLookupGetaddrinfoOperation) Run(ctx context.Context, rtx Runtime, domain string) (*DNSLookupResult, error) {
 	// create trace
 	trace := rtx.NewTrace()
 

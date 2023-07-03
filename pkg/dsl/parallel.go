@@ -5,12 +5,12 @@ import (
 	"sync"
 )
 
-// parallelRun runs the given functions using the given number of workers and returns
+// ParallelRun runs the given functions using the given number of workers and returns
 // a slice containing the result produced by each function. When the number of workers
 // is zero or negative, this function will use a single worker.
-func parallelRun[T any](ctx context.Context, parallelism int, workers ...worker[T]) []T {
+func ParallelRun[T any](ctx context.Context, parallelism int, workers ...Worker[T]) []T {
 	// create channel for distributing workers
-	inputs := make(chan worker[T])
+	inputs := make(chan Worker[T])
 
 	// distribute inputs
 	go func() {
@@ -64,6 +64,7 @@ type runStagesInParallelStage struct {
 
 const runStagesInParallelStageName = "run_stages_in_parallel"
 
+// ASTNode implements Stage.
 func (sx *runStagesInParallelStage) ASTNode() *SerializableASTNode {
 	var nodes []*SerializableASTNode
 	for _, stage := range sx.stages {
@@ -97,20 +98,21 @@ func (*runStagesInParallelLoader) StageName() string {
 	return runStagesInParallelStageName
 }
 
+// Run implements Stage.
 func (sx *runStagesInParallelStage) Run(ctx context.Context, rtx Runtime, input Maybe[*Void]) Maybe[*Void] {
 	if input.Error != nil {
 		return NewError[*Void](input.Error)
 	}
 
 	// initialize the workers
-	var workers []worker[Maybe[*Void]]
+	var workers []Worker[Maybe[*Void]]
 	for _, stage := range sx.stages {
 		workers = append(workers, &runStagesInParallelWorker{input: input, rtx: rtx, sx: stage})
 	}
 
 	// parallel run
 	const parallelism = 2
-	results := parallelRun(ctx, parallelism, workers...)
+	results := ParallelRun(ctx, parallelism, workers...)
 
 	// route exceptions
 	if err := catch(results...); err != nil {
@@ -120,13 +122,13 @@ func (sx *runStagesInParallelStage) Run(ctx context.Context, rtx Runtime, input 
 	return NewValue(&Void{})
 }
 
-// runStagesInParallelWorker is the [worker] used by [runStagesInParallelStage].
 type runStagesInParallelWorker struct {
 	input Maybe[*Void]
 	rtx   Runtime
 	sx    Stage[*Void, *Void]
 }
 
+// Produce implements Worker.
 func (w *runStagesInParallelWorker) Produce(ctx context.Context) Maybe[*Void] {
 	return w.sx.Run(ctx, w.rtx, w.input)
 }

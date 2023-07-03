@@ -103,6 +103,9 @@ func HTTPTransactionOptionUserAgent(value string) HTTPTransactionOption {
 	}
 }
 
+// TODO(bassosimone): we should probably autogenerate the config, the functional optionl
+// setters, and the conversion from config to list of options.
+
 type httpTransactionConfig struct {
 	// AcceptHeader is the accept header to use.
 	AcceptHeader string `json:"accept_header,omitempty"`

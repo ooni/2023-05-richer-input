@@ -15,6 +15,7 @@ type httpConnectionTCPStage struct{}
 
 const httpConnectionTCPStageName = "http_connection_tcp"
 
+// ASTNode implements Stage.
 func (sx *httpConnectionTCPStage) ASTNode() *SerializableASTNode {
 	return &SerializableASTNode{
 		StageName: httpConnectionTCPStageName,
@@ -42,6 +43,7 @@ func (*httpConnectionTCPLoader) StageName() string {
 	return httpConnectionTCPStageName
 }
 
+// Run implements Stage.
 func (sx *httpConnectionTCPStage) Run(ctx context.Context, rtx Runtime, input Maybe[*TCPConnection]) Maybe[*HTTPConnection] {
 	if input.Error != nil {
 		return NewError[*HTTPConnection](input.Error)

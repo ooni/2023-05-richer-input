@@ -1,8 +1,6 @@
 package dsl
 
-import (
-	"context"
-)
+import "context"
 
 // Stage is a stage of a measurement pipeline.
 type Stage[A, B any] interface {

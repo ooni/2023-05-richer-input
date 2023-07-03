@@ -16,8 +16,11 @@ type domainNameStage struct {
 
 const domainNameStageName = "domain_name"
 
+// ASTNode implements Stage.
 func (sx *domainNameStage) ASTNode() *SerializableASTNode {
-	// Note: we serialize the structure because this gives us forward compatibility
+	// Note: we serialize the structure because this gives us forward compatibility (i.e., we
+	// may add a field to a future version without breaking the AST structure and old probes will
+	// be fine as long as the zero value of the new field is the default)
 	return &SerializableASTNode{
 		StageName: domainNameStageName,
 		Arguments: sx,
@@ -44,6 +47,7 @@ func (*domainNameLoader) StageName() string {
 	return domainNameStageName
 }
 
+// Run implements Stage.
 func (sx *domainNameStage) Run(ctx context.Context, rtx Runtime, input Maybe[*Void]) Maybe[string] {
 	if input.Error != nil {
 		return NewError[string](input.Error)

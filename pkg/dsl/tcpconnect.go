@@ -9,14 +9,15 @@ import (
 
 // TCPConnect returns a stage that performs a TCP connect.
 func TCPConnect() Stage[*Endpoint, *TCPConnection] {
-	return wrapOperation[*Endpoint, *TCPConnection](&tcpConnectOp{})
+	return wrapOperation[*Endpoint, *TCPConnection](&tcpConnectOperation{})
 }
 
-type tcpConnectOp struct{}
+type tcpConnectOperation struct{}
 
 const tcpConnectStageName = "tcp_connect"
 
-func (op *tcpConnectOp) ASTNode() *SerializableASTNode {
+// ASTNode implements operation.
+func (op *tcpConnectOperation) ASTNode() *SerializableASTNode {
 	return &SerializableASTNode{
 		StageName: tcpConnectStageName,
 		Arguments: nil,
@@ -43,7 +44,8 @@ func (*tcpConnectLoader) StageName() string {
 	return tcpConnectStageName
 }
 
-func (op *tcpConnectOp) Run(ctx context.Context, rtx Runtime, endpoint *Endpoint) (*TCPConnection, error) {
+// Run implements operation.
+func (op *tcpConnectOperation) Run(ctx context.Context, rtx Runtime, endpoint *Endpoint) (*TCPConnection, error) {
 	// create trace
 	trace := rtx.NewTrace()
 

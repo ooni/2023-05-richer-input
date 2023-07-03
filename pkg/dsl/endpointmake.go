@@ -19,8 +19,11 @@ type makeEndpointsForPortStage struct {
 
 const makeEndpointsForPortStageName = "make_endpoints_for_port"
 
+// ASTNode implements Stage.
 func (sx *makeEndpointsForPortStage) ASTNode() *SerializableASTNode {
-	// Note: we serialize the structure because this gives us forward compatibility
+	// Note: we serialize the structure because this gives us forward compatibility (i.e., we
+	// may add a field to a future version without breaking the AST structure and old probes will
+	// be fine as long as the zero value of the new field is the default)
 	return &SerializableASTNode{
 		StageName: makeEndpointsForPortStageName,
 		Arguments: sx,
@@ -47,6 +50,7 @@ func (*makeEndpointForPortLoader) StageName() string {
 	return makeEndpointsForPortStageName
 }
 
+// Run implements Stage.
 func (sx *makeEndpointsForPortStage) Run(ctx context.Context, rtx Runtime, input Maybe[*DNSLookupResult]) Maybe[[]*Endpoint] {
 	if input.Error != nil {
 		return NewError[[]*Endpoint](input.Error)

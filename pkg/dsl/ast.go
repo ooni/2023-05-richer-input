@@ -7,50 +7,52 @@ import (
 	"fmt"
 )
 
-// SerializableASTNode is a serializable representation of a [Stage].
+// SerializableASTNode is the serializable representation of a [Stage].
 type SerializableASTNode struct {
 	// StageName is the name of the DSL stage to execute.
 	StageName string `json:"stage_name"`
 
-	// Arguments contains function-specific arguments.
+	// Arguments contains stage-specific arguments.
 	Arguments any `json:"arguments"`
 
-	// Children contains function-specific children nodes.
+	// Children contains stage-specific children nodes.
 	Children []*SerializableASTNode `json:"children"`
 }
 
-// LoadableASTNode is the loadable representation of an [ASTNode].
+// LoadableASTNode is the loadable representation of a [SerializableASTNode].
 type LoadableASTNode struct {
 	// StageName is the name of the DSL stage to execute.
 	StageName string `json:"stage_name"`
 
-	// Arguments contains function-specific arguments.
+	// Arguments contains stage-specific arguments.
 	Arguments json.RawMessage `json:"arguments"`
 
-	// Children contains function-specific children nodes.
+	// Children contains stage-specific children nodes.
 	Children []*LoadableASTNode `json:"children"`
 }
 
-// RunnableASTNode is the runnable representation of a loaded AST node. It is functionally
+// RunnableASTNode is the runnable representation of a [LoadableASTNode]. It is functionally
 // equivalent to a DSL [Stage] except that type checking happens at runtime.
 type RunnableASTNode interface {
 	ASTNode() *SerializableASTNode
 	Run(ctx context.Context, rtx Runtime, input Maybe[any]) Maybe[any]
 }
 
-// ASTLoaderRule is a rule to load serialized AST nodes.
+// ASTLoaderRule is a rule to load a [*LoadableASTNode] and convert it into a [RunnableASTNode].
 type ASTLoaderRule interface {
 	Load(loader *ASTLoader, node *LoadableASTNode) (RunnableASTNode, error)
 	StageName() string
 }
 
-// ASTLoader loads an [LoadableASTNode] and transforms it to a [RunnableASTNode]. The zero value
-// of this struct is not ready to use; please, construct using the [NewASTLoader] factory.
+// ASTLoader loads a [LoadableASTNode] and transforms it into a [RunnableASTNode]. The zero value
+// of this struct is not ready to use; please, use the [NewASTLoader] factory.
 type ASTLoader struct {
 	m map[string]ASTLoaderRule
 }
 
-// NewASTLoader constructs a new [ASTLoader].
+// NewASTLoader constructs a new [ASTLoader] and calls [ASTLoader.RegisterCustomLoadRule] for
+// all the built-in [ASTLoaderRule]. There's a built-in [ASTLoaderRule] for each [Stage] defined
+// by this package.
 func NewASTLoader() *ASTLoader {
 	al := &ASTLoader{
 		m: map[string]ASTLoaderRule{},
@@ -130,24 +132,26 @@ var ErrNoSuchStage = errors.New("dsl: no such stage")
 
 // Load loads a [*LoadableASTNode] producing the correspoinding [*RunnableASTNode].
 func (al *ASTLoader) Load(node *LoadableASTNode) (RunnableASTNode, error) {
-	// obtain the correct template
 	rule, good := al.m[node.StageName]
 	if !good {
 		return nil, fmt.Errorf("%w: %s", ErrNoSuchStage, node.StageName)
 	}
-
-	// invoke the template compiler
 	return rule.Load(al, node)
 }
 
-// LoadEmptyArguments is a convenience function for loading empty arguments when parsing.
+// LoadEmptyArguments is a convenience function for loading empty arguments when implementing
+// an [ASTLoaderRule].
 func (al *ASTLoader) LoadEmptyArguments(node *LoadableASTNode) error {
 	type Empty struct{}
 	var empty Empty
 	return json.Unmarshal(node.Arguments, &empty)
 }
 
-// RequireExactlyNumChildren is a convenience function to validate the number of children.
+// ErrInvalidNumberOfChildren indicates that the AST contains an invalid number of children.
+var ErrInvalidNumberOfChildren = errors.New("dsl: invalid number of children")
+
+// RequireExactlyNumChildren is a convenience function to validate the number of children
+// when implementing an [ASTLoaderRule].
 func (al *ASTLoader) RequireExactlyNumChildren(node *LoadableASTNode, num int) error {
 	if len(node.Children) != num {
 		return ErrInvalidNumberOfChildren
@@ -155,7 +159,8 @@ func (al *ASTLoader) RequireExactlyNumChildren(node *LoadableASTNode, num int) e
 	return nil
 }
 
-// LoadChildren is a convenience function to load all the node's children.
+// LoadChildren is a convenience function to load all the node's children
+// when implementing an [ASTLoaderRule].
 func (al *ASTLoader) LoadChildren(node *LoadableASTNode) (out []RunnableASTNode, err error) {
 	for _, node := range node.Children {
 		runnable, err := al.Load(node)
@@ -215,7 +220,7 @@ func (sx *RunnableASTNodeStage[A, B]) Run(ctx context.Context, rtx Runtime, inpu
 	return xoutput
 }
 
-// RunnableASTNodeListToStageList converts a list of [RunnableASTNode] to be [Stage].
+// RunnableASTNodeListToStageList converts a list of [RunnableASTNode] to a list of [Stage].
 func RunnableASTNodeListToStageList[A, B any](inputs ...RunnableASTNode) (outputs []Stage[A, B]) {
 	for _, input := range inputs {
 		outputs = append(outputs, &RunnableASTNodeStage[A, B]{input})

@@ -16,6 +16,7 @@ type measureMultipleEndpointsStage struct {
 
 const measureMultipleEndpointsStageName = "measure_multiple_endpoints"
 
+// ASTNode implements Stage.
 func (sx *measureMultipleEndpointsStage) ASTNode() *SerializableASTNode {
 	var nodes []*SerializableASTNode
 	for _, stage := range sx.stages {
@@ -49,20 +50,21 @@ func (*measureMultipleEndpointsLoader) StageName() string {
 	return measureMultipleEndpointsStageName
 }
 
+// Run implements stage.
 func (sx *measureMultipleEndpointsStage) Run(ctx context.Context, rtx Runtime, input Maybe[*DNSLookupResult]) Maybe[*Void] {
 	if input.Error != nil {
 		return NewError[*Void](input.Error)
 	}
 
 	// initialize the workers
-	var workers []worker[Maybe[*Void]]
+	var workers []Worker[Maybe[*Void]]
 	for _, stage := range sx.stages {
 		workers = append(workers, &measureMultipleEndpointsWorker{input: input, rtx: rtx, sx: stage})
 	}
 
 	// parallel run
 	const parallelism = 2
-	results := parallelRun(ctx, parallelism, workers...)
+	results := ParallelRun(ctx, parallelism, workers...)
 
 	// route exceptions
 	if err := catch(results...); err != nil {
@@ -72,13 +74,13 @@ func (sx *measureMultipleEndpointsStage) Run(ctx context.Context, rtx Runtime, i
 	return NewValue(&Void{})
 }
 
-// measureMultipleEndpointsWorker is the [worker] used by [measureMultipleEndpointsStage].
 type measureMultipleEndpointsWorker struct {
 	input Maybe[*DNSLookupResult]
 	rtx   Runtime
 	sx    Stage[*DNSLookupResult, *Void]
 }
 
+// Produce implements Worker.
 func (w *measureMultipleEndpointsWorker) Produce(ctx context.Context) Maybe[*Void] {
 	return w.sx.Run(ctx, w.rtx, w.input)
 }

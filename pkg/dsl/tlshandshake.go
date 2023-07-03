@@ -11,16 +11,16 @@ import (
 
 // TLSHandshake returns a stage that performs a TLS handshake.
 func TLSHandshake(options ...TLSHandshakeOption) Stage[*TCPConnection, *TLSConnection] {
-	return wrapOperation[*TCPConnection, *TLSConnection](&tlsHandshakeOp{options})
+	return wrapOperation[*TCPConnection, *TLSConnection](&tlsHandshakeOperation{options})
 }
 
-type tlsHandshakeOp struct {
+type tlsHandshakeOperation struct {
 	options []TLSHandshakeOption
 }
 
 const tlsHandshakeStageName = "tls_handshake"
 
-func (op *tlsHandshakeOp) ASTNode() *SerializableASTNode {
+func (op *tlsHandshakeOperation) ASTNode() *SerializableASTNode {
 	var config tlsHandshakeConfig
 	for _, option := range op.options {
 		option(&config)
@@ -52,7 +52,7 @@ func (*tlsHandshakeLoader) StageName() string {
 	return tlsHandshakeStageName
 }
 
-func (op *tlsHandshakeOp) Run(ctx context.Context, rtx Runtime, tcpConn *TCPConnection) (*TLSConnection, error) {
+func (op *tlsHandshakeOperation) Run(ctx context.Context, rtx Runtime, tcpConn *TCPConnection) (*TLSConnection, error) {
 	// initialize config
 	config := &tlsHandshakeConfig{
 		ALPN: []string{"h2", "http/1.1"},

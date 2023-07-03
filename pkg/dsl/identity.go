@@ -4,12 +4,13 @@ import (
 	"context"
 )
 
-// Identity returns a [Filter] that copies its input to its output.
+// Identity returns a filter that copies its input to its output. We define as filter a
+// [Stage] where the input and output type are the same type.
 type Identity[T any] struct{}
 
 const identityStageName = "identity"
 
-// ASTNode implements Filter.
+// ASTNode implements Stage.
 func (*Identity[T]) ASTNode() *SerializableASTNode {
 	return &SerializableASTNode{
 		StageName: identityStageName,
@@ -37,7 +38,7 @@ func (*identityLoader) StageName() string {
 	return identityStageName
 }
 
-// Run implements Filter.
+// Run implements Stage.
 func (*Identity[T]) Run(ctx context.Context, rtx Runtime, input Maybe[T]) Maybe[T] {
 	return input
 }

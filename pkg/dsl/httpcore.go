@@ -15,16 +15,17 @@ import (
 // HTTPTransaction returns a stage that uses an HTTP connection to send an HTTP request and
 // reads the response headers as well as a snapshot of the response body.
 func HTTPTransaction(options ...HTTPTransactionOption) Stage[*HTTPConnection, *HTTPResponse] {
-	return wrapOperation[*HTTPConnection, *HTTPResponse](&httpTransactionOp{options})
+	return wrapOperation[*HTTPConnection, *HTTPResponse](&httpTransactionOperation{options})
 }
 
-type httpTransactionOp struct {
+type httpTransactionOperation struct {
 	options []HTTPTransactionOption
 }
 
 const httpTransactionStageName = "http_transaction"
 
-func (op *httpTransactionOp) ASTNode() *SerializableASTNode {
+// ASTNode implements operation.
+func (op *httpTransactionOperation) ASTNode() *SerializableASTNode {
 	var config httpTransactionConfig
 	for _, option := range op.options {
 		option(&config)
@@ -57,7 +58,8 @@ func (*httpTransactionLoader) StageName() string {
 	return httpTransactionStageName
 }
 
-func (op *httpTransactionOp) Run(ctx context.Context, rtx Runtime, conn *HTTPConnection) (*HTTPResponse, error) {
+// Run implements operation.
+func (op *httpTransactionOperation) Run(ctx context.Context, rtx Runtime, conn *HTTPConnection) (*HTTPResponse, error) {
 	// setup
 	const timeout = 10 * time.Second
 	ctx, cancel := context.WithTimeout(ctx, timeout)
@@ -126,7 +128,7 @@ func (op *httpTransactionOp) Run(ctx context.Context, rtx Runtime, conn *HTTPCon
 	return output, nil
 }
 
-func (op *httpTransactionOp) newHTTPRequest(
+func (op *httpTransactionOperation) newHTTPRequest(
 	ctx context.Context, config *httpTransactionConfig) (*http.Request, error) {
 	URL := &url.URL{
 		Scheme:      config.URLScheme,
