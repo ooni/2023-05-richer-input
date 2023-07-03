@@ -10,6 +10,9 @@ import (
 )
 
 // TLSHandshake returns a stage that performs a TLS handshake.
+//
+// This function returns an [ErrTLSHandshake] if the error is a DNS lookup error. Remember to
+// use the [IsErrTLSHandshake] predicate when setting an experiment test keys.
 func TLSHandshake(options ...TLSHandshakeOption) Stage[*TCPConnection, *TLSConnection] {
 	return wrapOperation[*TCPConnection, *TLSConnection](&tlsHandshakeOperation{options})
 }

@@ -14,6 +14,9 @@ import (
 
 // HTTPTransaction returns a stage that uses an HTTP connection to send an HTTP request and
 // reads the response headers as well as a snapshot of the response body.
+//
+// This function returns an [ErrHTTPTransaction] if the error is a DNS lookup error. Remember to
+// use the [IsErrHTTPTransaction] predicate when setting an experiment test keys.
 func HTTPTransaction(options ...HTTPTransactionOption) Stage[*HTTPConnection, *HTTPResponse] {
 	return wrapOperation[*HTTPConnection, *HTTPResponse](&httpTransactionOperation{options})
 }
