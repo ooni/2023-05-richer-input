@@ -13,6 +13,10 @@ client implementing the "runx" command defined in [DESIGN.md](DESIGN.md).
 
 The [analysis](pkg/analysis/) package contains common code for data analysis.
 
+The [dsl](pkg/dsl/) package contains an internal and external DSL used
+to implement richer input for some nettests. This package is alternative to
+(and likely better than) [mininettest](pkg/mininettest/).
+
 The [experiment](pkg/experiment/) package reimplements the IM nettests
 to use the "mini nettests" defined in [DESIGN.md](DESIGN.md).
 
@@ -24,6 +28,8 @@ model package of the probe-engine).
 
 The [ooniprobe/interpreter](pkg/ooniprobe/interpreter/) package implements the
 "interpreter" defined in [DESIGN.md](DESIGN.md).
+
+The [x](pkg/x/) package contains experimental packages.
 
 ## The testdata directory
 

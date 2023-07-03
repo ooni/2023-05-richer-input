@@ -18,6 +18,9 @@ measure, and how to save and submit the results.
 We define the concept of "mini nettest", which allow nettests such as
 the IM ones to measure dynamic targets provided as richer input.
 
+We also define a DSL that allows to compose basic network functionality
+together, thus being more flexible than the "mini nettests."
+
 We support these use cases:
 
 1. users can write their own scripts for performing research;
@@ -311,6 +314,11 @@ suite would perform these additional measurements.
 
 ## Key Idea: mini nettests
 
+**TODO(bassosimone)**: mini nettests are deprecated because the DSL approach
+is more flexible. So, we should rewrite the code so that we only use the DSL and
+avoid using the "mini nettests". We should probably keep the "mini nettests" in
+the design document to document a discarded alternative to the DSL.
+
 We have several nettests that consist of running several smaller nettests
 together and computing some test keys. Consider, for example, the IM
 nettests or tor. The tor nettest is the most flexible of these nettests
@@ -397,6 +405,255 @@ Note that, if we move the top-level keys generation during the submission,
 using mini nettests means we can reimplement several nettests by calling
 a single, common function that executes a list of mini nettests.
 
+## Key idea: DSL
+
+We have several nettests that consist of running several smaller nettests
+together and computing some test keys. Consider, for example, the IM
+nettests or tor. The tor nettest is the most flexible of these nettests
+because the API serves its targets.
+
+The key idea of the DSL is to leverage richer input to provide
+input for IM nettests as we do for tor. (We should also rewrite tor to
+use mini nettests since this would allow us to reduce code duplication
+and consolidate the codebase.)
+
+This DSL is an extension of [dslx](https://github.com/ooni/probe-cli/blob/master/docs/design/dd-005-dslx.md).
+
+This PoC rewrites the IM nettests to use mini nettests. A subset of the
+Facebook Messenger nettest, for example, looks like this:
+
+```JSONC
+// This file shows how to define Facebook Messenger in terms of the DSL.
+{
+	"commands": [
+		{
+			"run_command": "nettest/run",
+			"with_arguments": {
+				"experimental_flags": {
+					"dsl": true
+				},
+				"nettest_name": "facebook_messenger",
+				"report_id": "20230406T142431Z_facebookmessenger_IT_30722_n1_nLq4AP3YQWmW8hg6",
+				"suite_name": "im",
+
+                // the toplevel stage of the DSL tree consists of running several
+                // stages in parallel, but here we show just one stage
+				"targets": {
+					"stage_name": "run_stages_in_parallel",
+					"arguments": null,
+					"children": [
+						{
+
+                            // this stage composes two operations A->B and B->C to
+                            // obtain a new operation A->C
+							"stage_name": "compose",
+							"arguments": null,
+							"children": [
+								{
+                                    // this stage takes in input void and returns a string
+                                    // representing a domain name to resolve
+									"stage_name": "domain_name",
+									"arguments": {
+										"domain": "b-api.facebook.com"
+									},
+									"children": []
+								},
+								{
+									"stage_name": "compose",
+									"arguments": null,
+									"children": [
+										{
+
+                                            // this stage takes in input a domain name to resolve
+                                            // and returns in output resolved IP adresses, on
+                                            // success, or an error on failure
+											"stage_name": "dns_lookup_getaddrinfo",
+											"arguments": null,
+											"children": []
+										},
+										{
+											"stage_name": "compose",
+											"arguments": null,
+											"children": [
+												{
+
+                                                    // this stage conditionally run its child stage
+                                                    // if its name exists for this probe
+													"stage_name": "if_filter_exists",
+													"arguments": null,
+													"children": [
+														{
+
+                                                            // this stage checks the DNS lookup results
+                                                            // and sets the related test keys
+															"stage_name": "fbmessenger_dns_consistency_check",
+															"arguments": {
+																"endpoint_name": "b_api"
+															},
+															"children": []
+														}
+													]
+												},
+												{
+													"stage_name": "compose",
+													"arguments": null,
+													"children": [
+														{
+
+                                                            // this stage converts the DNS lookup results
+                                                            // into a list of endpoints using port 443
+															"stage_name": "make_endpoints_for_port",
+															"arguments": {
+																"port": 443
+															},
+															"children": []
+														},
+														{
+                                                            // this stage schedules each endpoint belonging
+                                                            // to a list of endpoints to run on a specific
+                                                            // endpoint measurement pipeline provided as its
+                                                            // sub-stage
+															"stage_name": "new_endpoint_pipeline",
+															"arguments": null,
+															"children": [
+																{
+																	"stage_name": "compose",
+																	"arguments": null,
+																	"children": [
+																		{
+                                                                            // this stage performs a TCP connect
+																			"stage_name": "tcp_connect",
+																			"arguments": null,
+																			"children": []
+																		},
+																		{
+																			"stage_name": "compose",
+																			"arguments": null,
+																			"children": [
+																				{
+                                                                                    // this stage conditionally sets the test keys
+                                                                                    // based on the TCP connect results
+																					"stage_name": "if_filter_exists",
+																					"arguments": null,
+																					"children": [
+																						{
+																							"stage_name": "fbmessenger_tcp_reachability_check",
+																							"arguments": {
+																								"endpoint_name": "b_api"
+																							},
+																							"children": []
+																						}
+																					]
+																				},
+																				{
+                                                                                    // this stage sets the result to void, this
+                                                                                    // making the whole pipline void->void
+																					"stage_name": "discard",
+																					"arguments": null,
+																					"children": []
+																				}
+																			]
+																		}
+																	]
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+                        // [snip]
+					]
+				}
+			}
+		}
+	],
+	"v": 2
+}
+```
+
+An older version of OONI Probe would ignore the richer input
+"targets." Conversely, a richer-input-aware version would implement
+Facebook Messenger as a runner with DSL support. The DSL is a tree
+of operations to perform. The JSON above is equivalent to this diagram:
+
+```mermaid
+stateDiagram-v2
+    state "run_stages_in_parallel" as n1
+    state "compose" as n2
+    n1 --> n2
+    state "..." as n3
+    n1 --> n3
+    state "domain_name{'b-api.facebook.com'}" as n4
+    n2 --> n4
+    state "compose" as n5
+    n2 --> n5
+    state "dns_lookup_getaddrinfo" as n6
+    n5 --> n6
+    state "compose" as n7
+    n5 --> n7
+    state "if_filter_exists" as n8
+    n7 --> n8
+    state "fbmessenger_dns_consistency_check{'b_api'}" as n9
+    n8 --> n9
+    state "compose" as n10
+    n7 --> n10
+    state "make_endpoints_for_port{443}" as n11
+    n10 --> n11
+    state "new_endpoint_pipeline" as n12
+    n10 --> n12
+    state "compose" as n13
+    n12 --> n13
+    state "tcp_connect" as n14
+    n13 --> n14
+    state "compose" as n15
+    n13 --> n15
+    state "if_filter_exists" as n16
+    n15 --> n16
+    state "fbmessenger_tcp_reachability_check{'b_api'}" as n17
+    n16 --> n17
+    state "discard" as n18
+    n16 --> n18
+```
+
+each node in the tree is a stage in a measurement pipeline. Each stage name
+indicates the stage semantics, which we briefly described using comments
+in the JSONC snippet. The "compose" operation composes together
+two stages `s1: A -> B` and `s2: B -> C` to obtain a new stage `s3: A -> C`.
+
+Each stage receives in input a "maybe" monad containing an error or a given
+type (so, it would be more proper to write `s1: M A -> M B`). If the input
+monad contains an error, the stage would immediately forward the error down
+the pipeline with the correct downstream type. Otherwise, the stage will
+perform some action that depend on the stage semantics.
+
+Some stages are conditionally defined using `"if_stage_exists"`. We can use this
+functionality only for "filter" stages (e.g., `f: M A -> M A)`. We use filter
+stages to set the experiment test keys. The implementation of `"if_stage_exists"`
+replaces a filter stage with the identity function if it does not know the
+name if the stage. This means that we can serve a pipeline that would not break
+old probes that do not implement some filters.
+
+Note that, in principle, we can rewrite many nettests (for sure the IM nettests, tor,
+dnscheck, stunreachability and possibly others) to use DLS-based richer input.
+
+Compared to the "mini nettests", a DSL based solution is more flexible because we
+can express more complex operations using function composition of a finite set
+of measurement primitives. This means we need to write (or generate) much less code
+inside the probes implementation. Generating code also means that old probes may
+not be able to run some operations because they do not implement them.
+
+Additionally, with the DSL and because the stages are monadic, we can implement
+writing test keys by implementing the proper filter after each operation. Writing
+code to write test keys seems much more complex with "mini nettests".
+
+Also, note how the DSL is not Turing complete and basically only allows one
+to compose basic network measurement primitives together.
+
 ## Minor idea: A/B testing
 
 We include a "feature\_flags" map from string to boolean to each
@@ -421,6 +678,9 @@ Probe that we changed the access network (e.g., the phone moved from
 Wi-Fi to 3G/4G/5G).
 
 ## Minor idea: common code for data analysis
+
+**TODO(bassosimone)**: this minor idea is bound to the "mini nettests"
+concept but the DSL does not necessarily require this.
 
 This repository includes a package containing common functions to
 simplify data analysis for nettests.
