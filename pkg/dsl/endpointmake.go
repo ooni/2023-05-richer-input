@@ -62,11 +62,11 @@ func (sx *makeEndpointsForPortStage) Run(ctx context.Context, rtx Runtime, input
 		uniq[addr] = true
 	}
 
-	var out []*Endpoint
+	var output []*Endpoint
 	for addr := range uniq {
-		out = append(out, &Endpoint{
+		output = append(output, &Endpoint{
 			Address: net.JoinHostPort(addr, strconv.Itoa(int(sx.Port))),
 			Domain:  input.Value.Domain})
 	}
-	return NewValue(out)
+	return NewValue(output)
 }

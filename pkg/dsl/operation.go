@@ -28,9 +28,9 @@ func (sx *wrapOperationStage[A, B]) Run(ctx context.Context, rtx Runtime, input 
 	if input.Error != nil {
 		return NewError[B](input.Error)
 	}
-	result, err := sx.op.Run(ctx, rtx, input.Value)
+	output, err := sx.op.Run(ctx, rtx, input.Value)
 	if err != nil {
 		return NewError[B](err)
 	}
-	return NewValue(result)
+	return NewValue(output)
 }

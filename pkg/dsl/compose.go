@@ -49,7 +49,7 @@ func (*composeLoader) Load(loader *ASTLoader, node *LoadableASTNode) (RunnableAS
 	}
 
 	// Note: we Compose using `any` but we're not creating any Maybe[any] in the [composeStage.Run]
-	// method and inner stages should create correctly typed Maybe
+	// method and inner stages should create correctly-typed Maybes.
 	runtimex.Assert(len(runnables) == 2, "expected exactly two children nodes")
 	stage := Compose[any, any, any](runnables[0], runnables[1])
 	return stage, nil
