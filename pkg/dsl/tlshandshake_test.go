@@ -9,7 +9,7 @@ import (
 )
 
 func TestTLSHandshake(t *testing.T) {
-	t.Run("we correctly wrap TLS handshake errors during the handshake", func(t *testing.T) {
+	t.Run("we correctly wrap TLS handshake errors", func(t *testing.T) {
 		// create a server that RSTs during the handshake
 		srvr := filtering.NewTLSServer(filtering.TLSActionReset)
 		defer srvr.Close()
