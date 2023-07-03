@@ -1,0 +1,93 @@
+// Geneated by the ./pkg/x/minimaldsl/gen script
+{
+  "stage_name": "compose",
+  "arguments": null,
+  "children": [
+    {
+      "stage_name": "domain_name",
+      "arguments": {
+        "domain": "www.example.com"
+      },
+      "children": []
+    },
+    {
+      "stage_name": "compose",
+      "arguments": null,
+      "children": [
+        {
+          "stage_name": "dns_lookup_getaddrinfo",
+          "arguments": null,
+          "children": []
+        },
+        {
+          "stage_name": "compose",
+          "arguments": null,
+          "children": [
+            {
+              "stage_name": "make_endpoints_for_port",
+              "arguments": {
+                "port": 443
+              },
+              "children": []
+            },
+            {
+              "stage_name": "new_endpoint_pipeline",
+              "arguments": null,
+              "children": [
+                {
+                  "stage_name": "compose",
+                  "arguments": null,
+                  "children": [
+                    {
+                      "stage_name": "tcp_connect",
+                      "arguments": null,
+                      "children": []
+                    },
+                    {
+                      "stage_name": "compose",
+                      "arguments": null,
+                      "children": [
+                        {
+                          "stage_name": "tls_handshake",
+                          "arguments": {},
+                          "children": []
+                        },
+                        {
+                          "stage_name": "compose",
+                          "arguments": null,
+                          "children": [
+                            {
+                              "stage_name": "http_connection_tls",
+                              "arguments": null,
+                              "children": []
+                            },
+                            {
+                              "stage_name": "compose",
+                              "arguments": null,
+                              "children": [
+                                {
+                                  "stage_name": "http_transaction",
+                                  "arguments": {},
+                                  "children": []
+                                },
+                                {
+                                  "stage_name": "discard",
+                                  "arguments": null,
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

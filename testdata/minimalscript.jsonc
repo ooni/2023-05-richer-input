@@ -1,0 +1,10 @@
+// This script will be used in an internal presentation
+{"commands": [
+	{"run_command": "ui/set_suite", "with_arguments": {"suite_name": "im"}},
+
+	{"run_command": "ui/set_progress_bar_range", "with_arguments": {
+	  "initial_value": 0.33, "max_value": 0.66, "suite_name": "im"}},
+
+	{"run_command": "nettest/run", "with_arguments": {
+	  "nettest_name": "facebook_messenger", "suite_name": "im",
+	  "report_id": "20230406T142431Z_signal_IT_30722_n1_8vFVXzjCjfUFbOA5"}}]}
