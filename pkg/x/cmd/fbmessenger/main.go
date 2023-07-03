@@ -8,6 +8,8 @@ import (
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
+// TODO(bassosimone): this command should probably be an ooniprobe subcommand
+
 func main() {
 	// obtain the measurement pipeline
 	pipeline := fbmessenger.DSLToplevelFunc(fbmessenger.NewTestKeys())
