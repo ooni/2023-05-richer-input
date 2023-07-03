@@ -1,3 +1,4 @@
+// This file shows how to measure throttling using the DSL.
 {
 	"commands": [
 		{

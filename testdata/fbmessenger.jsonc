@@ -1,3 +1,4 @@
+// This file shows how to define Facebook Messenger in terms of the DSL.
 {
 	"commands": [
 		{
