@@ -431,3 +431,40 @@ func TestQAQUICHandshakeFailure(t *testing.T) {
 	// TODO(bassosimone): check the observations
 	_ = observations
 }
+
+func TestHTTPTransactionFailure(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skip test in short mode")
+	}
+
+	dnsConfig := netem.NewDNSConfig()
+	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
+	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
+
+	env := qaNewEnvironment(dnsConfig)
+	defer env.Close()
+
+	// Note: this rule should prevent handshaking
+	env.DPIEngine().AddRule(&netem.DPIResetTrafficForString{
+		Logger:          log.Log,
+		ServerIPAddress: qaWebServerAddress,
+		ServerPort:      80,
+		String:          "Host: www.example.com",
+	})
+
+	var (
+		observations *dsl.Observations
+		err          error
+	)
+
+	env.Do(func() {
+		observations, err = qaRunNode(qaNewRunnableASTNode())
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// TODO(bassosimone): check the observations
+	_ = observations
+}

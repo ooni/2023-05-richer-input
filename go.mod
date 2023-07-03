@@ -22,7 +22,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mroth/weightedrand v1.0.0 // indirect
-	github.com/ooni/netem v0.0.0-20230606061801-6bfb478aadf7
+	github.com/ooni/netem v0.0.0-20230703161932-f920565ac5f0
 	github.com/pebbe/zmq4 v1.2.10 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
