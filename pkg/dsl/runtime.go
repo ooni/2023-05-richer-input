@@ -19,6 +19,9 @@ type Runtime interface {
 	// Close closes all the closers tracker by the runtime.
 	Close() error
 
+	// Metrics returns the metrics to use.
+	Metrics() Metrics
+
 	// NewTrace creates a new measurement trace.
 	NewTrace() Trace
 
@@ -86,6 +89,11 @@ func (r *MinimalRuntime) ExtractObservations() []*Observations {
 	out := r.observations
 	r.observations = []*Observations{}
 	return out
+}
+
+// Metrics implements Runtime.
+func (r *MinimalRuntime) Metrics() Metrics {
+	return defaultNullMetrics
 }
 
 // SaveObservations implements Runtime.

@@ -78,9 +78,11 @@ func (op *dnsLookupGetaddrinfoOperation) Run(ctx context.Context, rtx Runtime, d
 
 	// handle the error case
 	if err != nil {
+		rtx.Metrics().Error(dnsLookupGetaddrinfoStageName)
 		return nil, &ErrDNSLookup{err}
 	}
 
 	// handle the successful case
+	rtx.Metrics().Success(dnsLookupGetaddrinfoStageName)
 	return &DNSLookupResult{Domain: domain, Addresses: addrs}, nil
 }

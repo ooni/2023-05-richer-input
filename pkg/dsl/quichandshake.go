@@ -105,6 +105,7 @@ func (sx *quicHandshakeOperation) Run(ctx context.Context, rtx Runtime, endpoint
 
 	// handle the error case
 	if err != nil {
+		rtx.Metrics().Error(quicHandshakeStageName)
 		return nil, &ErrQUICHandshake{err}
 	}
 
@@ -112,6 +113,7 @@ func (sx *quicHandshakeOperation) Run(ctx context.Context, rtx Runtime, endpoint
 	rtx.TrackQUICConn(quicConn)
 
 	// prepare the return value
+	rtx.Metrics().Success(quicHandshakeStageName)
 	out := &QUICConnection{
 		Address:               endpoint.Address,
 		Conn:                  quicConn,

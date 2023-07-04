@@ -92,9 +92,11 @@ func (sx *dnsLookupUDPOperation) Run(ctx context.Context, rtx Runtime, domain st
 
 	// handle the error case
 	if err != nil {
+		rtx.Metrics().Error(dnsLookupUDPStageName)
 		return nil, &ErrDNSLookup{err}
 	}
 
 	// handle the successful case
+	rtx.Metrics().Success(dnsLookupUDPStageName)
 	return &DNSLookupResult{Domain: domain, Addresses: addrs}, nil
 }

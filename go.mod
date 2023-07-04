@@ -5,7 +5,8 @@ go 1.19
 require (
 	github.com/apex/log v1.9.0
 	github.com/fatih/color v1.15.0
-	github.com/ooni/probe-engine v0.25.1-0.20230703115655-5f380d36daf4
+	github.com/google/go-cmp v0.5.9
+	github.com/ooni/probe-engine v0.25.1-0.20230704101036-d6ca05d2c834
 	github.com/quic-go/quic-go v0.33.0
 )
 
