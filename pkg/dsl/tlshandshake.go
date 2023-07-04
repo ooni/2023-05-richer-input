@@ -98,6 +98,7 @@ func (op *tlsHandshakeOperation) Run(ctx context.Context, rtx Runtime, tcpConn *
 
 	// handle the error case
 	if err != nil {
+		rtx.Metrics().Error(tlsHandshakeStageName)
 		return nil, &ErrTLSHandshake{err}
 	}
 
@@ -105,6 +106,7 @@ func (op *tlsHandshakeOperation) Run(ctx context.Context, rtx Runtime, tcpConn *
 	rtx.TrackCloser(conn)
 
 	// prepare the return value
+	rtx.Metrics().Success(tlsHandshakeStageName)
 	out := &TLSConnection{
 		Address:               tcpConn.Address,
 		Conn:                  conn.(netxlite.TLSConn), // guaranteed to work

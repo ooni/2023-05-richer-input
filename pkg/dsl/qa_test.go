@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/apex/log"
+	"github.com/google/go-cmp/cmp"
 	"github.com/google/gopacket/layers"
 	"github.com/ooni/2023-05-richer-input/pkg/dsl"
 	"github.com/ooni/netem"
@@ -33,7 +34,7 @@ const qaWebServerAddress = "93.184.216.34"
 func qaPipelineDNS() dsl.Stage[string, *dsl.DNSLookupResult] {
 	return dsl.DNSLookupParallel(
 		dsl.DNSLookupGetaddrinfo(),
-		dsl.DNSLookupUDP(net.JoinHostPort(netemx.DefaultServersResolver, "53")),
+		dsl.DNSLookupUDP(net.JoinHostPort(netemx.QAEnvDefaultUncensoredResolverAddress, "53")),
 	)
 }
 
@@ -108,52 +109,29 @@ func qaNewRunnableASTNode() dsl.RunnableASTNode {
 // This section of the file contains code to generate environments
 //
 
-func qaNewEnvironment(clientDNSConfig *netem.DNSConfig) *netemx.Environment {
-	// clientConfig configures the client topology
-	clientConfig := &netemx.ClientConfig{
-		ClientAddr:   "", // use the default
-		DNSConfig:    clientDNSConfig,
-		ResolverAddr: "", // use the default
-	}
+func qaNewEnvironment() *netemx.QAEnv {
+	// create the environment
+	env := netemx.NewQAEnv(netemx.QAEnvOptionHTTPServer(
+		qaWebServerAddress,
+		netemx.QAEnvDefaultHTTPHandler(),
+	))
 
-	// create the configuration of the uncensored DNS server.
-	serversDNSConfig := netem.NewDNSConfig()
-	serversDNSConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
-	serversDNSConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
-
-	// create the overall configuration for the servers.
-	serversConfig := &netemx.ServersConfig{
-		DNSConfig:    serversDNSConfig,
-		ResolverAddr: "", // use the default
-		Servers: []netemx.ConfigServerStack{{
-			ServerAddr: qaWebServerAddress,
-			HTTPServers: []netemx.ConfigHTTPServer{{
-				Port:    80,
-				QUIC:    false,
-				Handler: nil, // use the default
-			}, {
-				Port:    443,
-				QUIC:    false,
-				Handler: nil, // use the default
-			}, {
-				Port:    443,
-				QUIC:    true,
-				Handler: nil, // use the default
-			}},
-		}},
-	}
+	// create the configuration of the uncensored DNS servers.
+	dnsConfig := env.OtherResolversConfig()
+	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
+	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
 
 	// return the environment
-	return netemx.NewEnvironment(clientConfig, serversConfig)
+	return env
 }
 
 //
 // This section of the file runs the measurement pipeline
 //
 
-func qaRunNode(runnable dsl.RunnableASTNode) (*dsl.Observations, error) {
+func qaRunNode(metrics dsl.Metrics, runnable dsl.RunnableASTNode) (*dsl.Observations, error) {
 	input := dsl.NewValue(&dsl.Void{}).AsGeneric()
-	rtx := dsl.NewMeasurexliteRuntime(log.Log, time.Now())
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, time.Now())
 	if err := dsl.Try(runnable.Run(context.Background(), rtx, input)); err != nil {
 		return nil, err
 	}
@@ -166,24 +144,38 @@ func qaRunNode(runnable dsl.RunnableASTNode) (*dsl.Observations, error) {
 //
 
 func TestQASuccess(t *testing.T) {
-	dnsConfig := netem.NewDNSConfig()
+	env := qaNewEnvironment()
+	defer env.Close()
+
+	dnsConfig := env.ISPResolverConfig()
 	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
 	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
-
-	env := qaNewEnvironment(dnsConfig)
-	defer env.Close()
 
 	var (
 		observations *dsl.Observations
 		err          error
 	)
 
+	metrics := dsl.NewAccountingMetrics()
 	env.Do(func() {
-		observations, err = qaRunNode(qaNewRunnableASTNode())
+		observations, err = qaRunNode(metrics, qaNewRunnableASTNode())
 	})
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	// make sure the expected number of operations had the expected result
+	expected := map[string]int64{
+		"dns_lookup_udp_success_count":         2,
+		"dns_lookup_getaddrinfo_success_count": 2,
+		"http_transaction_success_count":       6,
+		"quic_handshake_success_count":         2,
+		"tcp_connect_success_count":            4,
+		"tls_handshake_success_count":          2,
+	}
+	if diff := cmp.Diff(expected, metrics.Snapshot()); diff != "" {
+		t.Fatal(diff)
 	}
 
 	// TODO(bassosimone): check the observations
@@ -191,23 +183,36 @@ func TestQASuccess(t *testing.T) {
 }
 
 func TestQADNSLookupGetaddrinfoFailure(t *testing.T) {
-	dnsConfig := netem.NewDNSConfig()
-	// Note: we're not filling the DNS config, which causes NXDOMAIN
-
-	env := qaNewEnvironment(dnsConfig)
+	env := qaNewEnvironment()
 	defer env.Close()
+
+	// Note: we're not filling the DNS config, which causes NXDOMAIN
 
 	var (
 		observations *dsl.Observations
 		err          error
 	)
 
+	metrics := dsl.NewAccountingMetrics()
 	env.Do(func() {
-		observations, err = qaRunNode(qaNewRunnableASTNode())
+		observations, err = qaRunNode(metrics, qaNewRunnableASTNode())
 	})
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	// make sure the expected number of operations had the expected result
+	expected := map[string]int64{
+		"dns_lookup_udp_success_count":       2,
+		"dns_lookup_getaddrinfo_error_count": 2,
+		"http_transaction_success_count":     6,
+		"quic_handshake_success_count":       2,
+		"tcp_connect_success_count":          4,
+		"tls_handshake_success_count":        2,
+	}
+	if diff := cmp.Diff(expected, metrics.Snapshot()); diff != "" {
+		t.Fatal(diff)
 	}
 
 	// TODO(bassosimone): check the observations
@@ -215,17 +220,17 @@ func TestQADNSLookupGetaddrinfoFailure(t *testing.T) {
 }
 
 func TestQADNSLookupUDPFailure(t *testing.T) {
-	dnsConfig := netem.NewDNSConfig()
+	env := qaNewEnvironment()
+	defer env.Close()
+
+	dnsConfig := env.ISPResolverConfig()
 	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
 	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
-
-	env := qaNewEnvironment(dnsConfig)
-	defer env.Close()
 
 	// Note: this rule should prevent UDP communication
 	env.DPIEngine().AddRule(&netem.DPIDropTrafficForServerEndpoint{
 		Logger:          log.Log,
-		ServerIPAddress: netemx.DefaultServersResolver,
+		ServerIPAddress: netemx.QAEnvDefaultUncensoredResolverAddress,
 		ServerPort:      53,
 		ServerProtocol:  layers.IPProtocolUDP,
 	})
@@ -235,12 +240,26 @@ func TestQADNSLookupUDPFailure(t *testing.T) {
 		err          error
 	)
 
+	metrics := dsl.NewAccountingMetrics()
 	env.Do(func() {
-		observations, err = qaRunNode(qaNewRunnableASTNode())
+		observations, err = qaRunNode(metrics, qaNewRunnableASTNode())
 	})
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	// make sure the expected number of operations had the expected result
+	expected := map[string]int64{
+		"dns_lookup_udp_error_count":           2,
+		"dns_lookup_getaddrinfo_success_count": 2,
+		"http_transaction_success_count":       6,
+		"quic_handshake_success_count":         2,
+		"tcp_connect_success_count":            4,
+		"tls_handshake_success_count":          2,
+	}
+	if diff := cmp.Diff(expected, metrics.Snapshot()); diff != "" {
+		t.Fatal(diff)
 	}
 
 	// TODO(bassosimone): check the observations
@@ -252,12 +271,12 @@ func TestQAFullDNSSpoofing(t *testing.T) {
 		t.Skip("skip test in short mode")
 	}
 
-	dnsConfig := netem.NewDNSConfig()
+	env := qaNewEnvironment()
+	defer env.Close()
+
+	dnsConfig := env.ISPResolverConfig()
 	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
 	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
-
-	env := qaNewEnvironment(dnsConfig)
-	defer env.Close()
 
 	// Note: this rule should spoof the responses
 	env.DPIEngine().AddRule(&netem.DPISpoofDNSResponse{
@@ -276,12 +295,24 @@ func TestQAFullDNSSpoofing(t *testing.T) {
 		err          error
 	)
 
+	metrics := dsl.NewAccountingMetrics()
 	env.Do(func() {
-		observations, err = qaRunNode(qaNewRunnableASTNode())
+		observations, err = qaRunNode(metrics, qaNewRunnableASTNode())
 	})
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	// make sure the expected number of operations had the expected result
+	expected := map[string]int64{
+		"dns_lookup_udp_success_count":         2,
+		"dns_lookup_getaddrinfo_success_count": 2,
+		"quic_handshake_error_count":           2,
+		"tcp_connect_error_count":              4,
+	}
+	if diff := cmp.Diff(expected, metrics.Snapshot()); diff != "" {
+		t.Fatal(diff)
 	}
 
 	// TODO(bassosimone): check the observations
@@ -294,12 +325,12 @@ func TestQATCPConnectFailure(t *testing.T) {
 			t.Skip("skip test in short mode")
 		}
 
-		dnsConfig := netem.NewDNSConfig()
+		env := qaNewEnvironment()
+		defer env.Close()
+
+		dnsConfig := env.ISPResolverConfig()
 		dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
 		dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
-
-		env := qaNewEnvironment(dnsConfig)
-		defer env.Close()
 
 		// Note: this rule should prevent connecting
 		env.DPIEngine().AddRule(&netem.DPIDropTrafficForServerEndpoint{
@@ -314,12 +345,26 @@ func TestQATCPConnectFailure(t *testing.T) {
 			err          error
 		)
 
+		metrics := dsl.NewAccountingMetrics()
 		env.Do(func() {
-			observations, err = qaRunNode(qaNewRunnableASTNode())
+			observations, err = qaRunNode(metrics, qaNewRunnableASTNode())
 		})
 
 		if err != nil {
 			t.Fatal(err)
+		}
+
+		// make sure the expected number of operations had the expected result
+		expected := map[string]int64{
+			"dns_lookup_udp_success_count":         2,
+			"dns_lookup_getaddrinfo_success_count": 2,
+			"http_transaction_success_count":       4,
+			"quic_handshake_success_count":         2,
+			"tcp_connect_error_count":              2,
+			"tcp_connect_success_count":            2,
+		}
+		if diff := cmp.Diff(expected, metrics.Snapshot()); diff != "" {
+			t.Fatal(diff)
 		}
 
 		// TODO(bassosimone): check the observations
@@ -331,12 +376,12 @@ func TestQATCPConnectFailure(t *testing.T) {
 			t.Skip("skip test in short mode")
 		}
 
-		dnsConfig := netem.NewDNSConfig()
+		env := qaNewEnvironment()
+		defer env.Close()
+
+		dnsConfig := env.ISPResolverConfig()
 		dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
 		dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
-
-		env := qaNewEnvironment(dnsConfig)
-		defer env.Close()
 
 		// Note: this rule should prevent connecting
 		env.DPIEngine().AddRule(&netem.DPIDropTrafficForServerEndpoint{
@@ -351,12 +396,27 @@ func TestQATCPConnectFailure(t *testing.T) {
 			err          error
 		)
 
+		metrics := dsl.NewAccountingMetrics()
 		env.Do(func() {
-			observations, err = qaRunNode(qaNewRunnableASTNode())
+			observations, err = qaRunNode(metrics, qaNewRunnableASTNode())
 		})
 
 		if err != nil {
 			t.Fatal(err)
+		}
+
+		// make sure the expected number of operations had the expected result
+		expected := map[string]int64{
+			"dns_lookup_udp_success_count":         2,
+			"dns_lookup_getaddrinfo_success_count": 2,
+			"http_transaction_success_count":       4,
+			"quic_handshake_success_count":         2,
+			"tcp_connect_error_count":              2,
+			"tcp_connect_success_count":            2,
+			"tls_handshake_success_count":          2,
+		}
+		if diff := cmp.Diff(expected, metrics.Snapshot()); diff != "" {
+			t.Fatal(diff)
 		}
 
 		// TODO(bassosimone): check the observations
@@ -365,12 +425,12 @@ func TestQATCPConnectFailure(t *testing.T) {
 }
 
 func TestQATLSHandshakeFailure(t *testing.T) {
-	dnsConfig := netem.NewDNSConfig()
+	env := qaNewEnvironment()
+	defer env.Close()
+
+	dnsConfig := env.ISPResolverConfig()
 	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
 	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
-
-	env := qaNewEnvironment(dnsConfig)
-	defer env.Close()
 
 	// Note: this rule should reset the handshake
 	env.DPIEngine().AddRule(&netem.DPIResetTrafficForTLSSNI{
@@ -383,12 +443,27 @@ func TestQATLSHandshakeFailure(t *testing.T) {
 		err          error
 	)
 
+	metrics := dsl.NewAccountingMetrics()
 	env.Do(func() {
-		observations, err = qaRunNode(qaNewRunnableASTNode())
+		observations, err = qaRunNode(metrics, qaNewRunnableASTNode())
 	})
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	// make sure the expected number of operations had the expected result
+	expected := map[string]int64{
+		"dns_lookup_udp_success_count":         2,
+		"dns_lookup_getaddrinfo_success_count": 2,
+		"http_transaction_success_count":       5,
+		"quic_handshake_success_count":         2,
+		"tcp_connect_success_count":            4,
+		"tls_handshake_error_count":            1,
+		"tls_handshake_success_count":          1,
+	}
+	if diff := cmp.Diff(expected, metrics.Snapshot()); diff != "" {
+		t.Fatal(diff)
 	}
 
 	// TODO(bassosimone): check the observations
@@ -400,12 +475,12 @@ func TestQAQUICHandshakeFailure(t *testing.T) {
 		t.Skip("skip test in short mode")
 	}
 
-	dnsConfig := netem.NewDNSConfig()
+	env := qaNewEnvironment()
+	defer env.Close()
+
+	dnsConfig := env.ISPResolverConfig()
 	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
 	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
-
-	env := qaNewEnvironment(dnsConfig)
-	defer env.Close()
 
 	// Note: this rule should prevent handshaking
 	env.DPIEngine().AddRule(&netem.DPIDropTrafficForServerEndpoint{
@@ -420,12 +495,26 @@ func TestQAQUICHandshakeFailure(t *testing.T) {
 		err          error
 	)
 
+	metrics := dsl.NewAccountingMetrics()
 	env.Do(func() {
-		observations, err = qaRunNode(qaNewRunnableASTNode())
+		observations, err = qaRunNode(metrics, qaNewRunnableASTNode())
 	})
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	// make sure the expected number of operations had the expected result
+	expected := map[string]int64{
+		"dns_lookup_udp_success_count":         2,
+		"dns_lookup_getaddrinfo_success_count": 2,
+		"http_transaction_success_count":       4,
+		"quic_handshake_error_count":           2,
+		"tcp_connect_success_count":            4,
+		"tls_handshake_success_count":          2,
+	}
+	if diff := cmp.Diff(expected, metrics.Snapshot()); diff != "" {
+		t.Fatal(diff)
 	}
 
 	// TODO(bassosimone): check the observations
@@ -437,12 +526,12 @@ func TestHTTPTransactionFailure(t *testing.T) {
 		t.Skip("skip test in short mode")
 	}
 
-	dnsConfig := netem.NewDNSConfig()
+	env := qaNewEnvironment()
+	defer env.Close()
+
+	dnsConfig := env.ISPResolverConfig()
 	dnsConfig.AddRecord("www.example.com", "www.example.com", qaWebServerAddress)
 	dnsConfig.AddRecord("www.example.org", "www.example.org", qaWebServerAddress)
-
-	env := qaNewEnvironment(dnsConfig)
-	defer env.Close()
 
 	// Note: this rule should prevent handshaking
 	env.DPIEngine().AddRule(&netem.DPIResetTrafficForString{
@@ -457,12 +546,27 @@ func TestHTTPTransactionFailure(t *testing.T) {
 		err          error
 	)
 
+	metrics := dsl.NewAccountingMetrics()
 	env.Do(func() {
-		observations, err = qaRunNode(qaNewRunnableASTNode())
+		observations, err = qaRunNode(metrics, qaNewRunnableASTNode())
 	})
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	// make sure the expected number of operations had the expected result
+	expected := map[string]int64{
+		"dns_lookup_udp_success_count":         2,
+		"dns_lookup_getaddrinfo_success_count": 2,
+		"http_transaction_success_count":       5,
+		"http_transaction_error_count":         1,
+		"quic_handshake_success_count":         2,
+		"tcp_connect_success_count":            4,
+		"tls_handshake_success_count":          2,
+	}
+	if diff := cmp.Diff(expected, metrics.Snapshot()); diff != "" {
+		t.Fatal(diff)
 	}
 
 	// TODO(bassosimone): check the observations

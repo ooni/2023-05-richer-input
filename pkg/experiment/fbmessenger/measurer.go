@@ -58,7 +58,8 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 	}
 
 	// create the DSL runtime
-	rtx := dsl.NewMeasurexliteRuntime(args.Session.Logger(), args.Measurement.MeasurementStartTimeSaved)
+	rtx := dsl.NewMeasurexliteRuntime(
+		args.Session.Logger(), &dsl.NullMetrics{}, args.Measurement.MeasurementStartTimeSaved)
 	defer rtx.Close()
 
 	// evaluate the function and handle exceptions

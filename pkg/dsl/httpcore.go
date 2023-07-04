@@ -116,10 +116,12 @@ func (op *httpTransactionOperation) Run(ctx context.Context, rtx Runtime, conn *
 
 	// handle the case where we failed
 	if err != nil {
+		rtx.Metrics().Error(httpTransactionStageName)
 		return nil, &ErrHTTPTransaction{err}
 	}
 
 	// prepare the value to return
+	rtx.Metrics().Success(httpTransactionStageName)
 	runtimex.Assert(resp != nil, "expected response to be non-nil here")
 	output := &HTTPResponse{
 		Address:              conn.Address,

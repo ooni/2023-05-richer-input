@@ -14,6 +14,9 @@ import (
 
 // MeasurexliteRuntime is a [Runtime] using [measurexlite] to collect [Observations].
 type MeasurexliteRuntime struct {
+	// metrics contains the metrics.
+	metrics Metrics
+
 	// runtime is the MinimalRuntime we compose with.
 	runtime *MinimalRuntime
 
@@ -22,8 +25,9 @@ type MeasurexliteRuntime struct {
 }
 
 // NewMeasurexliteRuntime creates a new [MeasurexliteRuntime].
-func NewMeasurexliteRuntime(logger model.Logger, zeroTime time.Time) *MeasurexliteRuntime {
+func NewMeasurexliteRuntime(logger model.Logger, metrics Metrics, zeroTime time.Time) *MeasurexliteRuntime {
 	return &MeasurexliteRuntime{
+		metrics:  metrics,
 		runtime:  NewMinimalRuntime(logger),
 		zeroTime: zeroTime,
 	}
@@ -34,6 +38,11 @@ var _ Runtime = &MeasurexliteRuntime{}
 // Close implements Runtime.
 func (r *MeasurexliteRuntime) Close() error {
 	return r.runtime.Close()
+}
+
+// Metrics implements Runtime.
+func (r *MeasurexliteRuntime) Metrics() Metrics {
+	return r.metrics
 }
 
 // SaveObservations implements Runtime.

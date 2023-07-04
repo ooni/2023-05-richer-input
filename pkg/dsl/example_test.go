@@ -111,7 +111,7 @@ func Example_internalDSL() {
 
 	// Create a measurement runtime using measurexlite as the underlying
 	// measurement library such that we also collect observations.
-	rtx := dsl.NewMeasurexliteRuntime(log.Log, time.Now())
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, &dsl.NullMetrics{}, time.Now())
 
 	// Create the void input for the pipeline.
 	input := dsl.NewValue(&dsl.Void{})
@@ -166,7 +166,7 @@ func Example_externalDSL() {
 
 	// Create a measurement runtime using measurexlite as the underlying
 	// measurement library such that we also collect observations.
-	rtx := dsl.NewMeasurexliteRuntime(log.Log, time.Now())
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, &dsl.NullMetrics{}, time.Now())
 
 	// Create the void input for the pipeline. We need to cast the input to
 	// a generic Maybe because there's dynamic type checking when running an

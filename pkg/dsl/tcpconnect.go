@@ -79,6 +79,7 @@ func (op *tcpConnectOperation) Run(ctx context.Context, rtx Runtime, endpoint *E
 
 	// handle the error case
 	if err != nil {
+		rtx.Metrics().Error(tcpConnectStageName)
 		return nil, &ErrTCPConnect{err}
 	}
 
@@ -86,6 +87,7 @@ func (op *tcpConnectOperation) Run(ctx context.Context, rtx Runtime, endpoint *E
 	rtx.TrackCloser(conn)
 
 	// prepare the return value
+	rtx.Metrics().Success(tcpConnectStageName)
 	out := &TCPConnection{
 		Address: endpoint.Address,
 		Conn:    conn,
