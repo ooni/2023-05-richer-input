@@ -419,6 +419,13 @@ and consolidate the codebase.)
 
 This DSL is an extension of [dslx](https://github.com/ooni/probe-cli/blob/master/docs/design/dd-005-dslx.md).
 
+**TODO(bassosimone)**: (1) we should collect cases in which having the DSL
+in the past would have allowed us to avoid making emergency releases; (2) we
+need to spend more time thinking about robust upgrading as well as keeping
+supporting legacy probes with less functionality; (3) think about which
+techiques cannot be implemented using the DSL and/or which new experiments
+for which we already have an opened issue.
+
 This PoC rewrites the IM nettests to use mini nettests. A subset of the
 Facebook Messenger nettest, for example, looks like this:
 
