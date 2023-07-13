@@ -94,7 +94,7 @@ func ValidPorts(ports ...string) bool {
 		if err != nil {
 			return false
 		}
-		if number <= 0 || number > math.MaxUint16 {
+		if number < 0 || number > math.MaxUint16 {
 			return false
 		}
 	}
