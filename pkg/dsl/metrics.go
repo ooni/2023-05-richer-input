@@ -14,7 +14,8 @@ type Metrics interface {
 	Success(name string)
 }
 
-// NullMetrics implements [Metrics] but ignores events.
+// NullMetrics implements [Metrics] but ignores events. The zero value of
+// this structure is ready to use.
 type NullMetrics struct{}
 
 // Error implements Metrics.

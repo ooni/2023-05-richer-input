@@ -156,7 +156,11 @@ func (t *minimalTrace) ExtractObservations() []*Observations {
 
 // HTTPTransaction implements Trace.
 func (t *minimalTrace) HTTPTransaction(
-	conn *HTTPConnection, req *http.Request, maxBodySnapshotSize int) (*http.Response, []byte, error) {
+	conn *HTTPConnection,
+	includeResponseBodySnapshot bool,
+	req *http.Request,
+	maxBodySnapshotSize int,
+) (*http.Response, []byte, error) {
 	// perform round trip
 	resp, err := conn.Transport.RoundTrip(req)
 	if err != nil {
