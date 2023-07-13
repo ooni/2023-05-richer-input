@@ -97,7 +97,16 @@ var _ Trace = &measurexliteTrace{}
 
 // HTTPTransaction implements Trace.
 func (t *measurexliteTrace) HTTPTransaction(
-	conn *HTTPConnection, req *http.Request, maxBodySnapshotSize int) (*http.Response, []byte, error) {
+	conn *HTTPConnection,
+	includeResponseBodySnapshot bool,
+	req *http.Request,
+	maxBodySnapshotSize int,
+) (*http.Response, []byte, error) {
+	// make sure the response body snapshot size is non-negative
+	if maxBodySnapshotSize < 0 {
+		maxBodySnapshotSize = 0
+	}
+
 	// create the beginning-of-transaction observation
 	started := t.trace.TimeSince(t.trace.ZeroTime)
 	t.runtime.saveNetworkEvents(measurexlite.NewAnnotationArchivalNetworkEvent(
@@ -151,7 +160,7 @@ func (t *measurexliteTrace) HTTPTransaction(
 		req,
 		resp,
 		int64(maxBodySnapshotSize),
-		body,
+		t.maybeIncludeBody(includeResponseBodySnapshot, body),
 		err,
 		finished,
 	))
@@ -164,6 +173,13 @@ func (t *measurexliteTrace) HTTPTransaction(
 	))
 
 	return resp, body, err
+}
+
+func (t *measurexliteTrace) maybeIncludeBody(includeBody bool, body []byte) []byte {
+	if !includeBody {
+		return []byte{}
+	}
+	return body
 }
 
 // Index implements Trace.

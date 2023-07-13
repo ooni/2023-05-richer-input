@@ -32,7 +32,7 @@ type QUICConnection struct {
 // QUICHandshakeOption is an option for configuring the QUIC handshake.
 type QUICHandshakeOption func(config *quicHandshakeConfig)
 
-// TODO(bassosimone): we should probably autogenerate the config, the functional optionl
+// TODO(bassosimone): we should probably autogenerate the config, the functional optional
 // setters, and the conversion from config to list of options.
 
 type quicHandshakeConfig struct {

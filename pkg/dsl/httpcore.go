@@ -70,16 +70,17 @@ func (op *httpTransactionOperation) Run(ctx context.Context, rtx Runtime, conn *
 
 	// create configuration
 	config := &httpTransactionConfig{
-		AcceptHeader:             model.HTTPHeaderAccept,
-		AcceptLanguageHeader:     model.HTTPHeaderAcceptLanguage,
-		HostHeader:               conn.Domain,
-		RefererHeader:            "",
-		RequestMethod:            "GET",
-		ResponseBodySnapshotSize: 1 << 19,
-		URLHost:                  conn.Domain,
-		URLPath:                  "/",
-		URLScheme:                conn.Scheme,
-		UserAgentHeader:          model.HTTPHeaderUserAgent,
+		AcceptHeader:                model.HTTPHeaderAccept,
+		AcceptLanguageHeader:        model.HTTPHeaderAcceptLanguage,
+		HostHeader:                  conn.Domain,
+		IncludeResponseBodySnapshot: false,
+		RefererHeader:               "",
+		RequestMethod:               "GET",
+		ResponseBodySnapshotSize:    1 << 19,
+		URLHost:                     conn.Domain,
+		URLPath:                     "/",
+		URLScheme:                   conn.Scheme,
+		UserAgentHeader:             model.HTTPHeaderUserAgent,
 	}
 	for _, option := range op.options {
 		option(config)
@@ -106,7 +107,12 @@ func (op *httpTransactionOperation) Run(ctx context.Context, rtx Runtime, conn *
 
 	// mediate the transaction execution via the trace, which gets a chance
 	// to generate HTTP observations for this transaction
-	resp, body, err := conn.Trace.HTTPTransaction(conn, req, config.ResponseBodySnapshotSize)
+	resp, body, err := conn.Trace.HTTPTransaction(
+		conn,
+		config.IncludeResponseBodySnapshot,
+		req,
+		config.ResponseBodySnapshotSize,
+	)
 
 	// save trace-collected observations (if any)
 	rtx.SaveObservations(conn.Trace.ExtractObservations()...)

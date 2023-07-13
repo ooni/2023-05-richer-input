@@ -55,6 +55,14 @@ func HTTPTransactionOptionHost(value string) HTTPTransactionOption {
 	}
 }
 
+// HTTPTransactionOptionIncludeResponseBodySnapshot controls whether to include the
+// response body snapshot in the JSON measurement; the default is false.
+func HTTPTransactionOptionIncludeResponseBodySnapshot(value bool) HTTPTransactionOption {
+	return func(c *httpTransactionConfig) {
+		c.IncludeResponseBodySnapshot = value
+	}
+}
+
 // HTTPTransactionOptionMethod sets the method.
 func HTTPTransactionOptionMethod(value string) HTTPTransactionOption {
 	return func(c *httpTransactionConfig) {
@@ -104,7 +112,7 @@ func HTTPTransactionOptionUserAgent(value string) HTTPTransactionOption {
 	}
 }
 
-// TODO(bassosimone): we should probably autogenerate the config, the functional optionl
+// TODO(bassosimone): we should probably autogenerate the config, the functional optional
 // setters, and the conversion from config to list of options.
 
 type httpTransactionConfig struct {
@@ -116,6 +124,10 @@ type httpTransactionConfig struct {
 
 	// HostHeader is the host header to use.
 	HostHeader string `json:"host_header,omitempty"`
+
+	// IncludeResponseBodySnapshot tells the engine to include the response body snapshot
+	// we have read inside the JSON measurement.
+	IncludeResponseBodySnapshot bool `json:"include_response_body_snapshot,omitempty"`
 
 	// RefererHeader is the referer header to use.
 	RefererHeader string `json:"referer_header,omitempty"`
@@ -148,6 +160,9 @@ func (c *httpTransactionConfig) options() (options []HTTPTransactionOption) {
 	}
 	if value := c.HostHeader; value != "" {
 		options = append(options, HTTPTransactionOptionHost(value))
+	}
+	if value := c.IncludeResponseBodySnapshot; value {
+		options = append(options, HTTPTransactionOptionIncludeResponseBodySnapshot(value))
 	}
 	if value := c.RefererHeader; value != "" {
 		options = append(options, HTTPTransactionOptionReferer(value))
