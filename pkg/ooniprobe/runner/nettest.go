@@ -26,6 +26,7 @@ type nettestFactory = func(args *modelx.InterpreterNettestRunArguments,
 // nettestRegistry maps nettests to their constructors.
 var nettestRegistry = map[string]nettestFactory{
 	"facebook_messenger": fbmessengerNew,
+	"riseupvpn":          riseupvpnNew,
 	"signal":             signalNew,
 	"telegram":           telegramNew,
 	"urlgetter":          urlgetterNew,
