@@ -196,3 +196,76 @@ func Example_externalDSL() {
 	)
 	// output: true true true true true true
 }
+
+// This example shows how to measure a single endpoint with an internal DSL.
+func Example_singleEndpointInternalDSL() {
+	// create a simple measurement pipeline
+	pipeline := dsl.Compose4(
+		dsl.NewEndpoint("8.8.8.8:443", dsl.NewEndpointOptionDomain("dns.google")),
+		dsl.TCPConnect(),
+		dsl.TLSHandshake(),
+		dsl.Discard[*dsl.TLSConnection](),
+	)
+
+	// create the metrics
+	metrics := dsl.NewAccountingMetrics()
+
+	// create a measurement runtime
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, time.Now())
+
+	// run the measurement pipeline
+	_ = pipeline.Run(context.Background(), rtx, dsl.NewValue(&dsl.Void{}))
+
+	// take a metrics snapshot
+	snapshot := metrics.Snapshot()
+
+	// print the metrics
+	fmt.Printf("%+v", snapshot)
+
+	// output: map[tcp_connect_success_count:1 tls_handshake_success_count:1]
+}
+
+// This example shows how to measure a single endpoint with an external DSL.
+func Example_singleEndpointExternalDSL() {
+	// create a simple measurement pipeline
+	pipeline := dsl.Compose4(
+		dsl.NewEndpoint("8.8.8.8:443", dsl.NewEndpointOptionDomain("dns.google")),
+		dsl.TCPConnect(),
+		dsl.TLSHandshake(),
+		dsl.Discard[*dsl.TLSConnection](),
+	)
+
+	// Serialize the measurement pipeline AST to JSON.
+	rawAST := runtimex.Try1(json.Marshal(pipeline.ASTNode()))
+
+	// Typically, you would send the serialized AST to the probe via some OONI backend API
+	// such as the future check-in v2 API. In this example, we keep it simple and just pretend
+	// we received the raw AST from some OONI backend API.
+
+	// Parse the serialized JSON into an AST.
+	var loadable dsl.LoadableASTNode
+	runtimex.Try0(json.Unmarshal(rawAST, &loadable))
+
+	// Create a loader for loading the AST we just parsed.
+	loader := dsl.NewASTLoader()
+
+	// Convert the AST we just loaded into a runnable AST node.
+	runnable := runtimex.Try1(loader.Load(&loadable))
+
+	// create the metrics
+	metrics := dsl.NewAccountingMetrics()
+
+	// create a measurement runtime
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, time.Now())
+
+	// run the measurement pipeline
+	_ = runnable.Run(context.Background(), rtx, dsl.NewValue(&dsl.Void{}).AsGeneric())
+
+	// take a metrics snapshot
+	snapshot := metrics.Snapshot()
+
+	// print the metrics
+	fmt.Printf("%+v", snapshot)
+
+	// output: map[tcp_connect_success_count:1 tls_handshake_success_count:1]
+}

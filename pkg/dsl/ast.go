@@ -88,6 +88,9 @@ func NewASTLoader() *ASTLoader {
 	// endpointpipeline.go
 	al.RegisterCustomLoaderRule(&newEndpointPipelineLoader{})
 
+	// endpointnew.go
+	al.RegisterCustomLoaderRule(&newEndpointLoader{})
+
 	// filter.go
 	al.RegisterCustomLoaderRule(&ifFilterExistsLoader{})
 
