@@ -16,7 +16,7 @@ import (
 // isTCPGatewayAccessible returns whether a gateways is accessible.
 func isTCPGatewayAccessible(stage dsl.Stage[*dsl.Void, *dsl.Void]) bool {
 	metrics := dsl.NewAccountingMetrics()
-	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, time.Now())
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, &dsl.NullProgressMeter{}, time.Now())
 	input := dsl.NewValue(&dsl.Void{})
 	ctx := context.Background()
 	runtimex.Try0(dsl.Try(stage.Run(ctx, rtx, input)))
@@ -84,7 +84,7 @@ func mustGenerateDSL(eipService *apiEIPService, rootCA string) dsl.Stage[*dsl.Vo
 	stages = append(stages, dslRuleFetchGeoServiceURL(rootCA))
 
 	// return the composed pipeline
-	return dsl.RunStagesInParallel(stages...)
+	return dsl.RunStagesInParallel(dsl.WrapWithProgress(stages...)...)
 }
 
 func main() {

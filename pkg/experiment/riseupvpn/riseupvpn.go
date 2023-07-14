@@ -63,13 +63,13 @@ func (m *Measurer) Run(ctx context.Context, args *model.ExperimentArgs) error {
 	// TODO(bassosimone): both fbmessenger and riseupvpn lack
 	//
 	// 1. an explicit mechanism to report the bytes sent and received, but the
-	// implicit context-based mechanism probably works;
-	//
-	// 2. a DSL-based mechanism to increment the test progress percentage.
+	// implicit context-based mechanism probably works.
 
 	// create the DSL runtime
+	progress := dsl.NewProgressMeterExperimentCallbacks(args.Callbacks)
 	rtx := dsl.NewMeasurexliteRuntime(
-		args.Session.Logger(), &dsl.NullMetrics{}, args.Measurement.MeasurementStartTimeSaved)
+		args.Session.Logger(), &dsl.NullMetrics{}, progress,
+		args.Measurement.MeasurementStartTimeSaved)
 	defer rtx.Close()
 
 	// evaluate the pipeline and handle exceptions

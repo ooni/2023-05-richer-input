@@ -112,6 +112,9 @@ func NewASTLoader() *ASTLoader {
 	// parallel.go
 	al.RegisterCustomLoaderRule(&runStagesInParallelLoader{})
 
+	// progress.go
+	al.RegisterCustomLoaderRule(&wrapWithProgressLoader{})
+
 	// quichandshake.go
 	al.RegisterCustomLoaderRule(&quicHandshakeLoader{})
 

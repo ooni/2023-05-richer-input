@@ -4,7 +4,7 @@ import "github.com/ooni/2023-05-richer-input/pkg/dsl"
 
 // DSLToplevelFunc generates the Facebook Messenger measurement pipeline.
 func DSLToplevelFunc(tk *TestKeys) dsl.Stage[*dsl.Void, *dsl.Void] {
-	return dsl.RunStagesInParallel(
+	stages := dsl.WrapWithProgress(
 
 		// stun
 		dsl.Compose4(
@@ -130,4 +130,5 @@ func DSLToplevelFunc(tk *TestKeys) dsl.Stage[*dsl.Void, *dsl.Void] {
 			),
 		),
 	)
+	return dsl.RunStagesInParallel(stages...)
 }

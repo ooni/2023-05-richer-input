@@ -19,14 +19,17 @@ type Runtime interface {
 	// Close closes all the closers tracker by the runtime.
 	Close() error
 
+	// Logger returns the logger to use.
+	Logger() model.Logger
+
 	// Metrics returns the metrics to use.
 	Metrics() Metrics
 
 	// NewTrace creates a new measurement trace.
 	NewTrace() Trace
 
-	// Logger returns the logger to use.
-	Logger() model.Logger
+	// ProgressMeter returns the progress meter to use.
+	ProgressMeter() ProgressMeter
 
 	// SaveObservations saves the given observations into the runtime.
 	SaveObservations(observations ...*Observations)
@@ -82,13 +85,18 @@ func (r *MinimalRuntime) Close() error {
 	return nil
 }
 
-// ExtractObservations implements Trace.
+// ExtractObservations implements Runtime.
 func (r *MinimalRuntime) ExtractObservations() []*Observations {
 	defer r.mu.Unlock()
 	r.mu.Lock()
 	out := r.observations
 	r.observations = []*Observations{}
 	return out
+}
+
+// ProgressMeter implements Runtime.
+func (r *MinimalRuntime) ProgressMeter() ProgressMeter {
+	return &NullProgressMeter{}
 }
 
 // Metrics implements Runtime.

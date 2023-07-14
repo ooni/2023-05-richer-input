@@ -17,6 +17,9 @@ type MeasurexliteRuntime struct {
 	// metrics contains the metrics.
 	metrics Metrics
 
+	// progress is the ProgressMeter to use.
+	progress ProgressMeter
+
 	// runtime is the MinimalRuntime we compose with.
 	runtime *MinimalRuntime
 
@@ -25,9 +28,15 @@ type MeasurexliteRuntime struct {
 }
 
 // NewMeasurexliteRuntime creates a new [MeasurexliteRuntime].
-func NewMeasurexliteRuntime(logger model.Logger, metrics Metrics, zeroTime time.Time) *MeasurexliteRuntime {
+func NewMeasurexliteRuntime(
+	logger model.Logger,
+	metrics Metrics,
+	progress ProgressMeter,
+	zeroTime time.Time,
+) *MeasurexliteRuntime {
 	return &MeasurexliteRuntime{
 		metrics:  metrics,
+		progress: progress,
 		runtime:  NewMinimalRuntime(logger),
 		zeroTime: zeroTime,
 	}
@@ -38,6 +47,11 @@ var _ Runtime = &MeasurexliteRuntime{}
 // Close implements Runtime.
 func (r *MeasurexliteRuntime) Close() error {
 	return r.runtime.Close()
+}
+
+// ProgressMeter implements Runtime.
+func (r *MeasurexliteRuntime) ProgressMeter() ProgressMeter {
+	return r.progress
 }
 
 // Metrics implements Runtime.

@@ -59,7 +59,8 @@ func TestMeasurexliteHTTPIncludeResponseBodySnapshot(t *testing.T) {
 	// define the function to run the measurement
 	measure := func(options ...HTTPTransactionOption) (Maybe[*HTTPResponse], *Observations) {
 		pipeline := makePipeline(options...)
-		rtx := NewMeasurexliteRuntime(model.DiscardLogger, &NullMetrics{}, time.Now())
+		meter := &NullProgressMeter{}
+		rtx := NewMeasurexliteRuntime(model.DiscardLogger, &NullMetrics{}, meter, time.Now())
 		input := NewValue(&Void{})
 		output := pipeline.Run(context.Background(), rtx, input)
 		observations := ReduceObservations(rtx.ExtractObservations()...)

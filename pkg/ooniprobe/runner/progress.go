@@ -76,6 +76,8 @@ var _ model.ExperimentCallbacks = &progressEmitterNettest{}
 func (pe *progressEmitterNettest) OnProgress(progress float64, message string) {
 	// the view only supports setting the progress, so use the logger
 	// to make sure the message is not lost
-	pe.logger.Info(message)
+	if message != "" {
+		pe.logger.Info(message)
+	}
 	pe.view.UpdateProgressBarValueWithinRange(progress)
 }
