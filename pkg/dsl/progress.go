@@ -87,6 +87,9 @@ type wrapWithProgressStageArguments struct {
 
 // ASTNode implements Stage.
 func (sx *wrapWithProgressStage) ASTNode() *SerializableASTNode {
+	// Note: we serialize the structure because this gives us forward compatibility (i.e., we
+	// may add a field to a future version without breaking the AST structure and old probes will
+	// be fine as long as the zero value of the new field is the default)
 	return &SerializableASTNode{
 		StageName: wrapWithProgressStageName,
 		Arguments: &wrapWithProgressStageArguments{sx.delta},
