@@ -111,7 +111,7 @@ func Example_internalDSL() {
 
 	// Create a measurement runtime using measurexlite as the underlying
 	// measurement library such that we also collect observations.
-	rtx := dsl.NewMeasurexliteRuntime(log.Log, &dsl.NullMetrics{}, time.Now())
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, &dsl.NullMetrics{}, &dsl.NullProgressMeter{}, time.Now())
 
 	// Create the void input for the pipeline.
 	input := dsl.NewValue(&dsl.Void{})
@@ -166,7 +166,7 @@ func Example_externalDSL() {
 
 	// Create a measurement runtime using measurexlite as the underlying
 	// measurement library such that we also collect observations.
-	rtx := dsl.NewMeasurexliteRuntime(log.Log, &dsl.NullMetrics{}, time.Now())
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, &dsl.NullMetrics{}, &dsl.NullProgressMeter{}, time.Now())
 
 	// Create the void input for the pipeline. We need to cast the input to
 	// a generic Maybe because there's dynamic type checking when running an
@@ -211,7 +211,7 @@ func Example_singleEndpointInternalDSL() {
 	metrics := dsl.NewAccountingMetrics()
 
 	// create a measurement runtime
-	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, time.Now())
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, &dsl.NullProgressMeter{}, time.Now())
 
 	// run the measurement pipeline
 	_ = pipeline.Run(context.Background(), rtx, dsl.NewValue(&dsl.Void{}))
@@ -256,7 +256,7 @@ func Example_singleEndpointExternalDSL() {
 	metrics := dsl.NewAccountingMetrics()
 
 	// create a measurement runtime
-	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, time.Now())
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, &dsl.NullProgressMeter{}, time.Now())
 
 	// run the measurement pipeline
 	_ = runnable.Run(context.Background(), rtx, dsl.NewValue(&dsl.Void{}).AsGeneric())

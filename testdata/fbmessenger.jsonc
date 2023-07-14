@@ -15,23 +15,20 @@
 					"arguments": null,
 					"children": [
 						{
-							"stage_name": "compose",
-							"arguments": null,
+							"stage_name": "wrap_with_progress",
+							"arguments": {
+								"delta": 0.14285714285714285
+							},
 							"children": [
-								{
-									"stage_name": "domain_name",
-									"arguments": {
-										"domain": "stun.fbsbx.com"
-									},
-									"children": []
-								},
 								{
 									"stage_name": "compose",
 									"arguments": null,
 									"children": [
 										{
-											"stage_name": "dns_lookup_getaddrinfo",
-											"arguments": null,
+											"stage_name": "domain_name",
+											"arguments": {
+												"domain": "stun.fbsbx.com"
+											},
 											"children": []
 										},
 										{
@@ -39,22 +36,33 @@
 											"arguments": null,
 											"children": [
 												{
-													"stage_name": "if_filter_exists",
-													"arguments": null,
-													"children": [
-														{
-															"stage_name": "fbmessenger_dns_consistency_check",
-															"arguments": {
-																"endpoint_name": "stun"
-															},
-															"children": []
-														}
-													]
-												},
-												{
-													"stage_name": "discard",
+													"stage_name": "dns_lookup_getaddrinfo",
 													"arguments": null,
 													"children": []
+												},
+												{
+													"stage_name": "compose",
+													"arguments": null,
+													"children": [
+														{
+															"stage_name": "if_filter_exists",
+															"arguments": null,
+															"children": [
+																{
+																	"stage_name": "fbmessenger_dns_consistency_check",
+																	"arguments": {
+																		"endpoint_name": "stun"
+																	},
+																	"children": []
+																}
+															]
+														},
+														{
+															"stage_name": "discard",
+															"arguments": null,
+															"children": []
+														}
+													]
 												}
 											]
 										}
@@ -63,23 +71,20 @@
 							]
 						},
 						{
-							"stage_name": "compose",
-							"arguments": null,
+							"stage_name": "wrap_with_progress",
+							"arguments": {
+								"delta": 0.14285714285714285
+							},
 							"children": [
-								{
-									"stage_name": "domain_name",
-									"arguments": {
-										"domain": "b-api.facebook.com"
-									},
-									"children": []
-								},
 								{
 									"stage_name": "compose",
 									"arguments": null,
 									"children": [
 										{
-											"stage_name": "dns_lookup_getaddrinfo",
-											"arguments": null,
+											"stage_name": "domain_name",
+											"arguments": {
+												"domain": "b-api.facebook.com"
+											},
 											"children": []
 										},
 										{
@@ -87,63 +92,74 @@
 											"arguments": null,
 											"children": [
 												{
-													"stage_name": "if_filter_exists",
+													"stage_name": "dns_lookup_getaddrinfo",
 													"arguments": null,
-													"children": [
-														{
-															"stage_name": "fbmessenger_dns_consistency_check",
-															"arguments": {
-																"endpoint_name": "b_api"
-															},
-															"children": []
-														}
-													]
+													"children": []
 												},
 												{
 													"stage_name": "compose",
 													"arguments": null,
 													"children": [
 														{
-															"stage_name": "make_endpoints_for_port",
-															"arguments": {
-																"port": 443
-															},
-															"children": []
-														},
-														{
-															"stage_name": "new_endpoint_pipeline",
+															"stage_name": "if_filter_exists",
 															"arguments": null,
 															"children": [
 																{
-																	"stage_name": "compose",
+																	"stage_name": "fbmessenger_dns_consistency_check",
+																	"arguments": {
+																		"endpoint_name": "b_api"
+																	},
+																	"children": []
+																}
+															]
+														},
+														{
+															"stage_name": "compose",
+															"arguments": null,
+															"children": [
+																{
+																	"stage_name": "make_endpoints_for_port",
+																	"arguments": {
+																		"port": 443
+																	},
+																	"children": []
+																},
+																{
+																	"stage_name": "new_endpoint_pipeline",
 																	"arguments": null,
 																	"children": [
-																		{
-																			"stage_name": "tcp_connect",
-																			"arguments": null,
-																			"children": []
-																		},
 																		{
 																			"stage_name": "compose",
 																			"arguments": null,
 																			"children": [
 																				{
-																					"stage_name": "if_filter_exists",
+																					"stage_name": "tcp_connect",
+																					"arguments": null,
+																					"children": []
+																				},
+																				{
+																					"stage_name": "compose",
 																					"arguments": null,
 																					"children": [
 																						{
-																							"stage_name": "fbmessenger_tcp_reachability_check",
-																							"arguments": {
-																								"endpoint_name": "b_api"
-																							},
+																							"stage_name": "if_filter_exists",
+																							"arguments": null,
+																							"children": [
+																								{
+																									"stage_name": "fbmessenger_tcp_reachability_check",
+																									"arguments": {
+																										"endpoint_name": "b_api"
+																									},
+																									"children": []
+																								}
+																							]
+																						},
+																						{
+																							"stage_name": "discard",
+																							"arguments": null,
 																							"children": []
 																						}
 																					]
-																				},
-																				{
-																					"stage_name": "discard",
-																					"arguments": null,
-																					"children": []
 																				}
 																			]
 																		}
@@ -160,23 +176,20 @@
 							]
 						},
 						{
-							"stage_name": "compose",
-							"arguments": null,
+							"stage_name": "wrap_with_progress",
+							"arguments": {
+								"delta": 0.14285714285714285
+							},
 							"children": [
-								{
-									"stage_name": "domain_name",
-									"arguments": {
-										"domain": "b-graph.facebook.com"
-									},
-									"children": []
-								},
 								{
 									"stage_name": "compose",
 									"arguments": null,
 									"children": [
 										{
-											"stage_name": "dns_lookup_getaddrinfo",
-											"arguments": null,
+											"stage_name": "domain_name",
+											"arguments": {
+												"domain": "b-graph.facebook.com"
+											},
 											"children": []
 										},
 										{
@@ -184,63 +197,74 @@
 											"arguments": null,
 											"children": [
 												{
-													"stage_name": "if_filter_exists",
+													"stage_name": "dns_lookup_getaddrinfo",
 													"arguments": null,
-													"children": [
-														{
-															"stage_name": "fbmessenger_dns_consistency_check",
-															"arguments": {
-																"endpoint_name": "b_graph"
-															},
-															"children": []
-														}
-													]
+													"children": []
 												},
 												{
 													"stage_name": "compose",
 													"arguments": null,
 													"children": [
 														{
-															"stage_name": "make_endpoints_for_port",
-															"arguments": {
-																"port": 443
-															},
-															"children": []
-														},
-														{
-															"stage_name": "new_endpoint_pipeline",
+															"stage_name": "if_filter_exists",
 															"arguments": null,
 															"children": [
 																{
-																	"stage_name": "compose",
+																	"stage_name": "fbmessenger_dns_consistency_check",
+																	"arguments": {
+																		"endpoint_name": "b_graph"
+																	},
+																	"children": []
+																}
+															]
+														},
+														{
+															"stage_name": "compose",
+															"arguments": null,
+															"children": [
+																{
+																	"stage_name": "make_endpoints_for_port",
+																	"arguments": {
+																		"port": 443
+																	},
+																	"children": []
+																},
+																{
+																	"stage_name": "new_endpoint_pipeline",
 																	"arguments": null,
 																	"children": [
-																		{
-																			"stage_name": "tcp_connect",
-																			"arguments": null,
-																			"children": []
-																		},
 																		{
 																			"stage_name": "compose",
 																			"arguments": null,
 																			"children": [
 																				{
-																					"stage_name": "if_filter_exists",
+																					"stage_name": "tcp_connect",
+																					"arguments": null,
+																					"children": []
+																				},
+																				{
+																					"stage_name": "compose",
 																					"arguments": null,
 																					"children": [
 																						{
-																							"stage_name": "fbmessenger_tcp_reachability_check",
-																							"arguments": {
-																								"endpoint_name": "b_graph"
-																							},
+																							"stage_name": "if_filter_exists",
+																							"arguments": null,
+																							"children": [
+																								{
+																									"stage_name": "fbmessenger_tcp_reachability_check",
+																									"arguments": {
+																										"endpoint_name": "b_graph"
+																									},
+																									"children": []
+																								}
+																							]
+																						},
+																						{
+																							"stage_name": "discard",
+																							"arguments": null,
 																							"children": []
 																						}
 																					]
-																				},
-																				{
-																					"stage_name": "discard",
-																					"arguments": null,
-																					"children": []
 																				}
 																			]
 																		}
@@ -257,23 +281,20 @@
 							]
 						},
 						{
-							"stage_name": "compose",
-							"arguments": null,
+							"stage_name": "wrap_with_progress",
+							"arguments": {
+								"delta": 0.14285714285714285
+							},
 							"children": [
-								{
-									"stage_name": "domain_name",
-									"arguments": {
-										"domain": "edge-mqtt.facebook.com"
-									},
-									"children": []
-								},
 								{
 									"stage_name": "compose",
 									"arguments": null,
 									"children": [
 										{
-											"stage_name": "dns_lookup_getaddrinfo",
-											"arguments": null,
+											"stage_name": "domain_name",
+											"arguments": {
+												"domain": "edge-mqtt.facebook.com"
+											},
 											"children": []
 										},
 										{
@@ -281,63 +302,74 @@
 											"arguments": null,
 											"children": [
 												{
-													"stage_name": "if_filter_exists",
+													"stage_name": "dns_lookup_getaddrinfo",
 													"arguments": null,
-													"children": [
-														{
-															"stage_name": "fbmessenger_dns_consistency_check",
-															"arguments": {
-																"endpoint_name": "edge"
-															},
-															"children": []
-														}
-													]
+													"children": []
 												},
 												{
 													"stage_name": "compose",
 													"arguments": null,
 													"children": [
 														{
-															"stage_name": "make_endpoints_for_port",
-															"arguments": {
-																"port": 443
-															},
-															"children": []
-														},
-														{
-															"stage_name": "new_endpoint_pipeline",
+															"stage_name": "if_filter_exists",
 															"arguments": null,
 															"children": [
 																{
-																	"stage_name": "compose",
+																	"stage_name": "fbmessenger_dns_consistency_check",
+																	"arguments": {
+																		"endpoint_name": "edge"
+																	},
+																	"children": []
+																}
+															]
+														},
+														{
+															"stage_name": "compose",
+															"arguments": null,
+															"children": [
+																{
+																	"stage_name": "make_endpoints_for_port",
+																	"arguments": {
+																		"port": 443
+																	},
+																	"children": []
+																},
+																{
+																	"stage_name": "new_endpoint_pipeline",
 																	"arguments": null,
 																	"children": [
-																		{
-																			"stage_name": "tcp_connect",
-																			"arguments": null,
-																			"children": []
-																		},
 																		{
 																			"stage_name": "compose",
 																			"arguments": null,
 																			"children": [
 																				{
-																					"stage_name": "if_filter_exists",
+																					"stage_name": "tcp_connect",
+																					"arguments": null,
+																					"children": []
+																				},
+																				{
+																					"stage_name": "compose",
 																					"arguments": null,
 																					"children": [
 																						{
-																							"stage_name": "fbmessenger_tcp_reachability_check",
-																							"arguments": {
-																								"endpoint_name": "edge"
-																							},
+																							"stage_name": "if_filter_exists",
+																							"arguments": null,
+																							"children": [
+																								{
+																									"stage_name": "fbmessenger_tcp_reachability_check",
+																									"arguments": {
+																										"endpoint_name": "edge"
+																									},
+																									"children": []
+																								}
+																							]
+																						},
+																						{
+																							"stage_name": "discard",
+																							"arguments": null,
 																							"children": []
 																						}
 																					]
-																				},
-																				{
-																					"stage_name": "discard",
-																					"arguments": null,
-																					"children": []
 																				}
 																			]
 																		}
@@ -354,23 +386,20 @@
 							]
 						},
 						{
-							"stage_name": "compose",
-							"arguments": null,
+							"stage_name": "wrap_with_progress",
+							"arguments": {
+								"delta": 0.14285714285714285
+							},
 							"children": [
-								{
-									"stage_name": "domain_name",
-									"arguments": {
-										"domain": "external.xx.fbcdn.net"
-									},
-									"children": []
-								},
 								{
 									"stage_name": "compose",
 									"arguments": null,
 									"children": [
 										{
-											"stage_name": "dns_lookup_getaddrinfo",
-											"arguments": null,
+											"stage_name": "domain_name",
+											"arguments": {
+												"domain": "external.xx.fbcdn.net"
+											},
 											"children": []
 										},
 										{
@@ -378,63 +407,74 @@
 											"arguments": null,
 											"children": [
 												{
-													"stage_name": "if_filter_exists",
+													"stage_name": "dns_lookup_getaddrinfo",
 													"arguments": null,
-													"children": [
-														{
-															"stage_name": "fbmessenger_dns_consistency_check",
-															"arguments": {
-																"endpoint_name": "external_cdn"
-															},
-															"children": []
-														}
-													]
+													"children": []
 												},
 												{
 													"stage_name": "compose",
 													"arguments": null,
 													"children": [
 														{
-															"stage_name": "make_endpoints_for_port",
-															"arguments": {
-																"port": 443
-															},
-															"children": []
-														},
-														{
-															"stage_name": "new_endpoint_pipeline",
+															"stage_name": "if_filter_exists",
 															"arguments": null,
 															"children": [
 																{
-																	"stage_name": "compose",
+																	"stage_name": "fbmessenger_dns_consistency_check",
+																	"arguments": {
+																		"endpoint_name": "external_cdn"
+																	},
+																	"children": []
+																}
+															]
+														},
+														{
+															"stage_name": "compose",
+															"arguments": null,
+															"children": [
+																{
+																	"stage_name": "make_endpoints_for_port",
+																	"arguments": {
+																		"port": 443
+																	},
+																	"children": []
+																},
+																{
+																	"stage_name": "new_endpoint_pipeline",
 																	"arguments": null,
 																	"children": [
-																		{
-																			"stage_name": "tcp_connect",
-																			"arguments": null,
-																			"children": []
-																		},
 																		{
 																			"stage_name": "compose",
 																			"arguments": null,
 																			"children": [
 																				{
-																					"stage_name": "if_filter_exists",
+																					"stage_name": "tcp_connect",
+																					"arguments": null,
+																					"children": []
+																				},
+																				{
+																					"stage_name": "compose",
 																					"arguments": null,
 																					"children": [
 																						{
-																							"stage_name": "fbmessenger_tcp_reachability_check",
-																							"arguments": {
-																								"endpoint_name": "external_cdn"
-																							},
+																							"stage_name": "if_filter_exists",
+																							"arguments": null,
+																							"children": [
+																								{
+																									"stage_name": "fbmessenger_tcp_reachability_check",
+																									"arguments": {
+																										"endpoint_name": "external_cdn"
+																									},
+																									"children": []
+																								}
+																							]
+																						},
+																						{
+																							"stage_name": "discard",
+																							"arguments": null,
 																							"children": []
 																						}
 																					]
-																				},
-																				{
-																					"stage_name": "discard",
-																					"arguments": null,
-																					"children": []
 																				}
 																			]
 																		}
@@ -451,23 +491,20 @@
 							]
 						},
 						{
-							"stage_name": "compose",
-							"arguments": null,
+							"stage_name": "wrap_with_progress",
+							"arguments": {
+								"delta": 0.14285714285714285
+							},
 							"children": [
-								{
-									"stage_name": "domain_name",
-									"arguments": {
-										"domain": "scontent.xx.fbcdn.net"
-									},
-									"children": []
-								},
 								{
 									"stage_name": "compose",
 									"arguments": null,
 									"children": [
 										{
-											"stage_name": "dns_lookup_getaddrinfo",
-											"arguments": null,
+											"stage_name": "domain_name",
+											"arguments": {
+												"domain": "scontent.xx.fbcdn.net"
+											},
 											"children": []
 										},
 										{
@@ -475,63 +512,74 @@
 											"arguments": null,
 											"children": [
 												{
-													"stage_name": "if_filter_exists",
+													"stage_name": "dns_lookup_getaddrinfo",
 													"arguments": null,
-													"children": [
-														{
-															"stage_name": "fbmessenger_dns_consistency_check",
-															"arguments": {
-																"endpoint_name": "scontent_cdn"
-															},
-															"children": []
-														}
-													]
+													"children": []
 												},
 												{
 													"stage_name": "compose",
 													"arguments": null,
 													"children": [
 														{
-															"stage_name": "make_endpoints_for_port",
-															"arguments": {
-																"port": 443
-															},
-															"children": []
-														},
-														{
-															"stage_name": "new_endpoint_pipeline",
+															"stage_name": "if_filter_exists",
 															"arguments": null,
 															"children": [
 																{
-																	"stage_name": "compose",
+																	"stage_name": "fbmessenger_dns_consistency_check",
+																	"arguments": {
+																		"endpoint_name": "scontent_cdn"
+																	},
+																	"children": []
+																}
+															]
+														},
+														{
+															"stage_name": "compose",
+															"arguments": null,
+															"children": [
+																{
+																	"stage_name": "make_endpoints_for_port",
+																	"arguments": {
+																		"port": 443
+																	},
+																	"children": []
+																},
+																{
+																	"stage_name": "new_endpoint_pipeline",
 																	"arguments": null,
 																	"children": [
-																		{
-																			"stage_name": "tcp_connect",
-																			"arguments": null,
-																			"children": []
-																		},
 																		{
 																			"stage_name": "compose",
 																			"arguments": null,
 																			"children": [
 																				{
-																					"stage_name": "if_filter_exists",
+																					"stage_name": "tcp_connect",
+																					"arguments": null,
+																					"children": []
+																				},
+																				{
+																					"stage_name": "compose",
 																					"arguments": null,
 																					"children": [
 																						{
-																							"stage_name": "fbmessenger_tcp_reachability_check",
-																							"arguments": {
-																								"endpoint_name": "scontent_cdn"
-																							},
+																							"stage_name": "if_filter_exists",
+																							"arguments": null,
+																							"children": [
+																								{
+																									"stage_name": "fbmessenger_tcp_reachability_check",
+																									"arguments": {
+																										"endpoint_name": "scontent_cdn"
+																									},
+																									"children": []
+																								}
+																							]
+																						},
+																						{
+																							"stage_name": "discard",
+																							"arguments": null,
 																							"children": []
 																						}
 																					]
-																				},
-																				{
-																					"stage_name": "discard",
-																					"arguments": null,
-																					"children": []
 																				}
 																			]
 																		}
@@ -548,23 +596,20 @@
 							]
 						},
 						{
-							"stage_name": "compose",
-							"arguments": null,
+							"stage_name": "wrap_with_progress",
+							"arguments": {
+								"delta": 0.14285714285714285
+							},
 							"children": [
-								{
-									"stage_name": "domain_name",
-									"arguments": {
-										"domain": "star.c10r.facebook.com"
-									},
-									"children": []
-								},
 								{
 									"stage_name": "compose",
 									"arguments": null,
 									"children": [
 										{
-											"stage_name": "dns_lookup_getaddrinfo",
-											"arguments": null,
+											"stage_name": "domain_name",
+											"arguments": {
+												"domain": "star.c10r.facebook.com"
+											},
 											"children": []
 										},
 										{
@@ -572,63 +617,74 @@
 											"arguments": null,
 											"children": [
 												{
-													"stage_name": "if_filter_exists",
+													"stage_name": "dns_lookup_getaddrinfo",
 													"arguments": null,
-													"children": [
-														{
-															"stage_name": "fbmessenger_dns_consistency_check",
-															"arguments": {
-																"endpoint_name": "star"
-															},
-															"children": []
-														}
-													]
+													"children": []
 												},
 												{
 													"stage_name": "compose",
 													"arguments": null,
 													"children": [
 														{
-															"stage_name": "make_endpoints_for_port",
-															"arguments": {
-																"port": 443
-															},
-															"children": []
-														},
-														{
-															"stage_name": "new_endpoint_pipeline",
+															"stage_name": "if_filter_exists",
 															"arguments": null,
 															"children": [
 																{
-																	"stage_name": "compose",
+																	"stage_name": "fbmessenger_dns_consistency_check",
+																	"arguments": {
+																		"endpoint_name": "star"
+																	},
+																	"children": []
+																}
+															]
+														},
+														{
+															"stage_name": "compose",
+															"arguments": null,
+															"children": [
+																{
+																	"stage_name": "make_endpoints_for_port",
+																	"arguments": {
+																		"port": 443
+																	},
+																	"children": []
+																},
+																{
+																	"stage_name": "new_endpoint_pipeline",
 																	"arguments": null,
 																	"children": [
-																		{
-																			"stage_name": "tcp_connect",
-																			"arguments": null,
-																			"children": []
-																		},
 																		{
 																			"stage_name": "compose",
 																			"arguments": null,
 																			"children": [
 																				{
-																					"stage_name": "if_filter_exists",
+																					"stage_name": "tcp_connect",
+																					"arguments": null,
+																					"children": []
+																				},
+																				{
+																					"stage_name": "compose",
 																					"arguments": null,
 																					"children": [
 																						{
-																							"stage_name": "fbmessenger_tcp_reachability_check",
-																							"arguments": {
-																								"endpoint_name": "star"
-																							},
+																							"stage_name": "if_filter_exists",
+																							"arguments": null,
+																							"children": [
+																								{
+																									"stage_name": "fbmessenger_tcp_reachability_check",
+																									"arguments": {
+																										"endpoint_name": "star"
+																									},
+																									"children": []
+																								}
+																							]
+																						},
+																						{
+																							"stage_name": "discard",
+																							"arguments": null,
 																							"children": []
 																						}
 																					]
-																				},
-																				{
-																					"stage_name": "discard",
-																					"arguments": null,
-																					"children": []
 																				}
 																			]
 																		}

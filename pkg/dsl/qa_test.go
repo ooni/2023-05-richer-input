@@ -131,7 +131,7 @@ func qaNewEnvironment() *netemx.QAEnv {
 
 func qaRunNode(metrics dsl.Metrics, runnable dsl.RunnableASTNode) (*dsl.Observations, error) {
 	input := dsl.NewValue(&dsl.Void{}).AsGeneric()
-	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, time.Now())
+	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, &dsl.NullProgressMeter{}, time.Now())
 	if err := dsl.Try(runnable.Run(context.Background(), rtx, input)); err != nil {
 		return nil, err
 	}

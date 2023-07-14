@@ -19,6 +19,11 @@ type Runtime interface {
 	// Close closes all the closers tracker by the runtime.
 	Close() error
 
+	// IncrementProgress increments the progress meter by adding the given delta
+	// to the current progress meter value. The progress meter value is a float
+	// number where 0 means beginning and 1.0 means we are done.
+	IncrementProgress(delta float64)
+
 	// Metrics returns the metrics to use.
 	Metrics() Metrics
 
@@ -82,13 +87,18 @@ func (r *MinimalRuntime) Close() error {
 	return nil
 }
 
-// ExtractObservations implements Trace.
+// ExtractObservations implements Runtime.
 func (r *MinimalRuntime) ExtractObservations() []*Observations {
 	defer r.mu.Unlock()
 	r.mu.Lock()
 	out := r.observations
 	r.observations = []*Observations{}
 	return out
+}
+
+// IncrementProgress implements Runtime.
+func (r *MinimalRuntime) IncrementProgress(delta float64) {
+	// nothing
 }
 
 // Metrics implements Runtime.
