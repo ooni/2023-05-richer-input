@@ -11,6 +11,12 @@ require (
 )
 
 require (
+	github.com/dlclark/regexp2 v1.7.0 // indirect
+	github.com/dop251/goja v0.0.0-20230707174833-636fdf960de1
+	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
+)
+
+require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
@@ -71,6 +77,7 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/grafov/m3u8 v0.12.0 // indirect
 	github.com/hashicorp/golang-lru v0.6.0 // indirect
+	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/juju/ratelimit v1.0.2 // indirect
 	github.com/klauspost/compress v1.16.6 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
