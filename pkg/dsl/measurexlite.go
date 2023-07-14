@@ -149,6 +149,16 @@ func (t *measurexliteTrace) HTTPTransaction(
 	// mainly going to be I/O events necessary to measure throttling
 	t.runtime.saveNetworkEvents(t.trace.NetworkEvents()...)
 
+	// TODO(bassosimone): when we completely omit the body, we should also
+	// declare that the body has been truncated, otherwise it becomes a bit
+	// difficult to understand what has actually happened. The best course
+	// of action here is probably to modify
+	//
+	//	measurexlite.NewArchivalHTTPRequestResult
+	//
+	// to replace the maxBodySnapshotSize with a boolean value telling
+	// the archival function whether the body has been truncated.
+
 	// create and save an HTTP observation
 	t.runtime.saveHTTPRequestResults(measurexlite.NewArchivalHTTPRequestResult(
 		t.trace.Index,
