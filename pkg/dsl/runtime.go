@@ -19,10 +19,8 @@ type Runtime interface {
 	// Close closes all the closers tracker by the runtime.
 	Close() error
 
-	// IncrementProgress increments the progress meter by adding the given delta
-	// to the current progress meter value. The progress meter value is a float
-	// number where 0 means beginning and 1.0 means we are done.
-	IncrementProgress(delta float64)
+	// Logger returns the logger to use.
+	Logger() model.Logger
 
 	// Metrics returns the metrics to use.
 	Metrics() Metrics
@@ -30,8 +28,8 @@ type Runtime interface {
 	// NewTrace creates a new measurement trace.
 	NewTrace() Trace
 
-	// Logger returns the logger to use.
-	Logger() model.Logger
+	// ProgressMeter returns the progress meter to use.
+	ProgressMeter() ProgressMeter
 
 	// SaveObservations saves the given observations into the runtime.
 	SaveObservations(observations ...*Observations)
@@ -96,9 +94,9 @@ func (r *MinimalRuntime) ExtractObservations() []*Observations {
 	return out
 }
 
-// IncrementProgress implements Runtime.
-func (r *MinimalRuntime) IncrementProgress(delta float64) {
-	// nothing
+// ProgressMeter implements Runtime.
+func (r *MinimalRuntime) ProgressMeter() ProgressMeter {
+	return &NullProgressMeter{}
 }
 
 // Metrics implements Runtime.

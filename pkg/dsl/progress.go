@@ -125,6 +125,6 @@ func (*wrapWithProgressLoader) StageName() string {
 // Run implements Stage.
 func (sx *wrapWithProgressStage) Run(ctx context.Context, rtx Runtime, input Maybe[*Void]) Maybe[*Void] {
 	output := sx.stage.Run(ctx, rtx, input)
-	rtx.IncrementProgress(sx.delta)
+	rtx.ProgressMeter().IncrementProgress(sx.delta)
 	return output
 }

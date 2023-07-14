@@ -49,9 +49,9 @@ func (r *MeasurexliteRuntime) Close() error {
 	return r.runtime.Close()
 }
 
-// IncrementProgress implements Runtime.
-func (r *MeasurexliteRuntime) IncrementProgress(delta float64) {
-	r.progress.IncrementProgress(delta)
+// ProgressMeter implements Runtime.
+func (r *MeasurexliteRuntime) ProgressMeter() ProgressMeter {
+	return r.progress
 }
 
 // Metrics implements Runtime.
