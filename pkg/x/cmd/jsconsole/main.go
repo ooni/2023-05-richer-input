@@ -1,16 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
-	"github.com/ooni/2023-05-richer-input/pkg/javascript"
+	"github.com/apex/log"
+	"github.com/ooni/2023-05-richer-input/pkg/jsengine"
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
 func main() {
-	rtx := runtimex.Try1(javascript.NewRuntime())
+	rtx := jsengine.New(log.Log)
 	script := string(runtimex.Try1(os.ReadFile(os.Args[1])))
-	value := runtimex.Try1(rtx.RunScript("", script))
-	fmt.Printf("%+v\n", value)
+	runtimex.Try0(rtx.RunScript(os.Args[1], script))
 }

@@ -10,6 +10,8 @@ require (
 	github.com/quic-go/quic-go v0.33.0
 )
 
+require github.com/dop251/goja_nodejs v0.0.0-20230602164024-804a84515562
+
 require (
 	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/dop251/goja v0.0.0-20230707174833-636fdf960de1

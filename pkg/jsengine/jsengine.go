@@ -1,46 +1,56 @@
-// Package javascript allows running OONI code from JavaScript.
-package javascript
+// Package jsengine implements a JavaScript engine for scripting OONI Probe.
+package jsengine
 
 import (
 	"context"
-	_ "embed"
 	"encoding/json"
 	"time"
 
-	"github.com/apex/log"
 	"github.com/dop251/goja"
+	"github.com/dop251/goja_nodejs/console"
+	"github.com/dop251/goja_nodejs/require"
 	"github.com/ooni/2023-05-richer-input/pkg/dsl"
+	"github.com/ooni/probe-engine/pkg/model"
 	"github.com/ooni/probe-engine/pkg/runtimex"
 )
 
-//go:embed dslinit.js
-var dslInitJS string
+// Runtime is the JavaScript engine runtime.
+type Runtime interface {
+	RunScript(fileName, fileContent string) error
+}
 
-// NewRuntime creates a new javascript runtime.
-func NewRuntime() (*goja.Runtime, error) {
+// runtime implements [Runtime].
+type runtime struct {
+	logger model.Logger
+	vm     *goja.Runtime
+}
+
+// RunScript implements [Runtime].
+func (r *runtime) RunScript(fileName, fileContent string) error {
+	_, err := r.vm.RunScript(fileName, fileContent)
+	return err
+}
+
+// New creates a new [*Runtime] instance.
+func New(logger model.Logger) Runtime {
+	registry := &require.Registry{}
 	vm := goja.New()
-
-	dslObject := vm.NewObject()
-	dslObject.Set("run", (&dslRunner{vm}).run)
-
-	ooniObject := vm.NewObject()
-	ooniObject.Set("dsl", dslObject)
-
-	vm.Set("ooni", ooniObject)
-
-	if _, err := vm.RunScript("", dslInitJS); err != nil {
-		return nil, err
+	registry.Enable(vm)
+	rtx := &runtime{
+		logger: logger,
+		vm:     vm,
 	}
-	return vm, nil
+	registry.RegisterNativeModule("_ooni", rtx.newModuleOONI)
+	console.Enable(vm)
+	return rtx
 }
 
-// dslRunner implements the dsl.run JavaScript function.
-type dslRunner struct {
-	vm *goja.Runtime
+func (r *runtime) newModuleOONI(vm *goja.Runtime, mod *goja.Object) {
+	exports := mod.Get("exports").(*goja.Object)
+	exports.Set("runDSL", r.ooniRunDSL)
 }
 
-// run implements the dsl.run JavaScript function.
-func (r *dslRunner) run(jsAST *goja.Object) (map[string]any, error) {
+func (r *runtime) ooniRunDSL(jsAST *goja.Object) (map[string]any, error) {
 	// serialize the incoming JS object
 	rawAST, err := jsAST.MarshalJSON()
 	if err != nil {
@@ -60,10 +70,13 @@ func (r *dslRunner) run(jsAST *goja.Object) (map[string]any, error) {
 		return nil, err
 	}
 
+	// TODO(bassosimone): we need to pass to this function the correct
+	// progressMeter and the correct zero time.
+
 	// create the runtime objects required for interpreting a DSL
 	metrics := dsl.NewAccountingMetrics()
 	progressMeter := &dsl.NullProgressMeter{}
-	rtx := dsl.NewMeasurexliteRuntime(log.Log, metrics, progressMeter, time.Now())
+	rtx := dsl.NewMeasurexliteRuntime(r.logger, metrics, progressMeter, time.Now())
 	input := dsl.NewValue(&dsl.Void{}).AsGeneric()
 
 	// interpret the DSL and correctly route exceptions
