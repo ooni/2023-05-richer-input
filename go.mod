@@ -117,6 +117,7 @@ require (
 	gitlab.com/yawning/edwards25519-extra.git v0.0.0-20220726154925-def713fd18e4 // indirect
 	gitlab.com/yawning/obfs4.git v0.0.0-20230519154740-645026c2ada4 // indirect
 	gitlab.com/yawning/utls.git v0.0.12-1 // indirect
+	go.starlark.net v0.0.0-20230718153141-1c3ac63bd217
 	golang.org/x/crypto v0.10.0 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/mod v0.11.0 // indirect
