@@ -63,6 +63,7 @@ func (sx *quicHandshakeOperation) Run(ctx context.Context, rtx Runtime, endpoint
 		ALPN:       []string{"h3"},
 		SkipVerify: false,
 		SNI:        endpoint.Domain,
+		Tags:       []string{},
 		X509Certs:  []string{},
 	}
 	for _, option := range sx.options {
@@ -76,7 +77,7 @@ func (sx *quicHandshakeOperation) Run(ctx context.Context, rtx Runtime, endpoint
 	}
 
 	// create trace
-	trace := rtx.NewTrace()
+	trace := rtx.NewTrace(config.Tags...)
 
 	// start the operation logger
 	ol := measurexlite.NewOperationLogger(
