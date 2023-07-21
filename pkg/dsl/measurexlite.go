@@ -86,10 +86,10 @@ func (r *MeasurexliteRuntime) TrackQUICConn(conn quic.EarlyConnection) {
 }
 
 // NewTrace implements Runtime.
-func (r *MeasurexliteRuntime) NewTrace() Trace {
+func (r *MeasurexliteRuntime) NewTrace(tags ...string) Trace {
 	return &measurexliteTrace{
 		runtime: r,
-		trace:   measurexlite.NewTrace(r.runtime.idGenerator.Add(1), r.zeroTime),
+		trace:   measurexlite.NewTrace(r.runtime.idGenerator.Add(1), r.zeroTime, tags...),
 	}
 }
 
@@ -121,12 +121,15 @@ func (t *measurexliteTrace) HTTPTransaction(
 		maxBodySnapshotSize = 0
 	}
 
+	tags := conn.Trace.Tags()
+
 	// create the beginning-of-transaction observation
 	started := t.trace.TimeSince(t.trace.ZeroTime)
 	t.runtime.saveNetworkEvents(measurexlite.NewAnnotationArchivalNetworkEvent(
 		t.trace.Index,
 		started,
 		"http_transaction_start",
+		tags...,
 	))
 
 	// create speed sampler
@@ -187,6 +190,7 @@ func (t *measurexliteTrace) HTTPTransaction(
 		t.maybeIncludeBody(includeResponseBodySnapshot, body),
 		err,
 		finished,
+		tags...,
 	))
 
 	// record that the transaction is done
@@ -194,6 +198,7 @@ func (t *measurexliteTrace) HTTPTransaction(
 		t.trace.Index,
 		finished,
 		"http_transaction_done",
+		tags...,
 	))
 
 	return resp, body, err
@@ -251,4 +256,9 @@ func (t *measurexliteTrace) ExtractObservations() []*Observations {
 		QUICHandshakes: t.trace.QUICHandshakes(),
 	}
 	return []*Observations{observations}
+}
+
+// Tags implements Trace.
+func (t *measurexliteTrace) Tags() []string {
+	return t.trace.Tags()
 }

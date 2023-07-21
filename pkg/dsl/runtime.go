@@ -26,7 +26,7 @@ type Runtime interface {
 	Metrics() Metrics
 
 	// NewTrace creates a new measurement trace.
-	NewTrace() Trace
+	NewTrace(tags ...string) Trace
 
 	// ProgressMeter returns the progress meter to use.
 	ProgressMeter() ProgressMeter
@@ -139,7 +139,8 @@ func (r *MinimalRuntime) TrackQUICConn(conn quic.EarlyConnection) {
 }
 
 // NewTrace implements Runtime.
-func (r *MinimalRuntime) NewTrace() Trace {
+func (r *MinimalRuntime) NewTrace(tags ...string) Trace {
+	// We ignore tags in the minimal implementation
 	return &minimalTrace{
 		idx: r.idGenerator.Add(1),
 		r:   r,
@@ -217,4 +218,9 @@ func (t *minimalTrace) NewStdlibResolver() model.Resolver {
 // NewTLSHandshakerStdlib implements Trace.
 func (t *minimalTrace) NewTLSHandshakerStdlib() model.TLSHandshaker {
 	return netxlite.NewTLSHandshakerStdlib(t.r.logger)
+}
+
+// Tags implements Trace.
+func (t *minimalTrace) Tags() []string {
+	return []string{}
 }
