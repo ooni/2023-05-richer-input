@@ -39,6 +39,7 @@ type quicHandshakeConfig struct {
 	ALPN       []string `json:"alpn,omitempty"`
 	SkipVerify bool     `json:"skip_verify,omitempty"`
 	SNI        string   `json:"sni,omitempty"`
+	Tags       []string `json:"tags,omitempty"`
 	X509Certs  []string `json:"x509_certs,omitempty"`
 }
 
@@ -51,6 +52,9 @@ func (c *quicHandshakeConfig) options() (options []QUICHandshakeOption) {
 	}
 	if c.SNI != "" {
 		options = append(options, QUICHandshakeOptionSNI(c.SNI))
+	}
+	if len(c.Tags) > 0 {
+		options = append(options, QUICHandshakeOptionTags(c.Tags...))
 	}
 	if len(c.X509Certs) > 0 {
 		options = append(options, QUICHandshakeOptionX509Certs(c.X509Certs...))
@@ -110,6 +114,13 @@ func QUICHandshakeOptionX509Certs(value ...string) QUICHandshakeOption {
 func QUICHandshakeOptionSNI(value string) QUICHandshakeOption {
 	return func(config *quicHandshakeConfig) {
 		config.SNI = value
+	}
+}
+
+// QUICHandshakeOptionTags allows to configure the tags to include into the measurement.
+func QUICHandshakeOptionTags(tags ...string) QUICHandshakeOption {
+	return func(config *quicHandshakeConfig) {
+		config.Tags = append(config.Tags, tags...)
 	}
 }
 

@@ -61,4 +61,7 @@ type Trace interface {
 
 	// NewStdlibResolver creates a resolver using the stdlib.
 	NewStdlibResolver() model.Resolver
+
+	// Tags returns the tags configured for the trace.
+	Tags() []string
 }
