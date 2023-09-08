@@ -5,13 +5,13 @@ import (
 	"testing"
 
 	"github.com/apex/log"
-	"github.com/ooni/probe-engine/pkg/netxlite/filtering"
+	"github.com/ooni/probe-engine/pkg/testingx"
 )
 
 func TestTLSHandshake(t *testing.T) {
 	t.Run("we correctly wrap TLS handshake errors", func(t *testing.T) {
 		// create a server that RSTs during the handshake
-		srvr := filtering.NewTLSServer(filtering.TLSActionReset)
+		srvr := testingx.MustNewTLSServer(testingx.TLSHandlerReset())
 		defer srvr.Close()
 
 		// create a measurement pipeline

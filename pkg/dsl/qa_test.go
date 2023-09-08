@@ -34,7 +34,7 @@ const qaWebServerAddress = "93.184.216.34"
 func qaPipelineDNS() dsl.Stage[string, *dsl.DNSLookupResult] {
 	return dsl.DNSLookupParallel(
 		dsl.DNSLookupGetaddrinfo(),
-		dsl.DNSLookupUDP(net.JoinHostPort(netemx.QAEnvDefaultUncensoredResolverAddress, "53")),
+		dsl.DNSLookupUDP(net.JoinHostPort(netemx.RootResolverAddress, "53")),
 	)
 }
 
@@ -111,9 +111,9 @@ func qaNewRunnableASTNode() dsl.RunnableASTNode {
 
 func qaNewEnvironment() *netemx.QAEnv {
 	// create the environment
-	env := netemx.NewQAEnv(netemx.QAEnvOptionHTTPServer(
+	env := netemx.MustNewQAEnv(netemx.QAEnvOptionHTTPServer(
 		qaWebServerAddress,
-		netemx.QAEnvDefaultHTTPHandler(),
+		netemx.ExampleWebPageHandlerFactory(),
 	))
 
 	// create the configuration of the uncensored DNS servers.
@@ -230,7 +230,7 @@ func TestQADNSLookupUDPFailure(t *testing.T) {
 	// Note: this rule should prevent UDP communication
 	env.DPIEngine().AddRule(&netem.DPIDropTrafficForServerEndpoint{
 		Logger:          log.Log,
-		ServerIPAddress: netemx.QAEnvDefaultUncensoredResolverAddress,
+		ServerIPAddress: netemx.RootResolverAddress,
 		ServerPort:      53,
 		ServerProtocol:  layers.IPProtocolUDP,
 	})
