@@ -9,14 +9,14 @@ import (
 	"testing"
 
 	"github.com/apex/log"
-	"github.com/ooni/probe-engine/pkg/netxlite/filtering"
 	"github.com/ooni/probe-engine/pkg/runtimex"
+	"github.com/ooni/probe-engine/pkg/testingx"
 )
 
 func TestHTTPTransaction(t *testing.T) {
 	t.Run("we correctly wrap HTTP transaction errors during the round trip", func(t *testing.T) {
 		// create a server that RSTs during the round trip
-		srvr := filtering.NewHTTPServerCleartext(filtering.HTTPActionReset)
+		srvr := testingx.MustNewHTTPServer(testingx.HTTPHandlerReset())
 		defer srvr.Close()
 
 		// create a measurement pipeline
@@ -28,7 +28,7 @@ func TestHTTPTransaction(t *testing.T) {
 
 		// create the endpoint
 		endpoint := NewValue(&Endpoint{
-			Address: srvr.URL().Host,
+			Address: runtimex.Try1(url.Parse(srvr.URL)).Host,
 			Domain:  "www.example.com",
 		})
 

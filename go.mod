@@ -6,8 +6,17 @@ require (
 	github.com/apex/log v1.9.0
 	github.com/fatih/color v1.15.0
 	github.com/google/go-cmp v0.5.9
-	github.com/ooni/probe-engine v0.25.1-0.20230704101036-d6ca05d2c834
+	github.com/ooni/probe-engine v0.25.1-0.20230908090215-28aeb3307924
 	github.com/quic-go/quic-go v0.33.0
+)
+
+require (
+	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
+	github.com/prometheus/client_golang v1.16.0 // indirect
+	github.com/prometheus/client_model v0.4.0 // indirect
+	github.com/prometheus/common v0.44.0 // indirect
+	github.com/prometheus/procfs v0.10.1 // indirect
 )
 
 require (
@@ -23,7 +32,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/mroth/weightedrand v1.0.0 // indirect
-	github.com/ooni/netem v0.0.0-20230703161932-f920565ac5f0
+	github.com/ooni/netem v0.0.0-20230906091637-85d962536ff3
 	github.com/pebbe/zmq4 v1.2.10 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
@@ -78,10 +87,10 @@ require (
 	github.com/miekg/dns v1.1.55 // indirect
 	github.com/onsi/ginkgo/v2 v2.10.0 // indirect
 	github.com/ooni/go-libtor v1.1.8 // indirect
-	github.com/ooni/oocrypto v0.5.2 // indirect
-	github.com/ooni/oohttp v0.6.2 // indirect
-	github.com/ooni/probe-assets v0.17.0 // indirect
-	github.com/oschwald/maxminddb-golang v1.10.0 // indirect
+	github.com/ooni/oocrypto v0.5.3 // indirect
+	github.com/ooni/oohttp v0.6.3 // indirect
+	github.com/ooni/probe-assets v0.18.0 // indirect
+	github.com/oschwald/maxminddb-golang v1.11.0 // indirect
 	github.com/pion/datachannel v1.5.5 // indirect
 	github.com/pion/dtls/v2 v2.2.7 // indirect
 	github.com/pion/ice/v2 v2.3.7 // indirect
@@ -94,7 +103,7 @@ require (
 	github.com/pion/sctp v1.8.7 // indirect
 	github.com/pion/sdp/v3 v3.0.6 // indirect
 	github.com/pion/srtp/v2 v2.0.15 // indirect
-	github.com/pion/stun v0.6.0 // indirect
+	github.com/pion/stun v0.6.1 // indirect
 	github.com/pion/transport/v2 v2.2.1 // indirect
 	github.com/pion/turn/v2 v2.1.0 // indirect
 	github.com/pion/webrtc/v3 v3.2.10 // indirect
@@ -117,12 +126,12 @@ require (
 	gitlab.com/yawning/edwards25519-extra.git v0.0.0-20220726154925-def713fd18e4 // indirect
 	gitlab.com/yawning/obfs4.git v0.0.0-20230519154740-645026c2ada4 // indirect
 	gitlab.com/yawning/utls.git v0.0.12-1 // indirect
-	golang.org/x/crypto v0.10.0 // indirect
+	golang.org/x/crypto v0.11.0 // indirect
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1 // indirect
 	golang.org/x/mod v0.11.0 // indirect
-	golang.org/x/net v0.11.0 // indirect
-	golang.org/x/sys v0.9.0 // indirect
-	golang.org/x/text v0.10.0 // indirect
+	golang.org/x/net v0.12.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/text v0.11.0 // indirect
 	golang.org/x/tools v0.10.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 )
